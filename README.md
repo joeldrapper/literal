@@ -6,7 +6,7 @@
 
 ```ruby
 class User
-  include Literal
+  include Literal::Attributes
 
   attribute :name, String
   attribute :age, Integer
