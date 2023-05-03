@@ -1,6 +1,6 @@
 # Literal
 
-This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lighter weight API that works with `===` and doesn't require defining a global `Types` module. You can use it with plain old Ruby types like `String`, `Integer`, `Proc`, etc. That's fine. If need more power, you can use advanced type matchers like `_Array`, `_Union`, `_Interface`.
+This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lighter API that works with `===` and doesn’t require defining a global `Types` module. You can use it with plain old Ruby types like `String`, `Integer`, `Proc`, etc. If need more power, you can use advanced type matchers like `_Array`, `_Union`, `_Interface`.
 
 ## Basic Usage
 
@@ -13,7 +13,7 @@ class User
   include Literal::Attributes
 
   attribute :name, String, reader: :public
-  attribute :age, Integer, writer: :public
+  attribute :age, 18.., writer: :public
 end
 ```
 
@@ -41,80 +41,101 @@ end
 
 ## Special Types
 
-### Union
+#### `_Union`
+
+A union type means one of the other. For example, if you want to accept a `String` or a `Symbol`, you could make a union.
 
 ```ruby
 _Union(String, Symbol)
 ```
 
-### Boolean
+#### `_Boolean`
+
+`_Boolean` is a union of `true` and `false. Literally, `_Union(true, false)`.
 
 ```ruby
 _Boolean
 ```
 
-### Maybe
+#### `_Maybe`
+
+`_Maybe` is union of whatever type you give it and `nil`. This is how you make optional arguments.
 
 ```ruby
 _Maybe(String)
 ```
 
-### Array
+### `_Array`
+
+The `_Array` type takes a specific type for the items of the array. It will match only if all items in the array match that type.
 
 ```ruby
 _Array(String)
 ```
 
-### Set
+### `_Set`
+
+Like `_Array` but for `Set`s.
 
 ```ruby
 _Set(String)
 ```
 
-### Enumerable
+### `_Enumerable`
+
+Like `_Array`, but for any `Enumerable`.
 
 ```ruby
 _Enumerable(String)
 ```
 
-### Tuple
-An Enumerable containing exactly the specified types in order.
+### `_Tuple`
+An Enumerable containing exactly the specified types in order. For example, if you expect an Array of exactly two items where the first is a `String` and the second is an `Integer`, you could specify that as a `_Tuple` type.
 
 ```ruby
 _Tuple(String, Integer)
 ```
 
-### Hash
+### `_Hash`
+
+A `Hash` type that ensures all the keys and values match the provided types.
 
 ```ruby
 _Hash(String, Integer)
 ```
 
-### Interface
+### `_Interface`
+The `_Interface` type ensures the given value responds to the methods defined on the interface. Note: there's currently no way to match the arity of the methods. If you have any ideas about how to do this, please open an issue.
+
 ```ruby
 _Interface(:to_s)
 ```
 
-### Class
+### `_Class`
+
+Match a `Class` that's either the given class or a subclass of the given class.
 
 ```ruby
 _Class(RuntimeError)
 ```
 
-### Module
-
-```ruby
-_Module(Enumerable)
-```
-
-### Integer
-You can of course just use `Integer` to specify an integer type. The special type `_Integer` allows you to limit that type with a range, while verifying that it's an integer and not something else that matches the range such as a float.
+### `_Integer`
+You can of course just use `Integer` to specify an integer type. The special type `_Integer` allows you to limit that type with a range, while verifying that it's an `Integer` and not something else that matches the range such as a `Float`.
 
 ```
 _Integer(18..)
 ```
 
-You can use these types together.
+### `_Float`
+
+Same as integer, but for `Float`s.
+
+```ruby
+_Float(1.4..6.4)
+```
+
+You can compose these types together.
+
 ```ruby
 _Maybe(Union(String, Symbol, Interface(:to_s), Interface(:to_str), Tuple(String, Symbol)))
 ```
