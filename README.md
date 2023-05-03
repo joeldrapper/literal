@@ -118,3 +118,9 @@ You can use these types together.
 ```ruby
 _Maybe(Union(String, Symbol, Interface(:to_s), Interface(:to_str), Tuple(String, Symbol)))
 ```
+
+## Writing your own matchers
+
+Values are compared to types using the types’ `===` operator. So you can define your own special matchers as objects that respond to `===`. It's worth taking a look at how the [built in](https://github.com/joeldrapper/literal/tree/main/lib/literal/types) type matchers are defined.
+
+As it happens, Procs alias `===` to `call`, which means you can provide a proc as a type. The proc will be called with the value and can return `true` or `false`.
