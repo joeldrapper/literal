@@ -14,7 +14,7 @@ Some of the advanced types, such as `_Array` and `_Hash` could be pretty bad for
 
 ### Attributes mixin
 
-The attributes mixin allows you to define type safe attribute accessors. By default, writers are private and readers are not defined.
+The attributes mixin allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined.
 
 You can specify that you want `:public` or `:private` readers. You can also specify that you want writers to be `:public`.
 
@@ -31,7 +31,7 @@ The attributes mixin also defines a default `initializer`, which assigns keyword
 
 ### Struct
 
-Literal structs are similar to Ruby structs, but they have type safe writers.
+Literal structs are similar to Ruby structs, but they have type-checked writers.
 
 ```ruby
 class Person < Literal::Struct
