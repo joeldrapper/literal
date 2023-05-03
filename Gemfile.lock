@@ -1,0 +1,29 @@
+GIT
+  remote: https://github.com/joeldrapper/green_dots.git
+  revision: 776745d38c9523e403b445eeef8b374ffb130f8b
+  specs:
+    green_dots (0.1.0)
+      concurrent-ruby
+      zeitwerk
+
+PATH
+  remote: .
+  specs:
+    literal (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    concurrent-ruby (1.2.2)
+    zeitwerk (2.6.8)
+
+PLATFORMS
+  arm64-darwin-22
+
+DEPENDENCIES
+  green_dots!
+  literal!
+  zeitwerk
+
+BUNDLED WITH
+   2.4.12
