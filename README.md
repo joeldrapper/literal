@@ -12,6 +12,8 @@ Ruby is a wonderful dyanmic langauge. While I’m excited about advances in RBS 
 
 The attributes mixin allows you to define type safe attribute accessors. By default, writers are private and readers are not defined.
 
+You can specify that you want `:public` or `:private` readers. You can also specify that you want writers to be `:public`.
+
 ```ruby
 class User
   include Literal::Attributes
