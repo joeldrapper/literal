@@ -41,6 +41,8 @@ end
 
 ## Special Types
 
+The following types are designed to work like generics in other languages. In Ruby, they are implemented as methods that return an object with an `===` method to match the given value.
+
 #### `_Union`
 
 A union type means one of the other. For example, if you want to accept a `String` or a `Symbol`, you could make a union.
