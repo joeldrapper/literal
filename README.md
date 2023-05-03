@@ -6,6 +6,10 @@ This gem is designed to be a simple alternative to Dry Types, Dry Initializer an
 
 Ruby is a wonderful dyanmic langauge. While I’m excited about advances in RBS and Steep, I think we've still got a long way to go before they can be used in many applications. In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces for specific classes on initializers and attribute writers. Literal is designed to help define and enforce this.
 
+### What about performance?
+
+Some of the advanced types, such as `_Array` and `_Hash` could be pretty bad for performance. The idea here is the disable these type checks in production, though I haven't built the switch for that just yet.
+
 ## Basic Usage
 
 ### Attributes mixin
