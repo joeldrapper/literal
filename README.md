@@ -1,19 +1,25 @@
 # Literal
 
+This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lighter weight API that works with `===` and doesn't require defining a global `Types` module. You can use it with plain old Ruby types like `String`, `Integer`, `Proc`, etc. That's fine. If need more power, you can use advanced type matchers like `_Array`, `_Union`, `_Interface`.
+
 ## Basic Usage
 
-### Mixin
+### Attributes mixin
+
+The attributes mixin allows you to define type safe attribute accessors. By default, writers are private and readers are not defined.
 
 ```ruby
 class User
   include Literal::Attributes
 
-  attribute :name, String
-  attribute :age, Integer
+  attribute :name, String, reader: :public
+  attribute :age, Integer, writer: :public
 end
 ```
 
 ### Struct
+
+Literal structs are similar to Ruby structs, but they have type safe writers.
 
 ```ruby
 class Person < Literal::Struct
@@ -23,6 +29,8 @@ end
 ```
 
 ### Data
+
+Literal data is essentially a deep frozen struct.
 
 ```ruby
 class Person < Literal::Data
