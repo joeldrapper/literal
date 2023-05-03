@@ -29,8 +29,8 @@ Literal structs are similar to Ruby structs, but they have type safe writers.
 
 ```ruby
 class Person < Literal::Struct
-  attribute :name, String
-  attribute :age, Integer
+  attribute :name, _Maybe(String)
+  attribute :age, _Union(Integer, Float)
 end
 ```
 
