@@ -27,6 +27,8 @@ class User
 end
 ```
 
+The attributes mixin also defines a default `initializer`, which assigns keyword arguments via the type-checked writers.
+
 ### Struct
 
 Literal structs are similar to Ruby structs, but they have type safe writers.
