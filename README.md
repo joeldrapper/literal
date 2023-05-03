@@ -2,6 +2,10 @@
 
 This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lighter API that works with `===` and doesn’t require defining a global `Types` module. You can use it with plain old Ruby types like `String`, `Integer`, `Proc`, etc. If need more power, you can use advanced type matchers like `_Array`, `_Union`, `_Interface`.
 
+### What's the point?
+
+Ruby is a wonderful dyanmic langauge. While I’m excited about advances in RBS and Steep, I think we've still got a long way to go before they can be used in many applications. In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces for specific classes: initializers and attribute writers. Literal is designed to help define and enforce this.
+
 ## Basic Usage
 
 ### Attributes mixin
