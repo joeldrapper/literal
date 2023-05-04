@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Literal::Attributes
-	extend Literal::Types
+	include Literal::Types
 
 	def attribute(name, type, reader: false, writer: :private)
-		__attributes__ << name
+		__schema__[name] = type
 
 		writer_name = :"#{name}="
 		ivar_name = :"@#{name}"
@@ -14,6 +14,44 @@ module Literal::Attributes
 
 			instance_variable_set(ivar_name, value)
 		end
+
+		class_eval <<~RUBY, __FILE__, __LINE__ + 1
+			# frozen_string_literal: true
+
+			def initialize(#{
+				__schema__.map { |n, t|
+					"#{n}: #{t.nil? ? 'nil' : ''}"
+				}.join(', ')
+			})
+				@__schema__ = self.class.__schema__
+
+				#{
+					__schema__.each_key.map { |n|
+						"raise ::Literal::TypeError unless @__schema__[:#{n}] === #{n}"
+					}.join("\n")
+				}
+
+				#{
+					__schema__.map { |n, _t|
+						"@#{n} = #{n}"
+					}.join("\n")
+				}
+			end
+		RUBY
+
+		class_eval <<~RUBY, __FILE__, __LINE__ + 1
+			# frozen_string_literal: true
+
+			def #{writer_name}(value)
+				type = @__schema__[:#{name}]
+
+				unless type === value
+					raise Literal::TypeError, "Expected `\#{value.inspect}` to be a `\#{type.inspect}`."
+				end
+
+				@#{name} = value
+			end
+		RUBY
 
 		case writer
 			when :public then nil
@@ -34,10 +72,10 @@ module Literal::Attributes
 		name
 	end
 
-	def __attributes__
-		return @__attributes__ if defined?(@__attributes__)
+	def __schema__
+		return @__schema__ if defined?(@__schema__)
 
-		@__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
+		@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
 	end
 
 	def self.extended(base)
