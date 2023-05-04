@@ -18,13 +18,13 @@ Some of the advanced collection types, such as `_Array` and `_Hash` could be pre
 
 ## `Literal::Attributes`
 
-The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the coresponding attributes. This is done through the attribute writers, so the types are checked.
+The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the corresponding attributes. This is done through the attribute writers, so the types are checked.
 
 Here we have a user class with a name and an age. The name is a `String` and the age is between 18 and infinity.
 
 ```ruby
 class User
-  include Literal::Attributes
+  extend Literal::Attributes
 
   attribute :name, String
   attribute :age, 18..
@@ -34,7 +34,7 @@ end
 If we try to pass an invalid value to the initializer, we’ll get an error. Under the hood, the attributes are being assigned to instance variables by the same name. Internally, we can reference these instance variables directly:
 
 ```ruby
-def first_name = @name.split.first
+def first_name = @name.split(/\s/).first
 ```
 
 The type-checking is really designed for the public interface. Internally, I think it’s good practice to reference the instance variables directly. You can always use the writers (which are private by default) if you need to do type-checking but that’s not usually necessary. We’re not trying to make the application type safe. We can’t do that without a complete type system. What we’re doing is adding some helpful checks to the main public interfaces.
@@ -67,7 +67,7 @@ end
 
 These types are implemented as methods that return an object with a `===` method designed to match a value to the specified type. From any context where `Literal::Types` is extended, you can reference them directly.
 
-#### `_Union(*T)`
+### `_Union(*T)`
 
 The `_Union` type will match if the value has the type of any of the specified `T` types.
 
@@ -84,7 +84,7 @@ attribute :thing, _Any
 
 To make this argument optional and allow `nil`, you could use use `_Maybe`.
 
-#### `_Maybe(T)`
+### `_Maybe(T)`
 
 The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literally `_Union(T, nil)`.
 
@@ -92,7 +92,7 @@ The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literal
 attribute :thing, _Maybe(_Any)
 ```
 
-#### `_Boolean`
+### `_Boolean`
 
 The `_Boolean` type is a union of `true` and `false`. It’s literally `_Union(true, false)`.
 
