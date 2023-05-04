@@ -4,7 +4,7 @@ This gem is designed to be a simple alternative to Dry Types, Dry Initializer an
 
 ### What's the point?
 
-Ruby is a wonderful dyanmic langauge. While I’m excited about advances in RBS and Steep, I think we've still got a long way to go before they can be used in many applications. In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces for specific classes on initializers and attribute writers. Literal is designed to help define and enforce this.
+While I’m excited about advances in RBS and Steep, I think we've still got a long way to go before they can be used in many applications. In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces for specific classes on initializers and attribute writers. Literal is designed to help define and enforce this.
 
 ### What about performance?
 
