@@ -1,7 +1,6 @@
 include Literal::Types
 
 test "Any" do
-  assert _Any === nil
   assert _Any === 0
   assert _Any === "a"
   assert _Any === :a
@@ -9,6 +8,8 @@ test "Any" do
   assert _Any === {}
   assert _Any === Object.new
   assert _Any === Class.new
+
+  refute _Any === nil
 end
 
 test "Array" do

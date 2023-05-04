@@ -1,5 +1,5 @@
 module Literal::Types::AnyType
   def self.===(value)
-    true
+    !value.nil?
   end
 end
