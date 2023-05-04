@@ -15,6 +15,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    benchmark-ips (2.11.0)
     concurrent-ruby (1.2.2)
     json (2.6.3)
     parallel (1.23.0)
@@ -43,6 +44,7 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  benchmark-ips
   green_dots!
   literal!
   rubocop
