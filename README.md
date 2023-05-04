@@ -1,168 +1,185 @@
 # Literal
 
-This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lighter API that works with `===` and doesn’t require defining a global `Types` module. You can use it with plain old Ruby types like `String`, `Integer`, `Proc`, etc. If need more power, you can use advanced type matchers like `_Array`, `_Union`, `_Interface`.
+This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lightweight API that works with the case equality operator `===`, which gets you a ton of stuff for free.
 
-### What's the point?
+You can use it with plain Ruby types — like `String`, `Integer`, `Proc` — and if you need more power, there are advanced type matchers such as `_Array`, `_Union`, `_Maybe`, and `_Interface`.
 
-While I’m excited about advances in RBS and Steep, I think we've still got a long way to go before they can be used in many applications. In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces for specific classes on initializers and attribute writers. Literal is designed to help define and enforce this.
+### What’s the point?
+
+While I’m very excited about RBS and Steep, I think we’ve still got a long way to go before they can be used in many applications. They will need significant adoption by libraries before we can really use them in our apps.
+
+In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces — initializers and attribute writers: models, operations, jobs, components, etc. That’s where Literals comes in.
 
 ### What about performance?
 
-Some of the advanced types, such as `_Array` and `_Hash` could be pretty bad for performance. The idea here is the disable these type checks in production, though I haven't built the switch for that just yet.
+The performance impact of most of the types is negligible: a single case equality check against the given type.
 
-## Basic Usage
+Some of the advanced collection types, such as `_Array` and `_Hash` could be pretty bad for performance, since they need to check every value at runtime. The idea here is to disable these type checks in production, though I must confess, haven’t built the switch for that just yet.
 
-### Attributes mixin
+## `Literal::Attributes`
 
-The attributes mixin allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined.
+The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the coresponding attributes. This is done through the attribute writers, so the types are checked.
 
-You can specify that you want `:public` or `:private` readers. You can also specify that you want writers to be `:public`.
+Here we have a user class with a name and an age. The name is a `String` and the age is between 18 and infinity.
 
 ```ruby
 class User
   include Literal::Attributes
 
-  attribute :name, String, reader: :public
-  attribute :age, 18.., writer: :public
-end
-```
-
-The attributes mixin also defines a default `initializer`, which assigns keyword arguments via the type-checked writers.
-
-### Struct
-
-Literal structs are similar to Ruby structs, but they have type-checked writers.
-
-```ruby
-class Person < Literal::Struct
-  attribute :name, _Maybe(String)
-  attribute :age, _Union(Integer, Float)
-end
-```
-
-### Data
-
-Literal data is essentially a deep frozen struct.
-
-```ruby
-class Person < Literal::Data
   attribute :name, String
-  attribute :age, Integer
+  attribute :age, 18..
 end
 ```
 
-## Special Types
-
-The following types are designed to work like generics in other languages. In Ruby, they are implemented as methods that return an object with an `===` method to match the given value.
-
-#### `_Union`
-
-A union type means one of the other. For example, if you want to accept a `String` or a `Symbol`, you could make a union.
+If we try to pass an invalid value to the initializer, we’ll get an error. Under the hood, the attributes are being assigned to instance variables by the same name. Internally, we can reference these instance variables directly:
 
 ```ruby
-_Union(String, Symbol)
+def first_name = @name.split.first
+```
+
+The type-checking is really designed for the public interface. Internally, I think it’s good practice to reference the instance variables directly. You can always use the writers (which are private by default) if you need to do type-checking but that’s not usually necessary. We’re not trying to make the application type safe. We can’t do that without a complete type system. What we’re doing is adding some helpful checks to the main public interfaces.
+
+## `Literal::Struct`
+
+Literal structs are similar to Ruby structs, but they have type-checked writers. Readers and writers are public by default. You can use them like this:
+
+```ruby
+class Address < Literal::Struct
+  attribute :street, String
+  attribute :city, String
+  attribute :state, String
+end
+```
+
+## `Literal::Data`
+`Literal::Data` is a deeply frozen `Literal::Struct`, which is similar to a Ruby `Data` object.
+
+```ruby
+class Measure < Literal::Data
+  attribute :amount, Float
+  attribute :unit, Symbol
+end
+```
+
+## `Literal::Types`
+
+`Literal::Attributes`, `Literal::Struct`, and `Literal::Data` all extend `Literal::Types`, which provide some advanced types including some generic-like collection types.
+
+These types are implemented as methods that return an object with a `===` method designed to match a value to the specified type. From any context where `Literal::Types` is extended, you can reference them directly.
+
+#### `_Union(*T)`
+
+The `_Union` type will match if the value has the type of any of the specified `T` types.
+
+```ruby
+attribute :name, _Union(String, Symbol)
 ```
 
 ### `_Any`
-`_Any` is a union of all types apart from `nil`. It's not literally implemented like that, but that's how you can think about it. You could include nil with `_Maybe`
+The `_Any` type is a union of all types apart from `nil`. It’s not literally implemented like that, but that’s how you can think about it. `_Any` is a way to essentially opt-out of type checking.
 
 ```ruby
-_Maybe(_Any)
+attribute :thing, _Any
+```
+
+To make this argument optional and allow `nil`, you could use use `_Maybe`.
+
+#### `_Maybe(T)`
+
+The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literally `_Union(T, nil)`.
+
+```ruby
+attribute :thing, _Maybe(_Any)
 ```
 
 #### `_Boolean`
 
-`_Boolean` is a union of `true` and `false`. It’s literally `_Union(true, false)`.
+The `_Boolean` type is a union of `true` and `false`. It’s literally `_Union(true, false)`.
 
 ```ruby
-_Boolean
+attribute :published, _Boolean
 ```
 
-#### `_Maybe`
+### `_Array(T)`
 
-`_Maybe` is union of whatever type you give it and `nil`. This is how you make optional arguments.
+The `_Array` type will match an Array only if all items in the Array match the given type `T`.
 
 ```ruby
-_Maybe(String)
+attribute :names, _Array(String)
 ```
 
-### `_Array`
+### `_Set(T)`
 
-The `_Array` type takes a specific type for the items of the array. It will match only if all items in the array match that type.
+The `_Set` type is like `_Array`, but matches for a `Set` instead of an `Array`.
 
 ```ruby
-_Array(String)
+attribute :names, _Set(String)
 ```
 
-### `_Set`
+### `_Enumerable(T)`
 
-Like `_Array` but for `Set`s.
+The `_Enumerable` type is like `_Array`, but for any `Enumerable`.
 
 ```ruby
-_Set(String)
+attribute :names, _Enumerable(String)
 ```
 
-### `_Enumerable`
+### `_Tuple(*T)`
 
-Like `_Array`, but for any `Enumerable`.
+The `_Tuple` type will match an `Enumerable` that contains the given `T` types in order. It’s important that the length of the `Enumerable` also matches the number of `T` types.
 
 ```ruby
-_Enumerable(String)
+attribute :names_and_ages, _Array(_Tuple(String, Integer))
 ```
 
-### `_Tuple`
-An Enumerable containing exactly the specified types in order. For example, if you expect an Array of exactly two items where the first is a `String` and the second is an `Integer`, you could specify that as a `_Tuple` type.
+### `_Hash(K, V)`
+
+The `_Hash` type will match a `Hash` where all the keys match the given `K` type and all the values match the given `V` type.
 
 ```ruby
-_Tuple(String, Integer)
+attribute :dictionary, _Hash(String, String)
 ```
 
-### `_Hash`
+### `_Interface(*M)`
 
-A `Hash` type that ensures all the keys and values match the provided types.
+The `_Interface` type ensures the given value responds to the `M` methods.
+
+Note: there's currently no way to match the arity of the methods. If you have any ideas about how to do this, please open an issue.
 
 ```ruby
-_Hash(String, Integer)
+attribute :name, _Interface(:to_s)
 ```
 
-### `_Interface`
-The `_Interface` type ensures the given value responds to the methods defined on the interface. Note: there's currently no way to match the arity of the methods. If you have any ideas about how to do this, please open an issue.
+### `_Class(T)`
+
+The `_Class` type ensures the given value is a calss and subclasses the given `T` class.
 
 ```ruby
-_Interface(:to_s)
+attribute :error, _Class(RuntimeError)
 ```
 
-### `_Class`
+### `_Integer(T)`
 
-Match a `Class` that's either the given class or a subclass of the given class.
+While you can use `Integer` to match only integers, the `_Integer` type allows you to limit that type with a more specific type `T`, such as a `Range`. You could use a literal range (e.g. `10..20`) but that would allow for `Float` values. Using `_Integer` ensures the value is an `Integer`.
 
 ```ruby
-_Class(RuntimeError)
+attribute :age, _Integer(18..)
 ```
 
-### `_Integer`
-You can of course just use `Integer` to specify an integer type. The special type `_Integer` allows you to limit that type with a range, while verifying that it's an `Integer` and not something else that matches the range such as a `Float`.
+### `_Float(T)`
 
-```
-_Integer(18..)
-```
-
-### `_Float`
-
-Same as integer, but for `Float`s.
+The `_Float` type is the same as `_Integer`, but for `Float` values.
 
 ```ruby
-_Float(1.4..6.4)
+attribute :degrees _Float(0..360)
 ```
 
-You can compose these types together.
+You can also compose these types together to form more complex types.
 
-```ruby
-_Maybe(Union(String, Symbol, Interface(:to_s), Interface(:to_str), Tuple(String, Symbol)))
-```
+## Writing your own type matchers
 
-## Writing your own matchers
+Values are compared to types using the type’s `===` operator. When there’s an error, the type’s `inspect` value is shown in the message. That means you can easily define your own type matchers as objects that respond to `===` and `inspect`. It’s worth taking a look at how the [built in](https://github.com/joeldrapper/literal/tree/main/lib/literal/types) type matchers are defined here.
 
-Values are compared to types using the types’ `===` operator. So you can define your own special matchers as objects that respond to `===`. It's worth taking a look at how the [built in](https://github.com/joeldrapper/literal/tree/main/lib/literal/types) type matchers are defined.
+### Procs as types
 
-As it happens, Procs alias `===` to `call`, which means you can provide a proc as a type. The proc will be called with the value and can return `true` or `false`.
+It just so happens that, Procs alias `===` to `call`, which means you can provide a Proc as a type and it will work as expected. The Proc will be called with the value and should return `true` or `false`.
