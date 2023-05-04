@@ -72,7 +72,7 @@ _Maybe(_Any)
 
 #### `_Boolean`
 
-`_Boolean` is a union of `true` and `false. Literally, `_Union(true, false)`.
+`_Boolean` is a union of `true` and `false`. It’s literally `_Union(true, false)`.
 
 ```ruby
 _Boolean
