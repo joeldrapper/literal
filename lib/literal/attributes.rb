@@ -15,12 +15,20 @@ module Literal::Attributes
 			instance_variable_set(ivar_name, value)
 		end
 
-		private writer_name unless writer == :public
+		case writer
+			when :public then nil
+			when :protected then protected writer_name
+			else private writer_name
+		end
 
 		if reader
 			attr_reader name
 
-			private name unless reader == :public
+			case reader
+				when :public then nil
+				when :protected then protected name
+				else private name
+			end
 		end
 
 		name
