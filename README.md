@@ -63,6 +63,13 @@ A union type means one of the other. For example, if you want to accept a `Strin
 _Union(String, Symbol)
 ```
 
+### `_Any`
+`_Any` is a union of all types apart from `nil`. It's not literally implemented like that, but that's how you can think about it. You could include nil with `_Maybe`
+
+```ruby
+_Maybe(_Any)
+```
+
 #### `_Boolean`
 
 `_Boolean` is a union of `true` and `false. Literally, `_Union(true, false)`.
