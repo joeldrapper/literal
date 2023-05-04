@@ -34,7 +34,7 @@ end
 If we try to pass an invalid value to the initializer, we’ll get an error. Under the hood, the attributes are being assigned to instance variables by the same name. Internally, we can reference these instance variables directly:
 
 ```ruby
-def first_name = @name.split.first
+def first_name = @name.split(/\s/).first
 ```
 
 The type-checking is really designed for the public interface. Internally, I think it’s good practice to reference the instance variables directly. You can always use the writers (which are private by default) if you need to do type-checking but that’s not usually necessary. We’re not trying to make the application type safe. We can’t do that without a complete type system. What we’re doing is adding some helpful checks to the main public interfaces.
