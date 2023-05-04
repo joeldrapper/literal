@@ -24,7 +24,7 @@ Here we have a user class with a name and an age. The name is a `String` and the
 
 ```ruby
 class User
-  include Literal::Attributes
+  extend Literal::Attributes
 
   attribute :name, String
   attribute :age, 18..
