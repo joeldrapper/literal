@@ -18,7 +18,7 @@ Some of the advanced collection types, such as `_Array` and `_Hash` could be pre
 
 ## `Literal::Attributes`
 
-The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the coresponding attributes. This is done through the attribute writers, so the types are checked.
+The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the corresponding attributes. This is done through the attribute writers, so the types are checked.
 
 Here we have a user class with a name and an age. The name is a `String` and the age is between 18 and infinity.
 
