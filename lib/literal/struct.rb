@@ -1,35 +1,39 @@
+# frozen_string_literal: true
+
 class Literal::Struct
-  extend Literal::Types
-  include Literal::Initializer
+	extend Literal::Types
+	include Literal::Initializer
 
-  def initialize(...)
-    @attributes = {}
-    super
-  end
+	def initialize(...)
+		@attributes = {}
+		super
+	end
 
-  def self.__attributes__
-    return @__attributes__ if defined?(@__attributes__)
-    @__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
-  end
+	def self.__attributes__
+		return @__attributes__ if defined?(@__attributes__)
 
-  def self.attribute(name, type, writer: :private)
-    __attributes__ << name
+		@__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
+	end
 
-    writer_name = :"#{name}="
+	def self.attribute(name, type, writer: :private)
+		__attributes__ << name
 
-    define_method writer_name do |value|
-      raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
-      @attributes[name] = value
-    end
+		writer_name = :"#{name}="
 
-    define_method name do
-      @attributes[name]
-    end
+		define_method writer_name do |value|
+			raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
 
-    name
-  end
+			@attributes[name] = value
+		end
 
-  def to_h
-    @attributes.dup
-  end
+		define_method name do
+			@attributes[name]
+		end
+
+		name
+	end
+
+	def to_h
+		@attributes.dup
+	end
 end

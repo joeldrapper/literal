@@ -7,3 +7,4 @@ gemspec
 
 gem "zeitwerk"
 gem "green_dots", git: "https://github.com/joeldrapper/green_dots.git"
+gem "rubocop"

@@ -1,12 +1,14 @@
-class Literal::Data < Literal::Struct
-  def initialize(...)
-    super
-    @attributes.each(&:freeze)
-    @attributes.freeze
-    freeze
-  end
+# frozen_string_literal: true
 
-  def dup(**attributes)
-    self.class.new(**@attributes.merge(attributes))
-  end
+class Literal::Data < Literal::Struct
+	def initialize(...)
+		super
+		@attributes.each(&:freeze)
+		@attributes.freeze
+		freeze
+	end
+
+	def dup(**attributes)
+		self.class.new(**@attributes.merge(attributes))
+	end
 end

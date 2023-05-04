@@ -1,0 +1,21 @@
+inherit_from:
+  - "https://www.goodcop.style/rubocop.yml"
+  - "https://www.goodcop.style/tabs.yml"
+
+AllCops:
+  TargetRubyVersion: 2.7
+
+Naming/MethodName:
+  Enabled: false
+
+Style/MixinUsage:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Lint/Void:
+  Enabled: false
+
+Style/MissingRespondToMissing:
+  Enabled: false

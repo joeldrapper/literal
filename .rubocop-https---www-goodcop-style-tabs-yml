@@ -1,0 +1,6 @@
+Layout/IndentationStyle:
+  EnforcedStyle: tabs
+  IndentationWidth: 1
+
+Layout/IndentationWidth:
+  Width: 1

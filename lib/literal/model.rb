@@ -1,22 +1,26 @@
+# frozen_string_literal: true
+
 class Literal::Model
-  extend Literal::Types
-  include Literal::Initializer
+	extend Literal::Types
+	include Literal::Initializer
 
-  def self.__attributes__
-    return @required_attributes if defined?(@required_attributes)
-    @required_attributes = superclass.is_a?(self) ? superclass.required_attributes.dup : []
-  end
+	def self.__attributes__
+		return @__attributes__ if defined?(@__attributes__)
 
-  def self.attribute(name, type)
-    __attributes__ << name
+		@__attributes__ = superclass.is_a?(self) ? superclass.required_attributes.dup : []
+	end
 
-    writer_name = :"#{name}="
+	def self.attribute(name, type)
+		__attributes__ << name
 
-    define_method writer_name do |value|
-      raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
-      super(value)
-    end
+		writer_name = :"#{name}="
 
-    name
-  end
+		define_method writer_name do |value|
+			raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
+
+			super(value)
+		end
+
+		name
+	end
 end

@@ -1,33 +1,38 @@
+# frozen_string_literal: true
+
 module Literal::Attributes
-  extend Literal::Types
+	extend Literal::Types
 
-  def attribute(name, type, reader: false, writer: :private)
-    __attributes__ << name
+	def attribute(name, type, reader: false, writer: :private)
+		__attributes__ << name
 
-    writer_name = :"#{name}="
-    ivar_name = :"@#{name}"
+		writer_name = :"#{name}="
+		ivar_name = :"@#{name}"
 
-    define_method writer_name do |value|
-      raise Literal::TypeError, "Expected `#{value.inspect}` to be a `#{type.inspect}`." unless type === value
-      instance_variable_set(ivar_name, value)
-    end
+		define_method writer_name do |value|
+			raise Literal::TypeError, "Expected `#{value.inspect}` to be a `#{type.inspect}`." unless type === value
 
-    private writer_name unless writer == :public
+			instance_variable_set(ivar_name, value)
+		end
 
-    if reader
-      attr_reader name
-      private name unless reader == :public
-    end
+		private writer_name unless writer == :public
 
-    name
-  end
+		if reader
+			attr_reader name
 
-  def __attributes__
-    return @__attributes__ if defined?(@__attributes__)
-    @__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
-  end
+			private name unless reader == :public
+		end
 
-  def self.extended(base)
-    base.include(Literal::Initializer)
-  end
+		name
+	end
+
+	def __attributes__
+		return @__attributes__ if defined?(@__attributes__)
+
+		@__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
+	end
+
+	def self.extended(base)
+		base.include(Literal::Initializer)
+	end
 end
