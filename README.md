@@ -67,7 +67,7 @@ end
 
 These types are implemented as methods that return an object with a `===` method designed to match a value to the specified type. From any context where `Literal::Types` is extended, you can reference them directly.
 
-#### `_Union(*T)`
+### `_Union(*T)`
 
 The `_Union` type will match if the value has the type of any of the specified `T` types.
 
@@ -84,7 +84,7 @@ attribute :thing, _Any
 
 To make this argument optional and allow `nil`, you could use use `_Maybe`.
 
-#### `_Maybe(T)`
+### `_Maybe(T)`
 
 The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literally `_Union(T, nil)`.
 
@@ -92,7 +92,7 @@ The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literal
 attribute :thing, _Maybe(_Any)
 ```
 
-#### `_Boolean`
+### `_Boolean`
 
 The `_Boolean` type is a union of `true` and `false`. It’s literally `_Union(true, false)`.
 
