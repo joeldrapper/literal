@@ -204,4 +204,4 @@ It’s worth noting that while Ruby’s built-in `Data` objects are themselves f
 
 | Normal Ruby Data | `Dry::Struct::Value` | `Literal::Data` |
 |---|---|---|
-| 4.272M ips | 286.696K ips | 1.443M ips |
+| 4.272M ips | 286.696K ips | 2.017M ips |
