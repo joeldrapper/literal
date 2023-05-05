@@ -61,6 +61,53 @@ class Measure < Literal::Data
 end
 ```
 
+## `Literal::Value`
+
+`Literal::Value` is like a `Literal::Data`, but specifically designed to enrich a single value. You could wrap a `String` as an `EmailAddress` or an `Integer` as a `UserId`.
+
+```ruby
+EmailAddress = Literal::Value.define(String)
+UserID = Literal::Value.define(Integer)
+```
+
+We can create a new `UserID` like this:
+
+```ruby
+user_id = UserID.new(123)
+```
+
+The input will be type-checked. If it's not frozen already, it will be duplicated and frozen.
+
+You can access the value by calling `value` on the object:
+
+```ruby
+user_id.value # => 123
+```
+
+Because these value types are defined with an underlying type — in this case, `Integer` — the value objects also implement specific coercion methods. With an `Integer` value, you can call `to_i` to get the underlying value:
+
+```ruby
+user_id.to_i # => 123
+```
+
+With the `EmailAddress`, we could call `to_s` or `to_str`.
+
+These value objects are designed to help you add extra type safety to your application. Let's say we have an operation that sends an email to a user. We could define the operation like this.
+
+```ruby
+class EmailUser
+  include Literal::Attributes
+
+  attribute :user_id, UserID
+
+  def call
+    # ...
+  end
+end
+```
+
+Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we get a type error.
+
 ## `Literal::Types`
 
 `Literal::Attributes`, `Literal::Struct`, and `Literal::Data` all extend `Literal::Types`, which provide some advanced types including some generic-like collection types.
