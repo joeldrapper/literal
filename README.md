@@ -152,7 +152,7 @@ attribute :name, _Interface(:to_s)
 
 ### `_Class(T)`
 
-The `_Class` type ensures the given value is a calss and subclasses the given `T` class.
+The `_Class` type ensures the given value is a class and subclasses the given `T` class.
 
 ```ruby
 attribute :error, _Class(RuntimeError)
@@ -174,7 +174,13 @@ The `_Float` type is the same as `_Integer`, but for `Float` values.
 attribute :degrees _Float(0..360)
 ```
 
-You can also compose these types together to form more complex types.
+You can also compose these types together to form more complex types. You can also save your own types as constants for re-use.
+
+```ruby
+AttributeType = Literal::Types::_Union(String, Symbol, Literal::Types::_Interface(:to_s))
+```
+
+Note unless you've extended `Literal::Types`, you'll need to reference the types by their fully qualified names. These types are methods, so why are we accessing them with `::`? It's a little known fact that `::` can stand in for `.` in Ruby. I like using `::` here becuase it makes these look more like normal generics. If you prefer, you can use `.`, e.g. `Literal::Types._Interface(:to_s)`.
 
 ## Writing your own type matchers
 
