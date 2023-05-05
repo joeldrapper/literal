@@ -1,6 +1,6 @@
 # Literal
 
-This gem is designed to be a simple alternative to Dry Types, Dry Initializer and Dry Struct. It has a lightweight API that works with the case equality operator `===`, which gets you a ton of stuff for free.
+This gem is designed to be a simple alternative to [`Dry::Types`](https://dry-rb.org/gems/dry-types/1.2/), [`Dry::Initializer`](https://dry-rb.org/gems/dry-initializer/3.0/), [`Dry::Struct`](https://dry-rb.org/gems/dry-struct/1.0/), and [`Dry::Struct::Value`](https://dry-rb.org/gems/dry-struct/1.0/#value). It has a lightweight API that works with the case equality operator `===`, which gets you a ton of stuff for free.
 
 You can use it with plain Ruby types — like `String`, `Integer`, `Proc` — and if you need more power, there are advanced type matchers such as `_Array`, `_Union`, `_Maybe`, and `_Interface`.
 
