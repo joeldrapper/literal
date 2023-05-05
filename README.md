@@ -188,20 +188,20 @@ It just so happens that, Procs alias `===` to `call`, which means you can provid
 
 ### Class with instance variables
 
-| Normal Ruby Class | Dry::Initializer | Literal::Attributes |
+| Normal Ruby Class | `Dry::Initializer` | `Literal::Attributes` |
 |---|---|---|
-| 5.226M | 1.494M | 3.399M |
+| 5.226M ips | 1.494M ips | 3.399M ips |
 
 ### Struct
 
-| Normal Ruby Struct | Dry::Struct | Literal::Struct |
+| Normal Ruby Struct | `Dry::Struct` | `Literal::Struct` |
 |---|---|---|
-| 4.100M | 1.333M | 3.029M |
+| 4.100M ips | 1.333M ips | 3.029M ips |
 
 ### Data
 
 It’s worth noting that while Ruby’s built-in `Data` objects are themselves frozen, they do not freeze the given values. `Dry::Struct::Value` does freeze the given values and `Literal::Data` both duplicates and freezes the given values.
 
-| Normal Ruby Data | Dry::Struct::Value | Literal::Data |
+| Normal Ruby Data | `Dry::Struct::Value` | `Literal::Data` |
 |---|---|---|
-| 4.272M | 286.696K | 1.443M |
+| 4.272M ips | 286.696K ips | 1.443M ips |
