@@ -29,7 +29,6 @@ class Literal::Value
 			end
 
 			value_class.class_exec(&block) if block
-			value_class.freeze
 			value_class
 		end
 	end
@@ -42,4 +41,8 @@ class Literal::Value
 	end
 
 	attr_reader :value
+
+	def inspect
+	  "#{self.class.name}(#{value.inspect})"
+  end
 end

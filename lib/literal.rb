@@ -15,4 +15,12 @@ module Literal
 	class ArgumentError < ::ArgumentError
 		include Error
 	end
+
+	def self.Enum(type, &block)
+	  Enum.define(type, &block)
+	end
+
+	def self.Value(type, &block)
+	  Value.define(type, &block)
+  end
 end

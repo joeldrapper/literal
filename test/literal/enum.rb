@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Color = Literal::Enum.define do
+Color = Literal::Enum(String) do
 	Red("#ff0000")
 	Green("#00ff00")
 	Blue("#0000ff")

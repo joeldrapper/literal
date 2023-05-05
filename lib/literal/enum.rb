@@ -17,7 +17,7 @@ module Literal
 				@members.each(&block)
 			end
 
-			def define(&block)
+			def define(type, &block)
 				Class.new(self, &block).freeze
 			end
 
