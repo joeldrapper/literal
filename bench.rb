@@ -37,20 +37,34 @@ class DryValue < Dry::Struct::Value
 	attribute :age, Types::Strict::Integer
 end
 
+NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
+NormalData = Data.define(:first_name, :last_name, :age)
+
 Benchmark.ips do |x|
-	x.report "Literal Struct" do
-		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	x.report "Struct" do
+		NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-	x.report "Dry Struct" do
+	x.report "Dry::Struct" do
 		DryStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-	x.report "Literal Data" do
+	x.report "Literal::Struct" do
+		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+
+	x.report "Data" do
+		NormalData.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+	x.report "Dry::Struct::Value" do
+		DryValue.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+	x.report "Literal::Data" do
 		LiteralData.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-	x.report "Dry Value" do
-		DryValue.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
+	# x.compare!
 end
