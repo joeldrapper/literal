@@ -116,7 +116,7 @@ Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we
 
 [Coming soon]
 
-## `Literal::Result
+## `Literal::Result`
 
 [Coming soon]
 
