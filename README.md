@@ -183,3 +183,25 @@ Values are compared to types using the type’s `===` operator. When there’s a
 ### Procs as types
 
 It just so happens that, Procs alias `===` to `call`, which means you can provide a Proc as a type and it will work as expected. The Proc will be called with the value and should return `true` or `false`.
+
+## Benchmarks
+
+### Class with instance variables
+
+| Normal Ruby Class | `Dry::Initializer` | `Literal::Attributes` |
+|---|---|---|
+| 5.226M ips | 1.494M ips | 3.399M ips |
+
+### Struct
+
+| Normal Ruby Struct | `Dry::Struct` | `Literal::Struct` |
+|---|---|---|
+| 4.100M ips | 1.333M ips | 3.029M ips |
+
+### Data
+
+It’s worth noting that while Ruby’s built-in `Data` objects are themselves frozen, they do not freeze the given values. `Dry::Struct::Value` does freeze the given values and `Literal::Data` both duplicates and freezes the given values.
+
+| Normal Ruby Data | `Dry::Struct::Value` | `Literal::Data` |
+|---|---|---|
+| 4.272M ips | 286.696K ips | 1.443M ips |
