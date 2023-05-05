@@ -26,12 +26,18 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
+    dry-struct (1.6.0)
+      dry-core (~> 1.0, < 2)
+      dry-types (>= 1.7, < 2)
+      ice_nine (~> 0.11)
+      zeitwerk (~> 2.6)
     dry-types (1.7.1)
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0)
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
+    ice_nine (0.11.2)
     json (2.6.3)
     parallel (1.23.0)
     parser (3.2.2.1)
@@ -61,6 +67,7 @@ PLATFORMS
 DEPENDENCIES
   benchmark-ips
   dry-initializer
+  dry-struct
   dry-types
   green_dots!
   literal!

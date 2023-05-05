@@ -27,7 +27,7 @@ class Literal::Data < Literal::Struct
 					@attributes = {
 						#{
 							__schema__.map { |n, _t|
-								"#{n}: #{n}"
+								"#{n}: #{n}.dup"
 							}.join(",\n")
 						}
 					}
@@ -51,6 +51,7 @@ class Literal::Data < Literal::Struct
 	end
 
 	def freeze
+		@attributes.each_value(&:freeze)
 		@attributes.freeze
 		super
 	end
