@@ -52,7 +52,7 @@ end
 ```
 
 ## `Literal::Data`
-`Literal::Data` is a deeply frozen `Literal::Struct`, which is similar to a Ruby `Data` object.
+`Literal::Data` is a deeply frozen `Literal::Struct`, which is similar to a Ruby `Data` object. All unfrozen values given to a `Literal::Data` initializer will be duplicated and frozen.
 
 ```ruby
 class Measure < Literal::Data
