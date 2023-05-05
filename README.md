@@ -6,7 +6,7 @@ You can use it with plain Ruby types — like `String`, `Integer`, `Proc` — a
 
 ### What’s the point?
 
-While I’m very excited about RBS and Steep, I think we’ve still got a long way to go before they can be used in many applications. They will need significant adoption by libraries before we can really use them in our apps.
+While I’m very excited about [RBS](https://github.com/ruby/rbs) and [Steep](https://github.com/soutaro/steep), I think we’ve still got a long way to go before they can be used in many applications. They will need significant adoption by libraries before we can really use them in our apps.
 
 In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces — initializers and attribute writers: models, operations, jobs, components, etc. That’s where Literals comes in.
 
