@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Literal::Data < Literal::Struct
-
 	class << self
 		def attribute(name, type, reader: :public)
 			__schema__[name] = type
@@ -50,13 +49,24 @@ class Literal::Data < Literal::Struct
 		end
 	end
 
-	def freeze
-		@attributes.each_value(&:freeze)
-		@attributes.freeze
-		super
+	attr_reader :attributes
+	protected :attributes
+
+	def with(**attributes)
+		copy = dup
+
+		attributes.each do |name, value|
+			type = @__schema__[name]
+			raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}.`" unless type === value
+
+			copy.attributes[name] = value
+		end
+
+		copy
 	end
 
-	def dup(**attributes)
-		self.class.new(**@attributes.merge(attributes))
+	def freeze
+		@attributes.each_value(&:freeze)
+		super
 	end
 end

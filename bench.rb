@@ -90,7 +90,6 @@ Benchmark.ips do |x|
 		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-
 	x.report "Ruby Data" do
 		NormalData.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
