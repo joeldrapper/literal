@@ -2,35 +2,73 @@
 
 class Literal::Struct
 	extend Literal::Types
-	include Literal::Initializer
 
-	def initialize(...)
-		@attributes = {}
-		super
-	end
+	class << self
+		def attribute(name, type, reader: :public, writer: :public)
+			__schema__[name] = type
 
-	def self.__attributes__
-		return @__attributes__ if defined?(@__attributes__)
+			writer_name = :"#{name}="
 
-		@__attributes__ = superclass.is_a?(self) ? superclass.__attributes__.dup : []
-	end
+			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				# frozen_string_literal: true
 
-	def self.attribute(name, type, writer: :private)
-		__attributes__ << name
+				def initialize(#{
+					__schema__.map { |n, t|
+						"#{n}: #{t.nil? ? 'nil' : ''}"
+					}.join(', ')
+				})
+					@__schema__ = self.class.__schema__
 
-		writer_name = :"#{name}="
+					#{
+						__schema__.each_key.map { |n|
+							"raise ::Literal::TypeError unless @__schema__[:#{n}] === #{n}"
+						}.join("\n")
+					}
 
-		define_method writer_name do |value|
-			raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
+					@attributes = {
+						#{
+							__schema__.map { |n, _t|
+								"#{n}: #{n}"
+							}.join(",\n")
+						}
+					}
+				end
 
-			@attributes[name] = value
+				def #{writer_name}(value)
+					type = @__schema__[:#{name}]
+
+					unless type === value
+						raise Literal::TypeError, "Expected `\#{value.inspect}` to be a `\#{type.inspect}`."
+					end
+
+					@attributes[:#{name}] = value
+				end
+
+				def #{name}
+					@attributes[:#{name}]
+				end
+			RUBY
+
+			case writer
+				when :public then nil
+				when :protected then protected writer_name
+				else private writer_name
+			end
+
+			case reader
+				when :public then nil
+				when :protected then protected name
+				else private name
+			end
+
+			name
 		end
 
-		define_method name do
-			@attributes[name]
-		end
+		def __schema__
+			return @__schema__ if defined?(@__schema__)
 
-		name
+			@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
+		end
 	end
 
 	def to_h

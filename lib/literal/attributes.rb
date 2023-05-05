@@ -9,12 +9,6 @@ module Literal::Attributes
 		writer_name = :"#{name}="
 		ivar_name = :"@#{name}"
 
-		define_method writer_name do |value|
-			raise Literal::TypeError, "Expected `#{value.inspect}` to be a `#{type.inspect}`." unless type === value
-
-			instance_variable_set(ivar_name, value)
-		end
-
 		class_eval <<~RUBY, __FILE__, __LINE__ + 1
 			# frozen_string_literal: true
 
@@ -37,10 +31,6 @@ module Literal::Attributes
 					}.join("\n")
 				}
 			end
-		RUBY
-
-		class_eval <<~RUBY, __FILE__, __LINE__ + 1
-			# frozen_string_literal: true
 
 			def #{writer_name}(value)
 				type = @__schema__[:#{name}]
