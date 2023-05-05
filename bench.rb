@@ -13,13 +13,47 @@ end
 
 puts RUBY_DESCRIPTION
 
+class NormalClass
+	def initialize(first_name:, last_name:, age:)
+		@first_name = first_name
+		@last_name = last_name
+		@age = age
+	end
+end
+
+class DryClass
+	extend Dry::Initializer
+
+	option :first_name, Types::Strict::String
+	option :last_name, Types::Strict::String
+	option :age, Types::Strict::Integer
+end
+
+class LiteralClass
+	extend Literal::Attributes
+
+	attribute :first_name, String
+	attribute :last_name, String
+	attribute :age, Integer
+end
+
+NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
+
+class DryStruct < Dry::Struct
+	attribute :first_name, Types::Strict::String
+	attribute :last_name, Types::Strict::String
+	attribute :age, Types::Strict::Integer
+end
+
 class LiteralStruct < Literal::Struct
 	attribute :first_name, String
 	attribute :last_name, String
 	attribute :age, Integer
 end
 
-class DryStruct < Dry::Struct
+NormalData = Data.define(:first_name, :last_name, :age)
+
+class DryValue < Dry::Struct::Value
 	attribute :first_name, Types::Strict::String
 	attribute :last_name, Types::Strict::String
 	attribute :age, Types::Strict::Integer
@@ -31,17 +65,20 @@ class LiteralData < Literal::Data
 	attribute :age, Integer
 end
 
-class DryValue < Dry::Struct::Value
-	attribute :first_name, Types::Strict::String
-	attribute :last_name, Types::Strict::String
-	attribute :age, Types::Strict::Integer
-end
-
-NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
-NormalData = Data.define(:first_name, :last_name, :age)
-
 Benchmark.ips do |x|
-	x.report "Struct" do
+	x.report "Ruby Class" do
+		NormalClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+	x.report "Dry::Initializer" do
+		DryClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+	x.report "Literal::Attributes" do
+		LiteralClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	end
+
+	x.report "Ruby Struct" do
 		NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
@@ -54,7 +91,7 @@ Benchmark.ips do |x|
 	end
 
 
-	x.report "Data" do
+	x.report "Ruby Data" do
 		NormalData.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
