@@ -26,7 +26,7 @@ class Literal::Data < Literal::Struct
 					@attributes = {
 						#{
 							__schema__.map { |n, _t|
-								"#{n}: #{n}.dup"
+								"#{n}: #{n}.frozen? ? #{n} : #{n}.dup"
 							}.join(",\n")
 						}
 					}
