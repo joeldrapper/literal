@@ -108,6 +108,18 @@ end
 
 Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we get a type error.
 
+## `Literal::Enum`
+
+[Coming soon]
+
+## `Literal::Operation`
+
+[Coming soon]
+
+## `Literal::Result
+
+[Coming soon]
+
 ## `Literal::Types`
 
 `Literal::Attributes`, `Literal::Struct`, and `Literal::Data` all extend `Literal::Types`, which provide some advanced types including some generic-like collection types.
