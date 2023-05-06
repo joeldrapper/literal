@@ -7,7 +7,6 @@ module Literal::Attributes
 		__schema__[name] = type
 
 		writer_name = :"#{name}="
-		ivar_name = :"@#{name}"
 
 		class_eval <<~RUBY, __FILE__, __LINE__ + 1
 			# frozen_string_literal: true

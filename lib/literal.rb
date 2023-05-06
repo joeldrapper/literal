@@ -17,10 +17,18 @@ module Literal
 	end
 
 	def self.Enum(type, &block)
-	  Enum.define(type, &block)
+		Enum.define(type, &block)
 	end
 
 	def self.Value(type, &block)
-	  Value.define(type, &block)
-  end
+		Value.define(type, &block)
+	end
+
+	def self.Data(&block)
+		Class.new(Data, &block)
+	end
+
+	def self.Struct(&block)
+		Class.new(Struct, &block)
+	end
 end

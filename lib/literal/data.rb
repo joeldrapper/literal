@@ -5,8 +5,6 @@ class Literal::Data < Literal::Struct
 		def attribute(name, type, reader: :public)
 			__schema__[name] = type
 
-			writer_name = :"#{name}="
-
 			class_eval <<~RUBY, __FILE__, __LINE__ + 1
 				# frozen_string_literal: true
 
