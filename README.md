@@ -66,8 +66,8 @@ end
 `Literal::Value` is like a `Literal::Data`, but specifically designed to enrich a single value. You could wrap a `String` as an `EmailAddress` or an `Integer` as a `UserId`.
 
 ```ruby
-EmailAddress = Literal::Value.define(String)
-UserID = Literal::Value.define(Integer)
+EmailAddress = Literal::Value(String)
+UserID = Literal::Value(Integer)
 ```
 
 We can create a new `UserID` like this:
