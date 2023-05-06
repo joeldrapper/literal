@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Literal::Types
-	extend self
-
 	def _Union(*types)
 		raise Literal::ArgumentError, "Union type must have at least two types." if types.size < 2
 
