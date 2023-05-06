@@ -2,62 +2,33 @@
 
 class Literal::Value
 	def initialize(value)
-		type = self.class.__type__
-		raise Literal::TypeError, "Expected value: `#{value.inspect}` to be: `#{type.inspect}`." unless type === value
+		unless __type__ === value
+			raise Literal::TypeError,
+				"Expected value: `#{value.inspect}` to be: `#{__type__.inspect}`."
+		end
 
 		@value = value.frozen? ? value : value.dup.freeze
+
 		freeze
 	end
 
 	attr_reader :value
 
-	def inspect
-		"#{self.class.name}(#{value.inspect})"
-	end
+	def inspect = "#{self.class.name}(#{value.inspect})"
 
-	class StringValue < Literal::Value
-		alias_method :to_s, :value
-		alias_method :to_str, :value
-	end
+	private
 
-	class SymbolValue < Literal::Value
-		alias_method :to_sym, :value
-	end
-
-	class IntegerValue < Literal::Value
-		alias_method :to_i, :value
-	end
-
-	class FloatValue < Literal::Value
-		alias_method :to_f, :value
-	end
-
-	class SetValue < Literal::Value
-		alias_method :to_set, :value
-	end
-
-	class ArrayValue < Literal::Value
-		alias_method :to_a, :value
-		alias_method :to_ary, :value
-	end
-
-	class HashValue < Literal::Value
-		alias_method :to_h, :value
-	end
-
-	class ProcValue < Literal::Value
-		alias_method :to_proc, :value
-	end
+	def __type__ = self.class.__type__
 
 	TYPE_CLASSES = {
+		Set => SetValue,
+		Proc => ProcValue,
+		Hash => HashValue,
+		Array => ArrayValue,
+		Float => FloatValue,
 		String => StringValue,
 		Symbol => SymbolValue,
 		Integer => IntegerValue,
-		Float => FloatValue,
-		Set => SetValue,
-		Array => ArrayValue,
-		Hash => HashValue,
-		Proc => ProcValue
 	}
 
 	class << self

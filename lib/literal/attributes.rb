@@ -25,7 +25,7 @@ module Literal::Attributes
 				}
 
 				#{
-					__schema__.map { |n, _t|
+					__schema__.each_key.map { |n|
 						"@#{n} = #{n}"
 					}.join("\n")
 				}
@@ -65,9 +65,5 @@ module Literal::Attributes
 		return @__schema__ if defined?(@__schema__)
 
 		@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
-	end
-
-	def self.extended(base)
-		base.include(Literal::Initializer)
 	end
 end
