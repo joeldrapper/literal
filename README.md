@@ -277,7 +277,7 @@ It just so happens that, Procs alias `===` to `call`, which means you can provid
 
 ### Data
 
-It’s worth noting that while Ruby’s built-in `Data` objects are themselves frozen, they do not freeze the given values. `Dry::Struct::Value` does freeze the given values and `Literal::Data` both duplicates and freezes the given values.
+It’s worth noting that while Ruby’s built-in `Data` objects are themselves frozen, they do not freeze the given values. `Dry::Struct::Value` does freeze the given values and `Literal::Data` duplicates and freezes the given values if they’re not already frozen.
 
 | Normal Ruby Data | `Dry::Struct::Value` | `Literal::Data` |
 |---|---|---|
