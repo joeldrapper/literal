@@ -8,16 +8,6 @@ describe "Either(Integer, String)" do
 	let def left = either.new(1)
 	let def right = either.new("foo")
 
-	test "left" do
-		expect(left).to_be :left?
-		expect(right).not_to_be :left?
-	end
-
-	test "right" do
-		expect(right).to_be :right?
-		expect(left).not_to_be :right?
-	end
-
 	test "===" do
 		assert either === left
 		assert either === right
@@ -27,5 +17,15 @@ describe "Either(Integer, String)" do
 
 		refute either === Literal::Left.new("foo")
 		refute either === Literal::Right.new(1)
+	end
+
+	test "#left?" do
+		expect(left).to_be :left?
+		expect(right).not_to_be :left?
+	end
+
+	test "#right?" do
+		expect(right).to_be :right?
+		expect(left).not_to_be :right?
 	end
 end

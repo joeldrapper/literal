@@ -1,34 +1,28 @@
 # frozen_string_literal: true
 
 module Literal::Monads
-	Nothing = Literal::Nothing.new
-	Optional = Nothing # `Maybe` called without anything, e.g. `Maybe(something)` is Nothing
+	Nothing = Literal::Nothing
+	Left = Literal::Left
+	Right = Literal::Right
+	Some = Literal::Some
 
-	def Some(thing)
-		Literal::Some.new(thing)
-	end
-
-	def Optional(value)
-		value.nil? ? Nothing : Some(value)
+	def Maybe(type)
+		Literal::MaybeType.new(type)
 	end
 
 	def Either(left_type, right_type)
-		Literal::Either.new(left_type, right_type)
-	end
-
-	def Left(value)
-		Literal::Left.new(value)
-	end
-
-	def Right(value)
-		Literal::Right.new(value)
+		Literal::EitherType.new(left_type, right_type)
 	end
 
 	def Result(type)
-		Literal::Result.new(type)
+		Literal::ResultType.new(type)
 	end
 
-	def Try(type, &)
-		Literal::Result.new(type).try(&)
+	def Try(type, &block)
+		Literal::ResultType.new(type).try(&block)
+	end
+
+	def Some(type)
+		Literal::SomeType.new(type)
 	end
 end

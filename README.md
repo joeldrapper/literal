@@ -149,14 +149,14 @@ The `_Any` type is a union of all types apart from `nil`. It’s not literally i
 attribute :thing, _Any
 ```
 
-To make this argument optional and allow `nil`, you could use use `_Maybe`.
+To make this argument optional and allow `nil`, you could use use `_Nilable`.
 
-### `_Maybe(T)`
+### `_Nilable(T)`
 
-The `_Maybe` type is a union of `nil` and the specified type `T`. It’s literally `_Union(T, nil)`.
+The `_Nilable` type is a union of `nil` and the specified type `T`. It’s literally `_Union(T, nil)`.
 
 ```ruby
-attribute :thing, _Maybe(_Any)
+attribute :thing, _Nilable(_Any)
 ```
 
 ### `_Boolean`

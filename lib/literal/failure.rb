@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Failure < Literal::Result::Option
+class Literal::Failure < Literal::Result
 	def initialize(value)
 		@value = case value
 		when StandardError

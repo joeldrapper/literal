@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Some < Literal::Optional::Option
+class Literal::Some < Literal::Maybe
 	def initialize(value)
 		@value = value
 		freeze
@@ -16,14 +16,14 @@ class Literal::Some < Literal::Optional::Option
 	end
 
 	def map
-		Some(yield @value)
+		Literal::Some.new(yield @value)
 	end
 
-	def flat_map
-		map(yield(@value)).value_or(Nothing)
+	def flat_map(&block)
+		map(&block).value_or(Nothing)
 	end
 
-	def or_else(_alternative)
+	def or(_alternative)
 		self
 	end
 end

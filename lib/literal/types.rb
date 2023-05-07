@@ -31,7 +31,7 @@ module Literal::Types
 		Literal::Types::InterfaceType.new(*methods)
 	end
 
-	def _Maybe(type)
+	def _Nilable(type)
 		_Union(type, nil)
 	end
 

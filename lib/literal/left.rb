@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Left < Literal::Either::Option
+class Literal::Left < Literal::Either
 	def left? = true
 	def right? = false
 
