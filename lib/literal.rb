@@ -7,7 +7,6 @@ module Literal
 	Loader = Zeitwerk::Loader.for_gem.tap(&:setup)
 
 	extend Literal::Types
-	extend Literal::Monads
 
 	module Error; end
 

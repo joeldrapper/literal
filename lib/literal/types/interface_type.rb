@@ -10,6 +10,6 @@ class Literal::Types::InterfaceType
 	end
 
 	def ===(other)
-		@methods.all? { |method| other.respond_to?(method) }
+		@methods.all? { |m| other.respond_to?(m) }
 	end
 end

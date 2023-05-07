@@ -2,7 +2,6 @@
 
 class Literal::Operation
 	extend Literal::Types
-	include Literal::Monads
 
 	class << self
 		def call(...) = new(...).call

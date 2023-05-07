@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Literal::Maybe
+class Literal::Optional::Option
 	include Literal::Monads
 end

@@ -12,4 +12,8 @@ class Literal::Types::UnionType
 	def ===(value)
 		@types.any? { |type| type === value }
 	end
+
+	def nil?
+		@types.any?(&:nil?)
+	end
 end

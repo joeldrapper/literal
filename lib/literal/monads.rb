@@ -2,17 +2,33 @@
 
 module Literal::Monads
 	Nothing = Literal::Nothing.new
-	Maybe = Nothing # `Maybe` called without anything, e.g. `Maybe(something)` is Nothing
+	Optional = Nothing # `Maybe` called without anything, e.g. `Maybe(something)` is Nothing
 
-	def Something(thing)
-		Literal::Something.new(thing)
+	def Some(thing)
+		Literal::Some.new(thing)
 	end
 
-	def Maybe(value = nil)
-		value.nil? ? NOTHING : Something(value)
+	def Optional(value)
+		value.nil? ? Nothing : Some(value)
 	end
 
-	def Either(whatever)
+	def Either(left_type, right_type)
+		Literal::Either.new(left_type, right_type)
+	end
 
+	def Left(value)
+		Literal::Left.new(value)
+	end
+
+	def Right(value)
+		Literal::Right.new(value)
+	end
+
+	def Result(type)
+		Literal::Result.new(type)
+	end
+
+	def Try(type, &)
+		Literal::Result.new(type).try(&)
 	end
 end

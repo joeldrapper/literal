@@ -1,23 +1,25 @@
 # frozen_string_literal: true
 
-class Literal::Something < Literal::Maybe
+class Literal::Some < Literal::Optional::Option
 	def initialize(value)
 		@value = value
 		freeze
 	end
 
+	attr_accessor :value
+
 	def empty? = false
-	def inspect = "Something(#{@value.inspect})"
+	def inspect = "Some(#{@value.inspect})"
 
 	def value_or(_fallback)
 		@value
 	end
 
 	def map
-		Something(yield @value)
+		Some(yield @value)
 	end
 
-	def flatmap
+	def flat_map
 		map(yield(@value)).value_or(Nothing)
 	end
 
