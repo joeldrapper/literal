@@ -5,6 +5,9 @@ module Literal::Monads
 	Left = Literal::Left
 	Right = Literal::Right
 	Some = Literal::Some
+	Maybe = Literal::Maybe
+	Either = Literal::Either
+	Result = Literal::Result
 
 	def Maybe(type)
 		Literal::MaybeType.new(type)

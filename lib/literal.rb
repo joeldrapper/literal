@@ -33,4 +33,8 @@ module Literal
 	def self.Struct(&block)
 		Class.new(Struct, &block)
 	end
+
+	def self.Array(type)
+		Literal::ArrayType.new(type)
+	end
 end

@@ -2,9 +2,12 @@
 
 extend Literal::Monads
 
-User = Struct.new(:name, :address)
-Address = Struct.new(:street, :city, :state, :zip)
+Account = Struct.new(:user)
+User = Struct.new(:address)
+Address = Struct.new(:street)
 
-user = User.new("Bob", Address.new("123 Main", "Anytown", "CA", "12345"))
-
-binding.irb
+account = Account.new(
+	User.new(
+		Address.new("123 Main")
+	)
+)

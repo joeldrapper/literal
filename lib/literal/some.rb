@@ -11,19 +11,39 @@ class Literal::Some < Literal::Maybe
 	def empty? = false
 	def inspect = "Some(#{@value.inspect})"
 
-	def value_or(_fallback)
+	def value_or
 		@value
 	end
 
+	def bind
+		output = yield @value
+
+		case output
+		when Literal::Maybe
+			output
+		else
+			raise Literal::TypeError,
+				"Block passed to `Literal::Maybe#bind` must return a `#{Literal::Maybe.inspect}`."
+		end
+	end
+
 	def map
-		Literal::Some.new(yield @value)
+		output = yield @value
+		Literal::Some.new(output)
 	end
 
-	def flat_map(&block)
-		map(&block).value_or(Nothing)
+	def maybe
+		output = yield @value
+
+		case output
+		when nil
+			Literal::Nothing
+		else
+			Literal::Some.new(output)
+		end
 	end
 
-	def or(_alternative)
-		self
+	def filter
+		yield @value ? self : Literal::Nothing
 	end
 end
