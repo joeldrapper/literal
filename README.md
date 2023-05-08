@@ -128,11 +128,17 @@ You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This wi
 
 #### `map`
 
-When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`.
+When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`. Note: it's possible to end up with a `Literal::Some(nil)` when using `map`. To avoid this, use `maybe` instead.
 
 #### `maybe`
 
 Like `map` but if the result of the block is `nil`, returns `Literal::Nothing` instead.
+
+Example:
+
+```
+account = Maybe(Account).new(get_account)
+account.maybe(&:user).maybe(&:address).maybe(&:street).value_or { "No Street Address" }
 
 #### `bind`
 
