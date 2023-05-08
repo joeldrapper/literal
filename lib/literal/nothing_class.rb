@@ -6,25 +6,15 @@ class Literal::NothingClass < Literal::Maybe
 	end
 
 	def empty? = true
+	def nothing? = true
+	def something? = false
+
 	def inspect = "Nothing"
 
-	def value_or
-		yield
-	end
+	def value_or = yield
 
-	def bind
-		self
-	end
-
-	def map
-		self
-	end
-
-	def maybe
-		self
-	end
-
-	def filter
-		self
-	end
+	def map = self
+	def bind = self
+	def maybe = self
+	def filter = self
 end

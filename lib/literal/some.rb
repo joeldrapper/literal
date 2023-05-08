@@ -9,16 +9,21 @@ class Literal::Some < Literal::Maybe
 	attr_accessor :value
 
 	def empty? = false
+	def nothing? = false
+	def something? = true
+
 	def inspect = "Some(#{@value.inspect})"
 
-	def value_or
-		@value
+	def value_or = @value
+
+	def map
+		Literal::Some.new(
+			yield @value
+		)
 	end
 
 	def bind
-		output = yield @value
-
-		case output
+		case (output = yield @value)
 		when Literal::Maybe
 			output
 		else
@@ -27,15 +32,8 @@ class Literal::Some < Literal::Maybe
 		end
 	end
 
-	def map
-		output = yield @value
-		Literal::Some.new(output)
-	end
-
 	def maybe
-		output = yield @value
-
-		case output
+		case (output = yield @value)
 		when nil
 			Literal::Nothing
 		else
