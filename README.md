@@ -155,6 +155,10 @@ When called on a `Literal::Some`, returns the underlying value. When called on `
 
 ## `Literal::Either`
 
+`Literal::Either(String, Integer).new("Hello")` will return a `Literal::Left`, while `Literal::Either(String, Integer).new(1)` will return a `Literal::Right`.
+
+If we call `left` on a `Literal::Right`, we'll get `Literal::Nothing`. However, if we call `right` on the `Literal::Right`, we'll get `Some(Integer)`.
+
 [Coming soon]
 
 ## `Literal::Array`
