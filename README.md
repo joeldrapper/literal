@@ -136,9 +136,10 @@ Like `map` but if the result of the block is `nil`, returns `Literal::Nothing` i
 
 Example:
 
-```
+```ruby
 account = Maybe(Account).new(get_account)
 account.maybe(&:user).maybe(&:address).maybe(&:street).value_or { "No Street Address" }
+```
 
 #### `bind`
 
