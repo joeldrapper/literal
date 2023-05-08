@@ -1,4 +1,4 @@
-# Literal
+# Literal [WIP]
 
 This gem is designed to be a simple alternative to [`Dry::Types`](https://dry-rb.org/gems/dry-types/1.2/), [`Dry::Initializer`](https://dry-rb.org/gems/dry-initializer/3.0/), [`Dry::Struct`](https://dry-rb.org/gems/dry-struct/1.0/), and [`Dry::Struct::Value`](https://dry-rb.org/gems/dry-struct/1.0/#value). It has a lightweight API that works with the case equality operator `===`, which gets you a ton of stuff for free.
 
@@ -120,11 +120,23 @@ Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we
 
 [Coming soon]
 
-## `Literal::Optional`
+## `Literal::Maybe`
 
 [Coming soon]
 
 ## `Literal::Either`
+
+[Coming soon]
+
+## `Literal::Array`
+
+[Coming soon]
+
+## `Literal::Hash`
+
+[Coming soon]
+
+## `Literal::Set`
 
 [Coming soon]
 
