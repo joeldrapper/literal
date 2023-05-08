@@ -130,13 +130,21 @@ You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This wi
 
 When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`.
 
-### `maybe`
+#### `maybe`
 
 Like `map` but if the result of the block is `nil`, returns `Literal::Nothing` instead.
 
-### `bind`
+#### `bind`
 
 Like `map` but expects the block to return a `Literal::Maybe` (either a `Literal::Some` or `Literal::Nothing`).
+
+#### `filter`
+
+When called on `Literal::Some`, yields the value to the block and if the block returns truthy, returns self. Otherwise, returns `Literal::Nothing`. When called on `Literal::Nothing`, returns self.
+
+#### `value_or`
+
+When called on a `Literal::Some`, returns the underlying value. When called on `Literal::Nothing` yields the block.
 
 ## `Literal::Either`
 
