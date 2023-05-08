@@ -122,6 +122,8 @@ Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we
 
 ## `Literal::Maybe`
 
+You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This will return a `Literal::Some`. If you created it with `nil` instead, it would return a `Literal::Nothing`.
+
 [Coming soon]
 
 ## `Literal::Either`
