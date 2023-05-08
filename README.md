@@ -122,9 +122,21 @@ Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we
 
 ## `Literal::Maybe`
 
-You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This will return a `Literal::Some`. If you created it with `nil` instead, it would return a `Literal::Nothing`.
-
 [Coming soon]
+
+You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This will return a `Literal::Some`. If you created it with `nil` instead, it would return a `Literal::Nothing`. `Literal::Some`s and `Literal::Nothing` both implement the same interface.
+
+#### `map`
+
+When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`.
+
+### `maybe`
+
+Like `map` but if the result of the block is `nil`, returns `Literal::Nothing` instead.
+
+### `bind`
+
+Like `map` but expects the block to return a `Literal::Maybe` (either a `Literal::Some` or `Literal::Nothing`).
 
 ## `Literal::Either`
 
