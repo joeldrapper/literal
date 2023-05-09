@@ -2,6 +2,7 @@
 
 module Literal::Attributes
 	include Literal::Types
+	include Literal::Schema
 
 	def attribute(name, type, reader: false, writer: :private)
 		__schema__[name] = type
@@ -20,7 +21,12 @@ module Literal::Attributes
 
 				#{
 					__schema__.each_key.map { |n|
-						"raise ::Literal::TypeError unless @__schema__[:#{n}] === #{n}"
+						"
+							type = @__schema__[:#{n}]
+							unless type === #{n}
+								raise ::Literal::TypeError.expected(#{n}, to_be_a: type)
+							end
+						"
 					}.join("\n")
 				}
 
@@ -35,7 +41,7 @@ module Literal::Attributes
 				type = @__schema__[:#{name}]
 
 				unless type === value
-					raise Literal::TypeError, "Expected `\#{value.inspect}` to be a `\#{type.inspect}`."
+					raise Literal::TypeError.expected(value, to_be_a: type)
 				end
 
 				@#{name} = value
@@ -59,11 +65,5 @@ module Literal::Attributes
 		end
 
 		name
-	end
-
-	def __schema__
-		return @__schema__ if defined?(@__schema__)
-
-		@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
 	end
 end

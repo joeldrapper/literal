@@ -16,11 +16,25 @@ class Literal::Some < Literal::Maybe
 
 	def value_or = @value
 
-	def map = Literal::Some.new(
-		yield @value
-	)
+	def map
+		Literal::Some.new(
+			yield @value
+		)
+	end
 
-	def bind = yield @value
+	def bind
+		yield @value
+	end
+
+	def then
+		output = yield @value
+
+		if Literal::Maybe === output
+			output
+		else
+			raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe)
+		end
+	end
 
 	def maybe
 		case (output = yield @value)

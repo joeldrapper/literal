@@ -6,12 +6,16 @@ class Literal::Failure < Literal::Result
 
 	def inspect = "Literal::Failure(#{@value.inspect})"
 
-	def raise! = raise @value
+	def raise!
+		raise @value
+	end
 
 	def success = Literal::Nothing
 	def failure = Literal::Some(@value)
 
 	def map = self
 	def bind = self
+	def then = self
+	def maybe = self
 	def filter = self
 end

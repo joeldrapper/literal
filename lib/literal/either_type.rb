@@ -28,8 +28,7 @@ class Literal::EitherType
 		when @right_type
 			Literal::Right.new(value)
 		else
-			raise Literal::TypeError,
-				"Expected `#{value.inspect}` to be either `#{@left_type.inspect}` or `#{@right_type.inspect}`."
+			raise Literal::TypeError.expected(value, to_be_a: Literal::Types._Union(@left_type, @right_type))
 		end
 	end
 
@@ -38,8 +37,7 @@ class Literal::EitherType
 		when @left_type
 			Literal::Left.new(value)
 		else
-			raise Literal::TypeError,
-				"Expected `#{value.inspect}` to be `#{@left_type}`."
+			raise Literal::TypeError.expected(value, to_be_a: @left_type)
 		end
 	end
 
@@ -48,8 +46,7 @@ class Literal::EitherType
 		when @right_type
 			Literal::Right.new(value)
 		else
-			raise Literal::TypeError,
-				"Expected `#{value.inspect}` to be `#{@right_type}`."
+			raise Literal::TypeError.expected(value, to_be_a: @right_type)
 		end
 	end
 end

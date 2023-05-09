@@ -2,6 +2,7 @@
 
 class Literal::Operation
 	extend Literal::Types
+	extend Literal::Schema
 
 	class << self
 		def call(...) = new(...).call
@@ -35,16 +36,5 @@ class Literal::Operation
 
 			name
 		end
-
-		def __schema__
-			return @__schema__ if defined?(@__schema__)
-
-			@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
-		end
-	end
-
-	def to_proc
-		me = self
-		proc { me.call }
 	end
 end

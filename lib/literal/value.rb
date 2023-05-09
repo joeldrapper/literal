@@ -3,8 +3,7 @@
 class Literal::Value
 	def initialize(value)
 		unless __type__ === value
-			raise Literal::TypeError,
-				"Expected value: `#{value.inspect}` to be: `#{__type__.inspect}`."
+			raise Literal::TypeError.expected(value, to_be_a: __type__)
 		end
 
 		@value = value.frozen? ? value : value.dup.freeze

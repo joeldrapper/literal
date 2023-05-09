@@ -9,12 +9,11 @@ class Literal::Array
 	attr_accessor :value, :type
 
 	def <<(item)
-		case item
-		when @type
-			@value << item
-			self
-		else
-			raise Literal::TypeError, "Expected #{item.inspect} to be #{@type.inspect}."
+		unless @type === item
+			raise Literal::TypeError.expected(item, to_be_a: @type)
 		end
+
+		@value << item
+		self
 	end
 end

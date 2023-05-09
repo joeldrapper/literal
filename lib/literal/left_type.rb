@@ -19,8 +19,7 @@ class LeftType
 		when @type
 			Literal::Left.new(value)
 		else
-			raise Literal::TypeError,
-				"Expected `#{value.inspect}` to be `#{@type.inspect}`."
+			raise Literal::TypeError.expected(value, to_be_a: @type)
 		end
 	end
 end

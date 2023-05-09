@@ -12,6 +12,11 @@ module Literal
 
 	class TypeError < ::TypeError
 		include Error
+
+		def self.expected(value, to_be_a: nil, to_be_an: nil)
+			type = to_be_a || to_be_an || (raise ArgumentError, "You must pass the expected type as `to_be_a:` or `to_be_an:`.")
+			new("Expected `#{value.inspect}` to be of type: `#{type.inspect}`.")
+		end
 	end
 
 	class ArgumentError < ::ArgumentError
@@ -36,5 +41,11 @@ module Literal
 
 	def self.Array(type)
 		Literal::ArrayType.new(type)
+	end
+
+	module Singleton
+		def self.new(...)
+			Class.new(...).new
+		end
 	end
 end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-class Literal::Data < Literal::Struct
+class Literal::Data
+	extend Literal::Types
+	extend Literal::Schema
+
 	class << self
 		def attribute(name, type, reader: :public)
 			__schema__[name] = type
@@ -23,7 +26,7 @@ class Literal::Data < Literal::Struct
 
 					@attributes = {
 						#{
-							__schema__.map { |n, _t|
+							__schema__.each_key.map { |n|
 								"#{n}: #{n}.frozen? ? #{n} : #{n}.dup"
 							}.join(",\n")
 						}
@@ -55,7 +58,7 @@ class Literal::Data < Literal::Struct
 
 		attributes.each do |name, value|
 			type = @__schema__[name]
-			raise Literal::TypeError, "Expected #{name}: `#{value.inspect}` to be: `#{type.inspect}.`" unless type === value
+			raise Literal::TypeError.expected(value, to_be_a: type) unless type === value
 
 			copy.attributes[name] = value
 		end

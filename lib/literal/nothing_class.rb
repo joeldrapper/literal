@@ -15,6 +15,7 @@ class Literal::NothingClass < Literal::Maybe
 
 	def map = self
 	def bind = self
+	def then = self
 	def maybe = self
 	def filter = self
 

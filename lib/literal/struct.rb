@@ -2,6 +2,7 @@
 
 class Literal::Struct
 	extend Literal::Types
+	extend Literal::Schema
 
 	class << self
 		def attribute(name, type, reader: :public, writer: :public)
@@ -27,7 +28,7 @@ class Literal::Struct
 
 					@attributes = {
 						#{
-							__schema__.map { |n, _t|
+							__schema__.each_key.map { |n|
 								"#{n}: #{n}"
 							}.join(",\n")
 						}
@@ -38,7 +39,7 @@ class Literal::Struct
 					type = @__schema__[:#{name}]
 
 					unless type === value
-						raise Literal::TypeError, "Expected `\#{value.inspect}` to be a `\#{type.inspect}`."
+						raise Literal::TypeError.expected(value, to_be_a: type)
 					end
 
 					@attributes[:#{name}] = value
@@ -62,12 +63,6 @@ class Literal::Struct
 			end
 
 			name
-		end
-
-		def __schema__
-			return @__schema__ if defined?(@__schema__)
-
-			@__schema__ = superclass.is_a?(self) ? superclass.__schema__.dup : {}
 		end
 	end
 

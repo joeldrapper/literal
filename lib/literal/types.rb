@@ -3,10 +3,28 @@
 module Literal::Types
 	include Literal::Monads
 
+	def self.ensure!(value = nil, type:)
+		unless type === value
+			raise Literal::TypeError.expected(value, to_be_a: type)
+		end
+	end
+
 	def _Union(*types)
-		raise Literal::ArgumentError, "Union type must have at least two types." if types.size < 2
+		raise Literal::ArgumentError, "_Union type must have at least two types." if types.size < 2
 
 		Literal::Types::UnionType.new(*types)
+	end
+
+	def _Intersection(*types)
+		raise Literal::ArgumentError, "_Intersection type must have at least two types." if types.size < 2
+
+		Literal::Types::IntersectionType.new(*types)
+	end
+
+	def _Is(*predicates)
+		raise Literal::ArgumentError, "_Is type must have at least one predicate." if predicates.size < 1
+
+		Literal::Types::IsType.new(*predicates)
 	end
 
 	def _Array(type)
@@ -26,7 +44,7 @@ module Literal::Types
 	end
 
 	def _Interface(*methods)
-		raise Literal::ArgumentError, "Interface type must have at least one method." if methods.size < 1
+		raise Literal::ArgumentError, "_Interface type must have at least one method." if methods.size < 1
 
 		Literal::Types::InterfaceType.new(*methods)
 	end
@@ -48,7 +66,7 @@ module Literal::Types
 	end
 
 	def _Tuple(*types)
-		raise Literal::ArgumentError, "Tuple type must have at least one type." if types.size < 1
+		raise Literal::ArgumentError, "_Tuple type must have at least one type." if types.size < 1
 
 		Literal::Types::TupleType.new(*types)
 	end
@@ -59,5 +77,9 @@ module Literal::Types
 
 	def _Float(range)
 		Literal::Types::FloatType.new(range)
+	end
+
+	def _Callable(type = nil)
+		Literal::Types::CallableType
 	end
 end
