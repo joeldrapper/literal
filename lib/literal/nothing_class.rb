@@ -17,4 +17,8 @@ class Literal::NothingClass < Literal::Maybe
 	def bind = self
 	def maybe = self
 	def filter = self
+
+	def ===(value)
+		self == value
+	end
 end

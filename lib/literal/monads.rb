@@ -28,4 +28,12 @@ module Literal::Monads
 	def Some(type)
 		Literal::SomeType.new(type)
 	end
+
+	def Left(type)
+		Literal::LeftType.new(type)
+	end
+
+	def Right(type)
+		Literal::RightType.new(type)
+	end
 end

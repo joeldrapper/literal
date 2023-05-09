@@ -13,8 +13,14 @@ class Literal::ResultType
 		case value
 		when @type
 			Literal::Success.new(value)
-		else
+		when StandardError
 			Literal::Failure.new(value)
+		else
+			Literal::Failure.new(
+				Literal::TypeError.new(
+					"Expected `#{value.inspect}` to be a `#{@type.inspect}`."
+				)
+			)
 		end
 	end
 

@@ -41,4 +41,24 @@ describe "Result(String)" do
 		expect(success.inspect) == %(Literal::Success("Foo"))
 		expect(failure.inspect) == "Literal::Failure(#<StandardError: Bar>)"
 	end
+
+	describe "#handle" do
+		test "with success" do
+			result = success.handle do |handler|
+				handler.on(Literal::Success) { "Hi" }
+				handler.on(Literal::Failure) { "Bye" }
+			end
+
+			expect(result) == "Hi"
+		end
+
+		test "with failure" do
+			result = failure.handle do |handler|
+				handler.on(Literal::Success) { "Hi" }
+				handler.on(Literal::Failure) { "Bye" }
+			end
+
+			expect(result) == "Bye"
+		end
+	end
 end

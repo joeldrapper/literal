@@ -16,21 +16,11 @@ class Literal::Some < Literal::Maybe
 
 	def value_or = @value
 
-	def map
-		Literal::Some.new(
-			yield @value
-		)
-	end
+	def map = Literal::Some.new(
+		yield @value
+	)
 
-	def bind
-		case (output = yield @value)
-		when Literal::Maybe
-			output
-		else
-			raise Literal::TypeError,
-				"Block passed to `Literal::Maybe#bind` must return a `#{Literal::Maybe.inspect}`."
-		end
-	end
+	def bind = yield @value
 
 	def maybe
 		case (output = yield @value)

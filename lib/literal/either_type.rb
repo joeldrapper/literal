@@ -32,4 +32,24 @@ class Literal::EitherType
 				"Expected `#{value.inspect}` to be either `#{@left_type.inspect}` or `#{@right_type.inspect}`."
 		end
 	end
+
+	def left(value)
+		case value
+		when @left_type
+			Literal::Left.new(value)
+		else
+			raise Literal::TypeError,
+				"Expected `#{value.inspect}` to be `#{@left_type}`."
+		end
+	end
+
+	def right(value)
+		case value
+		when @right_type
+			Literal::Right.new(value)
+		else
+			raise Literal::TypeError,
+				"Expected `#{value.inspect}` to be `#{@right_type}`."
+		end
+	end
 end
