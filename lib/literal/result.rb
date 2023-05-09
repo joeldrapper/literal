@@ -7,6 +7,6 @@ class Literal::Result
 	end
 
 	def handle(&block)
-		Literal::Case.new(Literal::Success, Literal::Failure, &block).call(self, @value)
+		Literal::Switch.new(Literal::Success, Literal::Failure, &block).call(self, @value)
 	end
 end

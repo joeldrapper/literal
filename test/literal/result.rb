@@ -44,18 +44,18 @@ describe "Result(String)" do
 
 	describe "#handle" do
 		test "with success" do
-			result = success.handle do |handler|
-				handler.on(Literal::Success) { "Hi" }
-				handler.on(Literal::Failure) { "Bye" }
+			result = success.handle do |switch|
+				switch.on(Literal::Success) { "Hi" }
+				switch.on(Literal::Failure) { "Bye" }
 			end
 
 			expect(result) == "Hi"
 		end
 
 		test "with failure" do
-			result = failure.handle do |handler|
-				handler.on(Literal::Success) { "Hi" }
-				handler.on(Literal::Failure) { "Bye" }
+			result = failure.handle do |switch|
+				switch.on(Literal::Success) { "Hi" }
+				switch.on(Literal::Failure) { "Bye" }
 			end
 
 			expect(result) == "Bye"
