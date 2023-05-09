@@ -173,6 +173,10 @@ If we call `left` on a `Literal::Right`, we'll get `Literal::Nothing`. However, 
 
 [Coming soon]
 
+## `Literal::Switch`
+
+[Coming soon]
+
 ## `Literal::Types`
 
 `Literal::Attributes`, `Literal::Struct`, and `Literal::Data` all extend `Literal::Types`, which provide some advanced types including some generic-like collection types.
