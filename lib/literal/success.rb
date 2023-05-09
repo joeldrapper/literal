@@ -22,10 +22,14 @@ class Literal::Success < Literal::Result
 	end
 
 	def filter
-		yield @value ? self : Literal::Failure.new(
+		yield if @value
+  self
+else
+  Literal::Failure.new(
 			RuntimeError.new(
 				"Filter condition not met."
 			)
 		)
+end
 	end
 end
