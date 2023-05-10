@@ -4,7 +4,7 @@ module Literal::Attributes
 	include Literal::Types
 	include Literal::Schema
 
-	def attribute(name, type, reader: false, writer: :private)
+	def attribute(name, type, reader: false, writer: false)
 		__schema__[name] = type
 
 		writer_name = :"#{name}="
@@ -36,22 +36,31 @@ module Literal::Attributes
 					}.join("\n")
 				}
 			end
-
-			def #{writer_name}(value)
-				type = @__schema__[:#{name}]
-
-				unless type === value
-					raise Literal::TypeError.expected(value, to_be_a: type)
-				end
-
-				@#{name} = value
-			end
 		RUBY
 
-		case writer
-			when :public then nil
-			when :protected then protected writer_name
-			else private writer_name
+		if writer
+			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				# frozen_string_literal: true
+
+				def #{writer_name}(value)
+					type = @__schema__[:#{name}]
+
+					unless type === value
+						raise Literal::TypeError.expected(value, to_be_a: type)
+					end
+
+					@#{name} = value
+				end
+			RUBY
+
+			case writer
+			when :public
+				public writer_name
+			when :protected
+				protected writer_name
+			else
+				private writer_name
+			end
 		end
 
 		if reader

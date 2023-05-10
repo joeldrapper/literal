@@ -34,32 +34,50 @@ class Literal::Struct
 						}
 					}
 				end
-
-				def #{writer_name}(value)
-					type = @__schema__[:#{name}]
-
-					unless type === value
-						raise Literal::TypeError.expected(value, to_be_a: type)
-					end
-
-					@attributes[:#{name}] = value
-				end
-
-				def #{name}
-					@attributes[:#{name}]
-				end
 			RUBY
 
-			case writer
-				when :public then nil
-				when :protected then protected writer_name
-				else private writer_name
+			if writer
+				class_eval <<~RUBY, __FILE__, __LINE__ + 1
+					# frozen_string_literal: true
+
+					def #{writer_name}(value)
+						type = @__schema__[:#{name}]
+
+						unless type === value
+							raise Literal::TypeError.expected(value, to_be_a: type)
+						end
+
+						@attributes[:#{name}] = value
+					end
+				RUBY
+
+				case writer
+				when :public
+					public writer_name
+				when :protected
+					protected writer_name
+				else
+					private writer_name
+				end
 			end
 
-			case reader
-				when :public then nil
-				when :protected then protected name
-				else private name
+			if reader
+				class_eval <<~RUBY, __FILE__, __LINE__ + 1
+					# frozen_string_literal: true
+
+					def #{name}
+						@attributes[:#{name}]
+					end
+				RUBY
+
+				case reader
+				when :public
+					public name
+				when :protected
+					protected name
+				else
+					private name
+				end
 			end
 
 			name

@@ -8,6 +8,8 @@ module Literal
 
 	extend Literal::Types
 
+	AccessorConfiguration = _Union(:public, :protected, :private, false)
+
 	module Error; end
 
 	class TypeError < ::TypeError

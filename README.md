@@ -1,58 +1,48 @@
 # Literal [WIP]
 
-This gem is designed to be a simple alternative to [`Dry::Types`](https://dry-rb.org/gems/dry-types/1.2/), [`Dry::Initializer`](https://dry-rb.org/gems/dry-initializer/3.0/), [`Dry::Struct`](https://dry-rb.org/gems/dry-struct/1.0/), and [`Dry::Struct::Value`](https://dry-rb.org/gems/dry-struct/1.0/#value). It has a lightweight API that works with the case equality operator `===`, which gets you a ton of stuff for free.
+While I’m very excited about [RBS](https://github.com/ruby/rbs) and [Steep](https://github.com/soutaro/steep), they will need significant adoption by libraries before we can really use them in our apps.
 
-You can use it with plain Ruby types — like `String`, `Integer`, `Proc` — and if you need more power, there are advanced type matchers such as `_Array`, `_Union`, `_Maybe`, and `_Interface`.
+In the meantime, you can get a long way by adding lightweight type checking to your main public interfaces (initializers and writer methods) for models, operations, jobs, components, etc.
 
-### What’s the point?
-
-While I’m very excited about [RBS](https://github.com/ruby/rbs) and [Steep](https://github.com/soutaro/steep), I think we’ve still got a long way to go before they can be used in many applications. They will need significant adoption by libraries before we can really use them in our apps.
-
-In the meantime, I think you can get a long way by adding lightweight type checking to public interfaces — initializers and attribute writers: models, operations, jobs, components, etc. That’s where Literals comes in.
+Literal provides a few tools to help you define type-checked structs, data objects and value objects, as well as a mixin for your plain old Ruby objects.
 
 ### What about performance?
 
-The performance impact of most of the types is negligible: a single case equality check against the given type.
+Literal uses code generation at startup, rather than dynamic meta-programming, so the performance of a literal initializer, for example, is equivalent to one you write by hand.
 
-Some of the advanced collection types, such as `_Array` and `_Hash` could be pretty bad for performance, since they need to check every value at runtime. The idea here is to disable these type checks in production, though I must confess, haven’t built the switch for that just yet.
-
-## `Literal::Attributes`
-
-The first tool we provide is the `Literal::Attributes` mixin. It allows you to define type-checked attribute accessors. By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the corresponding attributes. This is done through the attribute writers, so the types are checked.
-
-Here we have a user class with a name and an age. The name is a `String` and the age is between 18 and infinity.
+The performance impact of most of the type-checking is negligible: an if condition with a single case equality check against the given type.
 
 ```ruby
-class User
-  extend Literal::Attributes
-
-  attribute :name, String
-  attribute :age, 18..
-end
+unless expected_type === value
 ```
 
-If we try to pass an invalid value to the initializer, we’ll get an error. Under the hood, the attributes are being assigned to instance variables by the same name. Internally, we can reference these instance variables directly:
+Some of the advanced collection types, such as `_Array` and `_Hash` could have a significant performance impact for large collections, since they need to check every value at runtime. The idea here is to disable these more expensive checks in production.
 
-```ruby
-def first_name = @name.split(/\s/).first
-```
+Another disadvantage is `_Array` and friends don’t control the object itself; they just match against it. That means type-checks need to be run every time the object is passed to another type-checked initializer.
 
-The type-checking is really designed for the public interface. Internally, I think it’s good practice to reference the instance variables directly. You can always use the writers (which are private by default) if you need to do type-checking but that’s not usually necessary. We’re not trying to make the application type safe. We can’t do that without a complete type system. What we’re doing is adding some helpful checks to the main public interfaces.
+For some use-cases, the `Literal::Array` and `Literal::Hash` types will be better suited, since these maintain type integrity and can be passed around without re-checking.
 
 ## `Literal::Struct`
 
-Literal structs are similar to Ruby structs, but they have type-checked writers. Readers and writers are public by default. You can use them like this:
+Literal structs are similar to Ruby structs, but they have type-checked writers and initializers.
+
+You can define a literal struct by subclassing `Literal::Struct` and calling the `attribute` macro for each attribute. The first argument is the *name* of the attribute, which must be a `Symbol`. The second argument is the *type*, which must respond to `===`.
 
 ```ruby
 class Address < Literal::Struct
+  attribute :house_number, Integer
   attribute :street, String
-  attribute :city, String
-  attribute :state, String
 end
 ```
 
+You can optionally pass `reader:` and `writer:` keyword arguments set to `:public`, `:protected`, `:private` or `false`.
+
+Literal structs have public readers and writers by default.
+
 ## `Literal::Data`
-`Literal::Data` is a deeply frozen `Literal::Struct`, which is similar to a Ruby `Data` object. All unfrozen values given to a `Literal::Data` initializer will be duplicated and frozen.
+`Literal::Data`  is similar to a Ruby `Data` object. It is frozen and, therefore, immutable. Unlike a `Literal::Struct`, it has no writers.
+
+Additionally, all unfrozen values given to a `Literal::Data` initializer will be duplicated and frozen for extra safety. You can define a `Literal::Data` object much the same as a `Literal::Struct`, but the `attribute` macro doesn’t accept the `writer:` argument.
 
 ```ruby
 class Measure < Literal::Data
@@ -61,16 +51,20 @@ class Measure < Literal::Data
 end
 ```
 
+Just like a Ruby `Data` object, you can make a copy of a `Literal::Data` object with specific changes using `#with`.
+
 ## `Literal::Value`
 
-`Literal::Value` is like a `Literal::Data`, but specifically designed to enrich a single value. You could wrap a `String` as an `EmailAddress` or an `Integer` as a `UserId`.
+`Literal::Value` is like a `Literal::Data`, but specifically designed to enrich a single value — you could wrap a `String` as an `EmailAddress` or an `Integer` as a `UserId`.
+
+We can define literal value classes like this:
 
 ```ruby
 EmailAddress = Literal::Value(String)
 UserID = Literal::Value(Integer)
 ```
 
-We can create a new `UserID` like this:
+We could use this `UserID` class like this:
 
 ```ruby
 user_id = UserID.new(123)
@@ -92,21 +86,30 @@ user_id.to_i # => 123
 
 With the `EmailAddress`, we could call `to_s` or `to_str`.
 
-These value objects are designed to help you add extra type safety to your application. Let's say we have an operation that sends an email to a user. We could define the operation like this.
+## `Literal::Attributes`
+
+The `Literal::Attributes` mixin allows you to define type-checked attribute accessors on your plain old Ruby objects using the same `attribute` macro.
+
+By default, writers are private and readers are not defined. It also provides a default initializer which assigns all the keyword arguments to the corresponding attributes.
+
+Here we have a user class with a name and an age. The name is a `String` and the age is between 18 and infinity.
 
 ```ruby
-class EmailUser
-  include Literal::Attributes
+class User
+  extend Literal::Attributes
 
-  attribute :user_id, UserID
-
-  def call
-    # ...
-  end
+  attribute :name, String
+  attribute :age, 18..
 end
 ```
 
-Now, if we try to call the operation with an `Integer` that isn't a `UserID`, we get a type error.
+If we try to pass an invalid value to the initializer, we’ll get an error. Under the hood, the attributes are being assigned to instance variables by the same name. Internally, we can reference these instance variables directly:
+
+```ruby
+def first_name = @name.split(/\s/).first
+```
+
+The type-checking is really designed for the public interface. Internally, I think it’s good practice to reference the instance variables directly. You can always use the writers (which are private by default) if you need to do type-checking, but that’s not usually necessary. We’re not trying to make the application type-safe. We can’t do that without a complete type system. What we’re doing is adding some helpful checks to the main public interfaces.
 
 ## `Literal::Enum`
 
