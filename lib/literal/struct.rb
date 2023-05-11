@@ -10,7 +10,9 @@ class Literal::Struct
 
 			writer_name = :"#{name}="
 
-			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+			include initializer = Module.new
+
+			initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 				# frozen_string_literal: true
 
 				def initialize(#{
@@ -37,7 +39,7 @@ class Literal::Struct
 			RUBY
 
 			if writer
-				class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{writer_name}(value)
@@ -62,7 +64,7 @@ class Literal::Struct
 			end
 
 			if reader
-				class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{name}

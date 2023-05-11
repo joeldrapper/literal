@@ -20,7 +20,9 @@ class Literal::Data
 
 			__schema__[name] = type
 
-			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+			include initializer = Module.new
+
+			initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 				# frozen_string_literal: true
 
 				def initialize(#{
@@ -49,7 +51,7 @@ class Literal::Data
 			RUBY
 
 			if reader
-				class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{name}

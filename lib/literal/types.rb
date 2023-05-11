@@ -82,4 +82,12 @@ module Literal::Types
 	def _Callable(type = nil)
 		Literal::Types::CallableType
 	end
+
+	def _String(range)
+		Literal::Types::StringType.new(range)
+	end
+
+	def _Not(type)
+		Literal::Types::NotType.new(type)
+	end
 end
