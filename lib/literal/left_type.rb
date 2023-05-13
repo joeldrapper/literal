@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 class Literal::LeftType
+	include Literal::Generic
+
 	def initialize(type)
 		@type = type
+	end
+
+	def inspect
+		"Literal::Left(#{@type})"
 	end
 
 	def ===(left)

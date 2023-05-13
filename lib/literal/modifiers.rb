@@ -53,7 +53,8 @@ module Literal::Modifiers
 
 	def included(submodule)
 		submodule.extend(Literal::Modifiers)
-		submodule.abstract_methods << abstract_methods
+		submodule.abstract_methods.concat(abstract_methods)
+
 		inherited(submodule)
 	end
 

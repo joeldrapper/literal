@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Literal::MaybeType
+	include Literal::Generic
+
 	def initialize(type)
 		@type = type
 	end
