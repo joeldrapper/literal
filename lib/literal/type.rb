@@ -1,8 +1,8 @@
 module Literal::Type
 	extend Literal::Modifiers
 
-	abstract_class!
+	abstract!
 
-	abstract_method :===
-	abstract_method :inspect
+	abstract def === = nil
+	abstract def inspect = nil
 end

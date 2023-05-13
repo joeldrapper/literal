@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Literal::Safety
-	def abstract_class!
-		@abstract_class = true
+	def abstract!
+		@abstract = true
 	end
 
-	def abstract_class?
-		@abstract_class ||= false
+	def abstract?
+		@abstract ||= false
 	end
 
 	def abstract_method(method_name)
@@ -22,7 +22,7 @@ module Literal::Safety
 	def inherited(subclass)
 		TracePoint.new(:end) do |tp|
 			if tp.self == subclass
-				unless subclass.abstract_class?
+				unless subclass.abstract?
 					subclass.abstract_methods.each do |method_name|
 						unless subclass.instance_methods.include?(method_name)
 							raise "`#{subclass.inspect}` must implement `#{method_name.inspect}`."

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 class Literal::Result < Literal::Monad
-	abstract_class!
+	abstract!
 
-	abstract_method :success?
-	abstract_method :failure?
+	abstract def success? = nil
+	abstract def failure? = nil
 
-	abstract_method :success
-	abstract_method :failure
+	abstract def success = nil
+	abstract def failure = nil
 
-	abstract_method :raise!
+	abstract def raise! = nil
 
 	def initialize(value)
 		@value = value

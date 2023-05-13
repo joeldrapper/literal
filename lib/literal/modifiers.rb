@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module Literal::Modifiers
-	def abstract_class!
-		@abstract_class = true
+	def abstract!
+		@abstract = true
 	end
 
-	def abstract_class?
-		!!@abstract_class
+	def abstract?
+		!!@abstract
 	end
 
-	def abstract_method(method_name)
-		abstract_methods << method_name
+	def abstract(method_name)
+		abstract_methods << instance_method(method_name)
 		method_name
 	end
 
@@ -38,10 +38,10 @@ module Literal::Modifiers
 	def inherited(subclass)
 		TracePoint.trace(:end) do |tp|
 			if tp.self == subclass
-				unless subclass.abstract_class?
+				unless subclass.abstract?
 					abstract_methods.each do |abstract_method|
-						unless subclass.method_defined?(abstract_method)
-							raise "Abstract method `##{abstract_method}` not implemented in `#{subclass}`."
+						unless subclass.method_defined?(abstract_method.name) && subclass.instance_method(abstract_method.name) != abstract_method
+							raise "Abstract method `##{abstract_method.name}` not implemented in `#{subclass}`."
 						end
 					end
 				end
@@ -53,22 +53,22 @@ module Literal::Modifiers
 
 	def included(submodule)
 		submodule.extend(Literal::Modifiers)
+		submodule.abstract_methods << abstract_methods
 		inherited(submodule)
 	end
 
 	def method_added(method_name)
 		if final_methods[method_name]
-			raise "Method #{method_name} is final and cannot be overridden"
+			raise "Method #{method_name} is final and cannot be overridden."
 		end
 	end
 
 	def abstract_methods
 		return @abstract_methods if defined?(@abstract_methods)
 
-		case self
-		when Class
+		if self.is_a?(Class) && superclass.is_a?(Literal::Modifiers)
 			@abstract_methods = superclass.is_a?(Literal::Modifiers) ? superclass.abstract_methods.dup : Concurrent::Array.new
-		when Module
+		else
 			@abstract_methods = Concurrent::Array.new
 		end
 	end
@@ -76,6 +76,10 @@ module Literal::Modifiers
 	def final_methods
 		return @final_methods if defined?(@final_methods)
 
-		@final_methods = superclass.is_a?(Literal::Modifiers) ? superclass.final_methods.dup : Concurrent::Map.new
+		if self.is_a?(Class) && superclass.is_a?(Literal::Modifiers)
+			@final_methods = superclass.is_a?(Literal::Modifiers) ? superclass.final_methods.dup : Concurrent::Map.new
+		else
+			@final_methods = Concurrent::Map.new
+		end
 	end
 end

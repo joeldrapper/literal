@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Literal::Maybe < Literal::Monad
-	abstract_class!
+	abstract!
 
-	abstract_method :empty?
-	abstract_method :nothing?
-	abstract_method :something?
+	abstract def empty? = nil
+	abstract def nothing? = nil
+	abstract def something? = nil
 
 	def handle(&block)
 		Literal::Switch.new(Literal::Some, Literal::Nothing, &block).call(self, @value)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Literal::Types::IntegerType
+	include Literal::Type
+
 	def initialize(range)
 		@range = range
 	end

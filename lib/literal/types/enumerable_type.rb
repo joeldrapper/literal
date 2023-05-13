@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Literal::Types::EnumerableType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
