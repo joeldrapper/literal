@@ -1,4 +1,4 @@
-class Literal::Type
+module Literal::Type
 	extend Literal::Modifiers
 
 	abstract_class!

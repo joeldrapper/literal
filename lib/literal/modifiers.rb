@@ -51,6 +51,11 @@ module Literal::Modifiers
 		end.enable
 	end
 
+	def included(submodule)
+		submodule.extend(Literal::Modifiers)
+		inherited(submodule)
+	end
+
 	def method_added(method_name)
 		if final_methods[method_name]
 			raise "Method #{method_name} is final and cannot be overridden"
@@ -60,7 +65,12 @@ module Literal::Modifiers
 	def abstract_methods
 		return @abstract_methods if defined?(@abstract_methods)
 
-		@abstract_methods = superclass.is_a?(Literal::Modifiers) ? superclass.abstract_methods.dup : Concurrent::Array.new
+		case self
+		when Class
+			@abstract_methods = superclass.is_a?(Literal::Modifiers) ? superclass.abstract_methods.dup : Concurrent::Array.new
+		when Module
+			@abstract_methods = Concurrent::Array.new
+		end
 	end
 
 	def final_methods
