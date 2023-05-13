@@ -10,6 +10,7 @@ PATH
   remote: .
   specs:
     literal (0.1.0)
+      concurrent-ruby (~> 1.2)
       zeitwerk (~> 2.6)
 
 GEM

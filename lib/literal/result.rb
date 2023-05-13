@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
-class Literal::Result
-	include Literal::Monad
+class Literal::Result < Literal::Monad
+	abstract_class!
+
+	abstract_method :success?
+	abstract_method :failure?
+
+	abstract_method :success
+	abstract_method :failure
+
+	abstract_method :raise!
 
 	def initialize(value)
 		@value = value

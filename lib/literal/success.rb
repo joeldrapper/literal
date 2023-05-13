@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 class Literal::Success < Literal::Result
+	def inspect = "Literal::Success(#{@value.inspect})"
+
 	def success? = true
 	def failure? = false
 
-	def inspect = "Literal::Success(#{@value.inspect})"
-
 	def success = Literal::Some.new(@value)
 	def failure = Literal::Nothing
+
+	def raise! = self
+	def value_or = @value
 
 	def map
 		Literal::Success.new(yield @value)

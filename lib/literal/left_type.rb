@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LeftType
+class Literal::LeftType
 	def initialize(type)
 		@type = type
 	end

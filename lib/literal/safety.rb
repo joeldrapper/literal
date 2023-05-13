@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Literal::Safety
 	def abstract_class!
 		@abstract_class = true
