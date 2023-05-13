@@ -67,7 +67,7 @@ module Literal::Modifiers
 		return @abstract_methods if defined?(@abstract_methods)
 
 		if self.is_a?(Class) && superclass.is_a?(Literal::Modifiers)
-			@abstract_methods = superclass.is_a?(Literal::Modifiers) ? superclass.abstract_methods.dup : Concurrent::Array.new
+			@abstract_methods = superclass.abstract_methods.dup
 		else
 			@abstract_methods = Concurrent::Array.new
 		end
@@ -77,7 +77,7 @@ module Literal::Modifiers
 		return @final_methods if defined?(@final_methods)
 
 		if self.is_a?(Class) && superclass.is_a?(Literal::Modifiers)
-			@final_methods = superclass.is_a?(Literal::Modifiers) ? superclass.final_methods.dup : Concurrent::Map.new
+			@final_methods = superclass.final_methods.dup
 		else
 			@final_methods = Concurrent::Map.new
 		end
