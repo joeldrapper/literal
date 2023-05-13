@@ -303,7 +303,7 @@ AttributeType = Literal::Types::_Union(
 )
 ```
 
-Note unless you've extended `Literal::Types`, you'll need to reference the types by their fully qualified names. These types are methods, so why are we accessing them with `::`? It's a little known fact that `::` can stand in for `.` in Ruby. I like using `::` here becuase it makes these look more like normal generics. If you prefer, you can use `.`, e.g. `Literal::Types._Interface(:to_s)`.
+Note unless you've extended `Literal::Types`, you'll need to reference the types by their fully qualified names. These types are methods, so why are we accessing them with `::`? It's a little known fact that `::` can stand in for `.` in Ruby. I like using `::` here because it makes these look more like normal generics. If you prefer, you can use `.`, e.g. `Literal::Types._Interface(:to_s)`.
 
 ## Writing your own type matchers
 
