@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < Literal::Data
 	attribute :name, String
 	attribute :age, Integer

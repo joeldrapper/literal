@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Literal::Types::StringType
 	def initialize(range)
 		@range = range

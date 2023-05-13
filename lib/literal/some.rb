@@ -22,10 +22,6 @@ class Literal::Some < Literal::Maybe
 		)
 	end
 
-	def bind
-		yield @value
-	end
-
 	def then
 		output = yield @value
 
