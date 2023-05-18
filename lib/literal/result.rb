@@ -17,7 +17,7 @@ class Literal::Result < Literal::Monad
 	end
 
 	# @yieldparam switch [Literal::Switch]
-	def handle(&block)
-		Literal::Switch.new(Literal::Success, Literal::Failure, &block).call(self, @value)
+	def handle(&)
+		Literal::Switch.new(Literal::Success, Literal::Failure, &).call(self, @value)
 	end
 end

@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "literal/version"
 require "zeitwerk"
+require "concurrent-ruby"
 
 module Literal
-	Loader = Zeitwerk::Loader.for_gem.tap(&:setup)
+	Loader = Zeitwerk::Loader.for_gem.tap do |loader|
+		loader.inflector.inflect(
+			"lru" => "LRU",
+			"lru_type" => "LRUType"
+		)
+		loader.setup
+	end
 
 	extend Literal::Types
 
@@ -25,20 +31,16 @@ module Literal
 		include Error
 	end
 
-	def self.Enum(type, &block)
-		Enum.define(type, &block)
+	def self.Value(type, &)
+		Value.define(type, &)
 	end
 
-	def self.Value(type, &block)
-		Value.define(type, &block)
+	def self.Data(&)
+		Class.new(Data, &)
 	end
 
-	def self.Data(&block)
-		Class.new(Data, &block)
-	end
-
-	def self.Struct(&block)
-		Class.new(Struct, &block)
+	def self.Struct(&)
+		Class.new(Struct, &)
 	end
 
 	def self.Array(type)
@@ -49,5 +51,9 @@ module Literal
 		def self.new(...)
 			Class.new(...).new
 		end
+	end
+
+	def self.LRU(key_type, value_type)
+		Literal::LRUType.new(key_type, value_type)
 	end
 end

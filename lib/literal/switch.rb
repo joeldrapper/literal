@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Literal::Switch
-	def initialize(*required_cases, &block)
+	def initialize(*required_cases, &)
 		@required_cases = required_cases
 		@handled_cases = {}
 

@@ -1,40 +1,44 @@
 # frozen_string_literal: true
 
 class Literal::Data
+	Attribute = Data.define(:name, :type, :reader, :default)
+
 	extend Literal::Types
 	extend Literal::Schema
 
 	class << self
-		def attribute(name, type, reader: :public)
-			unless Symbol === name
-				raise Literal::TypeError.expected(name, to_be_a: Symbol)
-			end
+		def attribute(name, type, reader: :public, &default)
+			__schema__[name] = Attribute.new(
+				name:, type:, reader:, default:
+			)
 
-			unless _Interface(:===) === type
-				raise Literal::TypeError.expected(type, to_be_a: _Interface(:===))
-			end
+			include extension = Module.new
 
-			unless Literal::AccessorConfiguration === reader
-				raise Literal::TypeError.expected(reader, to_be_a: Literal::AccessorConfiguration)
-			end
-
-			__schema__[name] = type
-
-			include initializer = Module.new
-
-			initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+			extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 				# frozen_string_literal: true
 
 				def initialize(#{
-					__schema__.map { |n, t|
-						"#{n}: #{t.nil? ? 'nil' : ''}"
+					__schema__.each_value.map { |attribute|
+						"#{attribute.name}: #{attribute.default || attribute.type.nil? ? 'nil' : nil}"
 					}.join(', ')
 				})
 					@__schema__ = self.class.__schema__
 
 					#{
-						__schema__.each_key.map { |n|
-							"raise ::Literal::TypeError unless @__schema__[:#{n}] === #{n}"
+						__schema__.each_value.map { |attribute|
+							"
+								attribute = @__schema__[:#{attribute.name}]
+
+								#{
+									if attribute.default
+										"#{attribute.name} ||= attribute.default.call"
+									end
+								}
+
+								unless attribute.type === #{attribute.name}
+									raise ::Literal::TypeError.expected(#{attribute.name}, to_be_a: attribute.type)
+								end
+							"
 						}.join("\n")
 					}
 
@@ -51,7 +55,7 @@ class Literal::Data
 			RUBY
 
 			if reader
-				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+				extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{name}
@@ -73,14 +77,18 @@ class Literal::Data
 		end
 	end
 
+	def to_h
+		@attributes.dup
+	end
+
 	def with(**new_attributes)
 		new_attributes.each do |name, value|
-			unless (type = @__schema__[name])
+			unless (attribute = @__schema__[name])
 				raise Literal::ArgumentError, "Unknown attribute `#{name.inspect}`."
 			end
 
-			unless type === value
-				raise Literal::TypeError.expected(value, to_be_a: type)
+			unless attribute.type === value
+				raise Literal::TypeError.expected(value, to_be_a: attribute.type)
 			end
 
 			new_attributes[name] = value.frozen? ? value : value.dup

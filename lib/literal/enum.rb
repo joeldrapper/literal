@@ -12,22 +12,22 @@ class Literal::Enum
 			@values.keys
 		end
 
-		def each(&block)
-			@members.each(&block)
+		def each(&)
+			@members.each(&)
 		end
 
-		def define(type, &block)
-			Class.new(self, &block).freeze
+		def define(type, &)
+			Class.new(self, &).freeze
 		end
 
-		def method_missing(name, *args, **kwargs, &block)
+		def method_missing(name, *args, **kwargs, &)
 			return super if frozen? || args.length > 1 || kwargs.any?
 			return super unless name[0] =~ /[A-Z]/
 
-			new(name, *args, &block)
+			new(name, *args, &)
 		end
 
-		def new(name, a = nil, b = nil, &block)
+		def new(name, a = nil, b = nil, &)
 			raise ArgumentError if frozen?
 
 			@values ||= Concurrent::Map.new
@@ -64,7 +64,7 @@ class Literal::Enum
 
 			member = super(name, value)
 			member.define_singleton_method(:transitions_to, transitions_to) if transitions_to
-			member.instance_eval(&block) if block_given?
+			member.instance_eval(&) if block_given?
 			member.freeze
 
 			const_set(name, member)

@@ -7,7 +7,7 @@ class Literal::Maybe < Literal::Monad
 	abstract def nothing? = nil
 	abstract def something? = nil
 
-	def handle(&block)
-		Literal::Switch.new(Literal::Some, Literal::Nothing, &block).call(self, @value)
+	def handle(&)
+		Literal::Switch.new(Literal::Some, Literal::Nothing, &).call(self, @value)
 	end
 end

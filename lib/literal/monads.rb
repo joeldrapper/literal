@@ -21,8 +21,8 @@ module Literal::Monads
 		Literal::ResultType.new(type)
 	end
 
-	def Try(type, &block)
-		Literal::ResultType.new(type).try(&block)
+	def Try(type, &)
+		Literal::ResultType.new(type).try(&)
 	end
 
 	def Some(type)

@@ -1,30 +1,44 @@
 # frozen_string_literal: true
 
 class Literal::Struct
+	Attribute = Data.define(:name, :type, :reader, :writer, :default)
+
 	extend Literal::Types
 	extend Literal::Schema
 
 	class << self
-		def attribute(name, type, reader: :public, writer: :public)
-			__schema__[name] = type
+		def attribute(name, type, reader: :public, writer: :public, &default)
+			__schema__[name] = Attribute.new(
+				name:, type:, reader:, writer:, default:
+			)
 
-			writer_name = :"#{name}="
+			include extension = Module.new
 
-			include initializer = Module.new
-
-			initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+			extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 				# frozen_string_literal: true
 
 				def initialize(#{
-					__schema__.map { |n, t|
-						"#{n}: #{t.nil? ? 'nil' : ''}"
+					__schema__.each_value.map { |attribute|
+						"#{attribute.name}: #{attribute.default || attribute.type.nil? ? 'nil' : nil}"
 					}.join(', ')
 				})
 					@__schema__ = self.class.__schema__
 
 					#{
-						__schema__.each_key.map { |n|
-							"raise ::Literal::TypeError unless @__schema__[:#{n}] === #{n}"
+						__schema__.each_value.map { |attribute|
+							"
+								attribute = @__schema__[:#{attribute.name}]
+
+								#{
+									if attribute.default
+										"#{attribute.name} ||= attribute.default.call"
+									end
+								}
+
+								unless attribute.type === #{attribute.name}
+									raise ::Literal::TypeError.expected(#{attribute.name}, to_be_a: attribute.type)
+								end
+							"
 						}.join("\n")
 					}
 
@@ -39,14 +53,16 @@ class Literal::Struct
 			RUBY
 
 			if writer
-				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+				writer_name = :"#{name}="
+
+				extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{writer_name}(value)
-						type = @__schema__[:#{name}]
+						attribute = @__schema__[:#{name}]
 
-						unless type === value
-							raise Literal::TypeError.expected(value, to_be_a: type)
+						unless attribute.type === value
+							raise Literal::TypeError.expected(value, to_be_a: attribute.type)
 						end
 
 						@attributes[:#{name}] = value
@@ -64,7 +80,7 @@ class Literal::Struct
 			end
 
 			if reader
-				initializer.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+				extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 					# frozen_string_literal: true
 
 					def #{name}

@@ -11,13 +11,13 @@ class Literal::Array
 	attr_reader :value, :type
 	protected attr_writer :value
 
-	def each(&block)
-		@value.each(&block)
+	def each(&)
+		@value.each(&)
 	end
 
-	def safe_map(type = @type, &block)
+	def safe_map(type = @type, &)
 		Literal::Array.new(
-			@value.map(&block),
+			@value.map(&),
 			type:
 		)
 	end
