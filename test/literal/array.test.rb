@@ -35,14 +35,3 @@ describe "#+" do
 		expect(both).to_be_a Literal::Array
 	end
 end
-
-describe "#safe_map" do
-	test do
-		array = Literal::Array(Integer).new([1, 2, 3])
-		array.safe_map!(String) { |number| number.to_s }
-
-		expect(array) == ["1", "2", "3"]
-
-		assert(Literal::Array(String) === array)
-	end
-end
