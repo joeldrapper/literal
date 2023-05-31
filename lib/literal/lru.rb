@@ -45,6 +45,20 @@ class Literal::LRU
 		end
 	end
 
+	def include?(key)
+		@hash.include?(key)
+	end
+
+	def compute_if_absent(key)
+		@mutex.synchronize do
+			if @hash.include?(key)
+				@hash[key]
+			else
+				@hash[key] = yield
+			end
+		end
+	end
+
 	def size
 		@hash.size
 	end
