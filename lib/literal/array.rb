@@ -80,9 +80,7 @@ class Literal::Array
 	alias_method :push, :append
 
 	def dup
-		duplicate = super
-		duplicate.value = @value.dup
-		duplicate
+		super.tap { |d| d.value = @value.dup }
 	end
 
 	def concat(other)
@@ -128,6 +126,43 @@ class Literal::Array
 		end
 	end
 
+	def *(other)
+		case output = @value * other
+		when Array
+			new(output)
+		when String
+			output
+		else
+			raise ArgumentError
+		end
+	end
+
+	def |(other)
+		case other
+		when Literal::Array
+			if @type == other.type
+				new(@value | other.value)
+			else
+				raise Literal::TypeError.expected(other, to_be_a: Literal::Array(@type))
+			end
+		when Array
+			if Literal::_Array(@type) === other
+				new(@value | other)
+			else
+				raise Literal::TypeError.expected(other, to_be_a: Literal::_Array(@type))
+			end
+		end
+	end
+
+	def &(other)
+		case other
+		when Literal::Array(@type)
+			new(@value & other.value)
+		else
+			@value & other
+		end
+	end
+
 	def clear
 		@value.clear
 		self
@@ -146,18 +181,15 @@ class Literal::Array
 	end
 
 	def sort!
-		@value.sort!
-		self
+		self if @value.sort!
 	end
 
 	def rotate!(...)
-		@value.rotate!(...)
-		self
+		self if @value.rotate!(...)
 	end
 
 	def sort_by!(...)
-		@value.sort_by!(...)
-		self
+		self if @value.sort_by!(...)
 	end
 
 	def select!(...)
@@ -171,8 +203,7 @@ class Literal::Array
 	end
 
 	def uniq!(...)
-		@value.uniq!(...)
-		self
+		self if @value.uniq!(...)
 	end
 
 	def compact!
@@ -181,23 +212,19 @@ class Literal::Array
 	end
 
 	def shuffle(...)
-		Literal::Array(@type).new(
-			@value.shuffle(...)
-		)
+		new @value.shuffle(...)
 	end
 
 	def shuffle!(...)
-		@value.shuffle!(...)
-		self
+		self if @value.shuffle!(...)
 	end
 
 	def reverse
-		Literal::Array(@type).new(@value.reverse)
+		new @value.reverse
 	end
 
 	def reverse!
-		@value.reverse!
-		self
+		self if @value.reverse!
 	end
 
 	def empty?
@@ -205,26 +232,65 @@ class Literal::Array
 	end
 
 	def shift(n = nil)
-		if n
-			Literal::Array(@type).new(@value.shift(n))
-		else
-			@value.shift
-		end
+		n ? new(@value.shift(n)) : @value.shift
 	end
 
 	def pop(n = nil)
-		if n
-			Literal::Array(@type).new(@value.pop(n))
-		else
-			@value.pop
-		end
+		n ? new(@value.pop(n)) : @value.pop
 	end
 
 	def sample(n = nil, random: nil)
-		if n
-			Literal::Array(@type).new(@value.sample(n, random:))
-		else
-			@value.sample(random:)
+		n ? new(@value.sample(n, random:)) : @value.sample(random:)
+	end
+
+	def last(n = nil)
+		n ? new(@value.last(n)) : @value.last
+	end
+
+	def first(n = nil)
+		n ? new(@value.first(n)) : @value.first
+	end
+
+	def join(...)
+		@value.join(...)
+	end
+
+	def pack(...)
+		@value.pack(...)
+	end
+
+	def at(i)
+		@value.at(i)
+	end
+
+	def fetch(...)
+		@value.fetch(...)
+	end
+
+	def union(*others)
+		others.map! do |other|
+			case other
+			when Literal::Array
+				if @type == other.type
+					other.value
+				else
+					raise Literal::TypeError.expected(other, to_be_a: Literal::Array(@type))
+				end
+			when Array
+				if Literal::_Array(@type) === other
+					other
+				else
+					raise Literal::TypeError.expected(other, to_be_a: Literal::_Array(@type))
+				end
+			else
+				raise ArgumentError
+			end
 		end
+
+		new(@value.union(*others))
+	end
+
+	private def new(value)
+		Literal::Array.new(value, type: @type)
 	end
 end
