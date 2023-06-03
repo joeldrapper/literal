@@ -3,7 +3,7 @@
 class Literal::Types::ConstraintType
 	include Literal::Type
 
-	def initialize(attribute, constraint = Literal::Types::TruthyType.new)
+	def initialize(attribute, constraint = Literal::Types::TruthyType)
 		@attribute = attribute
 		@constraint = constraint
 	end

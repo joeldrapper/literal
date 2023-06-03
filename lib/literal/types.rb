@@ -90,4 +90,12 @@ module Literal::Types
 	def _Not(type)
 		Literal::Types::NotType.new(type)
 	end
+
+	def _Truthy
+		Literal::Types::TruthyType
+	end
+
+	def _Falsy
+		Literal::Types::FalsyType
+	end
 end

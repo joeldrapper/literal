@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Types::FalsyType
+Literal::Types::FalsyType = Literal::Singleton.new do
 	include Literal::Type
 
 	def inspect
