@@ -87,6 +87,10 @@ module Literal::Types
 		Literal::Types::ProcableType
 	end
 
+	def _Lambda
+		Literal::Types::LambdaType
+	end
+
 	def _String(range)
 		Literal::Types::StringType.new(range)
 	end
