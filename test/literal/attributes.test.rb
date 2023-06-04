@@ -4,7 +4,7 @@ class Foo
 	extend Literal::Attributes
 
 	def initialize(foo:)
-		super(foo: foo)
+		super(foo:)
 		@bar = 1
 	end
 

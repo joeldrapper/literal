@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 Literal::Types::JSONCoercibleType = Literal::Singleton.new do
+	include Literal::Type
+
+	def inspect = "_JSONCoercible"
+
 	def ===(other)
 		case other
 		when Hash

@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+TracePoint.trace(:end, :b_return) do |tp|
+	it = tp.self
+
+	if it.is_a?(Literal::Modifiers::Abstract) && !it.abstract?
+		it.abstract_methods.each do |abstract_method|
+			unless it.method_defined?(abstract_method.name) && it.instance_method(abstract_method.name) != abstract_method
+				raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
+			end
+		end
+	end
+end
+
 module Literal::Modifiers::Abstract
 	def abstract!
 		@abstract = true
@@ -17,24 +29,6 @@ module Literal::Modifiers::Abstract
 	def included(submodule)
 		submodule.extend(Literal::Modifiers)
 		submodule.abstract_methods.concat(abstract_methods)
-
-		inherited(submodule)
-	end
-
-	def inherited(subclass)
-		TracePoint.trace(:end) do |tp|
-			if tp.self == subclass
-				unless subclass.abstract?
-					abstract_methods.each do |abstract_method|
-						unless subclass.method_defined?(abstract_method.name) && subclass.instance_method(abstract_method.name) != abstract_method
-							raise "Abstract method `##{abstract_method.name}` not implemented in `#{subclass}`."
-						end
-					end
-				end
-
-				tp.disable
-			end
-		end.enable
 	end
 
 	def abstract_methods
