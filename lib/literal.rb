@@ -7,7 +7,9 @@ module Literal
 	Loader = Zeitwerk::Loader.for_gem.tap do |loader|
 		loader.inflector.inflect(
 			"lru" => "LRU",
-			"lru_type" => "LRUType"
+			"lru_type" => "LRUType",
+			"json_data_type" => "JSONDataType",
+			"json_coercible_type" => "JSONCoercibleType"
 		)
 		loader.setup
 	end

@@ -50,7 +50,7 @@ module Literal::Types
 	end
 
 	def _Nilable(type)
-		_Union(type, nil)
+		Literal::Types::NilableType
 	end
 
 	def _Any
@@ -97,5 +97,17 @@ module Literal::Types
 
 	def _Falsy
 		Literal::Types::FalsyType
+	end
+
+	def _Schema(...)
+		Literal::Types::SchemaType.new(...)
+	end
+
+	def _JSONData
+		Literal::Types::JSONDataType
+	end
+
+	def _JSONCoercible
+		Literal::Types::JSONCoercibleType
 	end
 end
