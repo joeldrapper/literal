@@ -83,6 +83,10 @@ module Literal::Types
 		Literal::Types::CallableType
 	end
 
+	def _Procable
+		Literal::Types::ProcableType
+	end
+
 	def _String(range)
 		Literal::Types::StringType.new(range)
 	end
@@ -103,10 +107,13 @@ module Literal::Types
 		Literal::Types::SchemaType.new(...)
 	end
 
+	# Ensures the value is valid JSON data (i.e. it came from JSON.parse)
+	# @see `_JSON::Coercible`
 	def _JSONData
 		Literal::Types::JSONDataType
 	end
 
+	# Ensures the value can be converted to JSON.
 	def _JSONCoercible
 		Literal::Types::JSONCoercibleType
 	end
