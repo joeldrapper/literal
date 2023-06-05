@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @abstract
 class Literal::Monad
 	extend Literal::Modifiers
 

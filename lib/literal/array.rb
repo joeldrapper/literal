@@ -8,8 +8,9 @@ class Literal::Array
 		@type = type
 	end
 
-	attr_reader :value, :type
-	protected attr_writer :value
+	attr_accessor :value
+	attr_reader :type
+	protected :value
 
 	alias_method :to_a, :value
 	alias_method :to_ary, :value

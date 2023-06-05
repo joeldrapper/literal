@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Types::StringType < Literal::Type
 	def initialize(constraint)
 		@constraint = constraint

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Types::UnionType < Literal::Type
 	def initialize(*types)
 		@types = types

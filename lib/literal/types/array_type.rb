@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Types::ArrayType < Literal::Type
 	def initialize(type)
 		@type = type

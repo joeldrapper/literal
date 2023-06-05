@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Types::InterfaceType < Literal::Type
 	def initialize(*methods)
 		@methods = methods

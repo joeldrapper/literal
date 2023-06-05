@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Types::IsType < Literal::Type
 	def initialize(*predicates)
 		@predicates = predicates

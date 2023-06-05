@@ -57,15 +57,17 @@ GEM
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
-    mini_portile2 (2.8.2)
     msgpack (1.7.0)
-    nokogiri (1.15.0)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.15.0-arm64-darwin)
       racc (~> 1.4)
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
     racc (1.6.2)
+    rack (3.0.7)
+    rackup (2.1.0)
+      rack (>= 3)
+      webrick (~> 1.8)
     rainbow (3.1.1)
     rbs (2.8.4)
     regexp_parser (2.8.0)
@@ -110,6 +112,7 @@ GEM
     thor (1.2.1)
     tilt (2.1.0)
     unicode-display_width (2.4.2)
+    webrick (1.8.1)
     yard (0.9.34)
     zeitwerk (2.6.8)
 
@@ -124,10 +127,12 @@ DEPENDENCIES
   dry-types
   green_dots!
   literal!
+  rack
+  rackup
   rubocop
   simplecov
   solargraph
-  zeitwerk
+  yard
 
 BUNDLED WITH
    2.4.12
