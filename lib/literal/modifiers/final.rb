@@ -10,6 +10,8 @@ module Literal::Modifiers::Final
 		if final_methods[method_name]
 			raise "Method #{method_name} is final and cannot be overridden."
 		end
+
+		super
 	end
 
 	def final_methods

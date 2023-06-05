@@ -17,6 +17,8 @@ module Literal::Modifiers::Abstract
 	def included(submodule)
 		submodule.extend(Literal::Modifiers::Abstract)
 		submodule.abstract_methods.concat(abstract_methods)
+
+		super
 	end
 
 	def abstract_methods
