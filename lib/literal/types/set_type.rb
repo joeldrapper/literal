@@ -7,11 +7,15 @@ class Literal::Types::SetType
 		@type = type
 	end
 
-	def inspect
-		"Set(#{@type.inspect})"
-	end
+	def inspect = "_Set(#{@type.inspect})"
 
-	def ===(value)
-		value.is_a?(::Set) && value.all? { |item| @type === item }
+	if Literal::EXPENSIVE_TYPE_CHECKS
+		def ===(value)
+			Set === value && value.all? { |item| @type === item }
+		end
+	else
+		def ===(value)
+			Set === value && @type === value.first
+		end
 	end
 end

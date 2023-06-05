@@ -7,9 +7,7 @@ class Literal::Types::UnionType
 		@types = types
 	end
 
-	def inspect
-		"Union(#{@types.map(&:inspect).join(', ')})"
-	end
+	def inspect = "_Union(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
 		@types.any? { |type| type === value }

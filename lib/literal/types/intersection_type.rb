@@ -7,9 +7,7 @@ class Literal::Types::IntersectionType
 		@types = types
 	end
 
-	def inspect
-		"Intersection(#{@types.map(&:inspect).join(', ')})"
-	end
+	def inspect = "_Intersection(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
 		@types.all? { |type| type === value }

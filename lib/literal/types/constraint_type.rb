@@ -8,9 +8,7 @@ class Literal::Types::ConstraintType
 		@constraint = constraint
 	end
 
-	def inspect
-		"Constraint(#{@attribute.inspect}, #{@constraint.inspect})"
-	end
+	def inspect = "_Constraint(#{@attribute.inspect}, #{@constraint.inspect})"
 
 	def ===(value)
 		@constraint === value.public_send(@attribute)

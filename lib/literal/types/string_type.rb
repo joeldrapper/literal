@@ -3,15 +3,15 @@
 class Literal::Types::StringType
 	include Literal::Type
 
-	def initialize(range)
-		@range = range
+	def initialize(constraint)
+		@constraint = constraint
 	end
 
 	def inspect
-		"_String(#{@range.inspect})"
+		"_String(#{@constraint.inspect})"
 	end
 
 	def ===(value)
-		value.is_a?(String) && @range === value.length
+		String === value && @constraint === value.length
 	end
 end

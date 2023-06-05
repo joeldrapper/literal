@@ -13,17 +13,17 @@ class Literal::Types::SchemaType
 
 	def inspect
 		if @array
-			"Schema(#{@array.inspect})"
+			"_Schema(#{@array.inspect})"
 		else
-			"Schema(#{@hash.inspect})"
+			"_Schema(#{@hash.inspect})"
 		end
 	end
 
 	def ===(other)
 		if @array
-			(Array === other) && (@array.size == other.size) && @array.each_with_index.all? { |t, i| t === other[i] }
+			Array === other && (@array.size == other.size) && @array.each_with_index.all? { |t, i| t === other[i] }
 		else
-			(Hash === other) && (@hash.size == other.size) && @hash.all? { |k, t| t === other[k] }
+			Hash === other && (@hash.size == other.size) && @hash.all? { |k, t| t === other[k] }
 		end
 	end
 end

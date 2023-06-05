@@ -50,7 +50,7 @@ module Literal::Types
 	end
 
 	def _Nilable(type)
-		Literal::Types::NilableType
+		Literal::Types::NilableType.new(type)
 	end
 
 	def _Any

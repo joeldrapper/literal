@@ -7,9 +7,7 @@ class Literal::Types::FrozenType
 		@type = type
 	end
 
-	def inspect
-		"Frozen(#{@type.inspect})"
-	end
+	def inspect = "_Frozen(#{@type.inspect})"
 
 	def ===(value)
 		value.frozen? && @type === value

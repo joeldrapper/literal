@@ -7,11 +7,9 @@ class Literal::Types::InterfaceType
 		@methods = methods
 	end
 
-	def inspect
-		"Interface(#{@methods.map(&:inspect).join(', ')})"
-	end
+	def inspect = "_Interface(#{@methods.map(&:inspect).join(', ')})"
 
-	def ===(other)
-		@methods.all? { |m| other.respond_to?(m) }
+	def ===(value)
+		@methods.all? { |m| value.respond_to?(m) }
 	end
 end

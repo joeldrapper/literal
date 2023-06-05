@@ -7,11 +7,9 @@ class Literal::Types::TupleType
 		@types = types
 	end
 
-	def inspect
-		"Tuple(#{@types.map(&:inspect).join(', ')})"
-	end
+	def inspect = "_Tuple(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
-		value.is_a?(::Enumerable) && value.size == @types.size && value.zip(@types).all? { |v, t| t === v }
+		Enumerable === value && value.size == @types.size && @types.each_with_index.all? { |t, i| t === value[i] }
 	end
 end

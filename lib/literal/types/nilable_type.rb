@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
-Literal::Types::NilableType = Literal::Types::UnionType.new(
-	Literal::Types::AnyType,
-	nil
-)
+class Literal::Types::NilableType
+	def initialize(type)
+		@type = type
+	end
+
+	def inspect = "_Nilable(#{@type.inspect})"
+
+	def ===(value)
+		nil === value || @type === value
+	end
+end

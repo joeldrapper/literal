@@ -17,12 +17,10 @@ class Literal::ArrayType
 	def new(value)
 		value = value.to_a
 
-		value.each do |item|
-			unless @type === item
-				Literal::TypeError.expected(item, to_be_a: @type)
-			end
+		if Literal::_Array(@type) === value
+			Literal::Array.new(value, type: @type)
+		else
+			Literal::TypeError.expected(item, to_be_a: @type)
 		end
-
-		Literal::Array.new(value, type: @type)
 	end
 end

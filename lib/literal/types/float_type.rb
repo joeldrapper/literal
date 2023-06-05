@@ -7,11 +7,9 @@ class Literal::Types::FloatType
 		@range = range
 	end
 
-	def inspect
-		"Float(#{@range})"
-	end
+	def inspect = "_Float(#{@range})"
 
-	def ===(other)
-		other.is_a?(::Float) && @range === other
+	def ===(value)
+		Float === value && @range === value
 	end
 end

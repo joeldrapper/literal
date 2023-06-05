@@ -7,11 +7,9 @@ class Literal::Types::IntegerType
 		@range = range
 	end
 
-	def inspect
-		"Integer(#{@range})"
-	end
+	def inspect = "_Integer(#{@range})"
 
-	def ===(other)
-		other.is_a?(::Integer) && @range === other
+	def ===(value)
+		Integer === value && @range === value
 	end
 end

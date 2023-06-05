@@ -7,9 +7,7 @@ class Literal::Types::IsType
 		@predicates = predicates
 	end
 
-	def inspect
-		"_Is(#{predicates.map(&:inspect).join(', ')})"
-	end
+	def inspect = "_Is(#{predicates.map(&:inspect).join(', ')})"
 
 	def ===(value)
 		@predicates.all? { |predicate| value.send(predicate) }

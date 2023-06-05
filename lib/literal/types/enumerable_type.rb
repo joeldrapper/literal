@@ -7,11 +7,9 @@ class Literal::Types::EnumerableType
 		@type = type
 	end
 
-	def inspect
-		"Enumerable(#{@type.inspect})"
-	end
+	def inspect = "_Enumerable(#{@type.inspect})"
 
 	def ===(value)
-		value.is_a?(::Enumerable) && value.all? { |item| @type === item }
+		Enumerable === value && value.all? { |item| @type === item }
 	end
 end

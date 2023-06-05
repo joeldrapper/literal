@@ -3,9 +3,9 @@
 Literal::Types::LambdaType = Literal::Singleton.new do
 	include Literal::Type
 
-	def inspect = "Lambda"
+	def inspect = "_Lambda"
 
-	def ===(other)
-		(Proc === other) && other.lambda?
+	def ===(value)
+		Proc === value && value.lambda?
 	end
 end

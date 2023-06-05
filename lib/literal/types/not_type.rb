@@ -7,9 +7,7 @@ class Literal::Types::NotType
 		@type = type
 	end
 
-	def inspect
-		"_Not(#{@type.inspect})"
-	end
+	def inspect = "_Not(#{@type.inspect})"
 
 	def ===(value)
 		!(@type === value)

@@ -8,11 +8,15 @@ class Literal::Types::HashType
 		@value_type = value_type
 	end
 
-	def inspect
-		"Hash(#{@key_type.inspect}, #{@value_type.inspect})"
-	end
+	def inspect = "_Hash(#{@key_type.inspect}, #{@value_type.inspect})"
 
-	def ===(value)
-		value.is_a?(::Hash) && value.all? { |k, v| @key_type === k && @value_type === v }
+	if Literal::EXPENSIVE_TYPE_CHECKS
+		def ===(value)
+			Hash === value && value.all? { |k, v| @key_type === k && @value_type === v }
+		end
+	else
+		def ===(value)
+			Hash === value && @key_type === value.each_key.first && @value_type === value.each_value.first
+		end
 	end
 end

@@ -3,9 +3,7 @@
 Literal::Types::TruthyType = Literal::Singleton.new do
 	include Literal::Type
 
-	def inspect
-		"Truthy"
-	end
+	def inspect = "_Truthy"
 
 	def ===(value)
 		!!value
