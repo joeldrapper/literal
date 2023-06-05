@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-Literal::Types::JSONDataType = Literal::Singleton.new do
-	include Literal::Type
-
+Literal::Types::JSONDataType = Literal::Singleton.new(Literal::Type) do
 	def inspect = "_JSONData"
 
 	if Literal::EXPENSIVE_TYPE_CHECKS

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-Literal::Types::AnyType = Literal::Singleton.new do
-	include Literal::Type
-
+Literal::Types::AnyType = Literal::Singleton.new(Literal::Type) do
 	def initialize
 		freeze
 	end

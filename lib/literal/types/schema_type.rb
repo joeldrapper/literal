@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Types::SchemaType
-	include Literal::Type
-
+class Literal::Types::SchemaType < Literal::Type
 	def initialize(*array, **hash)
 		@array = array.empty? ? nil : array
 		@hash = hash.empty? ? nil : hash

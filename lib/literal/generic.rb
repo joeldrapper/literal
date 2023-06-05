@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-module Literal::Generic
-	include Literal::Type
-
+class Literal::Generic < Literal::Type
 	abstract!
 
 	abstract def new = nil

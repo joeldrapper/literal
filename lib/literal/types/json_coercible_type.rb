@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-Literal::Types::JSONCoercibleType = Literal::Singleton.new do
-	include Literal::Type
-
+Literal::Types::JSONCoercibleType = Literal::Singleton.new(Literal::Type) do
 	def inspect = "_JSONCoercible"
 
 	if Literal::EXPENSIVE_TYPE_CHECKS

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::EitherType
-	include Literal::Generic
-
+class Literal::EitherType < Literal::Generic
 	def initialize(left_type, right_type)
 		@left_type = left_type
 		@right_type = right_type

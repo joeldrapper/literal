@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-class Literal::HashType
+class Literal::HashType < Literal::Generic
 	def initialize(key_type, value_type)
 		@key_type = key_type
 		@value_type = value_type
 	end
+
+	def inspect = "Hash(#{@key_type}, #{@value_type})"
 
 	def ===(value)
 		case value

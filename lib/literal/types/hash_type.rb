@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Types::HashType
-	include Literal::Type
-
+class Literal::Types::HashType < Literal::Type
 	def initialize(key_type, value_type)
 		@key_type = key_type
 		@value_type = value_type

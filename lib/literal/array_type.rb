@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class Literal::ArrayType
+class Literal::ArrayType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end
+
+	def inspect = "Array(#{@type.inspect})"
 
 	def ===(value)
 		case value

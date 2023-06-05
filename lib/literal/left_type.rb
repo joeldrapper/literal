@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::LeftType
-	include Literal::Generic
-
+class Literal::LeftType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end

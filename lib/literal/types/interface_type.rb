@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Types::InterfaceType
-	include Literal::Type
-
+class Literal::Types::InterfaceType < Literal::Type
 	def initialize(*methods)
 		@methods = methods
 	end

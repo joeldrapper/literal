@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-Literal::Types::ProcableType = Literal::Singleton.new do
-	include Literal::Type
-
+Literal::Types::ProcableType = Literal::Singleton.new(Literal::Type) do
 	def inspect = "_Procable"
 
 	def ===(value)
