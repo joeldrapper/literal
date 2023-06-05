@@ -6,15 +6,15 @@ class Literal::Maybe < Literal::Monad
 
 	# @!method empty?
 	# 	@return [Boolean]
-	abstract def empty? = nil
+	abstract :empty?
 
 	# @!method nothing?
 	# 	@return [Boolean]
-	abstract def nothing? = nil
+	abstract :nothing?
 
 	# @!method something?
 	# 	@return [Boolean]
-	abstract def something? = nil
+	abstract :something?
 
 	# @return [void]
 	def handle(&)

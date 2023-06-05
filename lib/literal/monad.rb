@@ -7,24 +7,24 @@ class Literal::Monad
 	abstract!
 
 	# @!method map
-	abstract def map = nil
+	abstract :map
 
 	# @!method then
-	abstract def then = nil
+	abstract :then
 
 	# @!method maybe
-	abstract def maybe = nil
+	abstract :maybe
 
 	# @!method filter
-	abstract def filter = nil
+	abstract :filter
 
 	# @!method handle
 	# 	@return [void]
 	# 	@yieldparam switch [Literal::Switch]
-	abstract def handle = nil
+	abstract :handle
 
 	# @!method value_or
-	abstract def value_or = nil
+	abstract :value_or
 
 	def bind
 		yield @value

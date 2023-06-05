@@ -10,6 +10,10 @@ module Literal::Modifiers::Abstract
 	end
 
 	def abstract(method_name)
+		define_method(method_name) do
+			raise NoMethodError, "You called an abstract method that hasn't been implemented by `#{self.class}`."
+		end
+
 		abstract_methods << instance_method(method_name)
 		method_name
 	end

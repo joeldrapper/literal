@@ -13,23 +13,23 @@ class Literal::Either
 
 	# @!method inspect
 	# 	@return [String]
-	abstract def inspect = nil
+	abstract :inspect
 
 	# @!method left?
 	# 	@return [Boolean]
-	abstract def left? = nil
+	abstract :left?
 
 	# @!method right?
 	# 	@return [Boolean]
-	abstract def right? = nil
+	abstract :right?
 
 	# @!method left
 	# 	@return [Literal::Either]
-	abstract def left = nil
+	abstract :left
 
 	# @!method right
 	# 	@return [Literal::Either]
-	abstract def right = nil
+	abstract :right
 
 	attr_reader :value
 	attr_accessor :type
