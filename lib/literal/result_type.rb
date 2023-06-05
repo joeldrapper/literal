@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class Literal::ResultType
+# @api private
+class Literal::ResultType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect
-		"Result(#{@type.inspect})"
-	end
+	def inspect = "Literal::Result(#{@type.inspect})"
 
 	def new(value)
 		case value
@@ -21,6 +20,17 @@ class Literal::ResultType
 					"Expected `#{value.inspect}` to be a `#{@type.inspect}`."
 				)
 			)
+		end
+	end
+
+	def ===(value)
+		case value
+		when Literal::Success
+			@type === value.value
+		when Literal::Failure
+			true
+		else
+			false
 		end
 	end
 

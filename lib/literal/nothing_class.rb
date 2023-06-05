@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
+# @note This class is not meant to be instantiated. You should use the `Literal::Nothing` instance.
 class Literal::NothingClass < Literal::Maybe
 	def initialize
 		freeze
 	end
 
-	def empty? = true
-	def nothing? = true
-	def something? = false
+	# @return [String]
+	def inspect = "Literal::Nothing"
 
-	def inspect = "Nothing"
+	# @return [true]
+	def empty? = true
+
+	# @return [true]
+	def nothing? = true
+
+	# @return [false]
+	def something? = false
 
 	def value_or = yield
 

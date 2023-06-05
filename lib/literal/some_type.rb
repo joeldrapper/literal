@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class Literal::SomeType
+# @api private
+class Literal::SomeType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect
-		"Some(#{@type.inspect})"
-	end
+	def inspect = "Literal::Some(#{@type.inspect})"
 
 	def ===(other)
 		case other

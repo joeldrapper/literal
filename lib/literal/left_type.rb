@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::LeftType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect
-		"Literal::Left(#{@type})"
-	end
+	def inspect = "Literal::Left(#{@type})"
 
-	def ===(left)
-		case left
+	def ===(other)
+		case other
 		when Literal::Left
-			@type === left.value
+			@type === other.value
 		else
 			false
 		end

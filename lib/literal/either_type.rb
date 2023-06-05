@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::EitherType < Literal::Generic
 	def initialize(left_type, right_type)
 		@left_type = left_type
 		@right_type = right_type
 	end
 
-	def inspect
-		"Either(#{@left_type.inspect}, #{@right_type.inspect})"
-	end
+	def inspect = "Literal::Either(#{@left_type.inspect}, #{@right_type.inspect})"
 
 	def ===(either)
 		case either

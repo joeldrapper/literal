@@ -8,11 +8,17 @@ class Literal::Some < Literal::Maybe
 
 	attr_accessor :value
 
-	def empty? = false
-	def nothing? = false
-	def something? = true
+	# @return [String]
+	def inspect = "Literal::Some(#{@value.inspect})"
 
-	def inspect = "Some(#{@value.inspect})"
+	# @return [false]
+	def empty? = false
+
+	# @return [false]
+	def nothing? = false
+
+	# @return [true]
+	def something? = true
 
 	def value_or = @value
 

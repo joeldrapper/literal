@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 class Literal::Success < Literal::Result
+	# @return [String]
 	def inspect = "Literal::Success(#{@value.inspect})"
 
+	# @return [true]
 	def success? = true
+
+	# @return [false]
 	def failure? = false
 
+	# @return [Literal::Some]
 	def success = Literal::Some.new(@value)
+
+	# @return [Literal::NothingClass]
 	def failure = Literal::Nothing
 
 	def raise! = self

@@ -37,28 +37,12 @@ module Literal
 		include Error
 	end
 
-	def self.Value(type, &)
-		Value.define(type, &)
-	end
-
-	def self.Data(&)
-		Class.new(Data, &)
-	end
-
-	def self.Struct(&)
-		Class.new(Struct, &)
-	end
-
+	# @return [Literal::Array]
 	def self.Array(type)
 		Literal::ArrayType.new(type)
 	end
 
-	module Singleton
-		def self.new(...)
-			Class.new(...).new
-		end
-	end
-
+	# @return [Literal::LRU]
 	def self.LRU(key_type, value_type)
 		Literal::LRUType.new(key_type, value_type)
 	end

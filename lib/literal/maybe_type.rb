@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::MaybeType < Literal::Generic
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect
-		"Maybe(#{@type.inspect})"
-	end
+	def inspect = "Literal::Maybe(#{@type.inspect})"
 
 	def new(value)
 		case value
@@ -20,12 +19,12 @@ class Literal::MaybeType < Literal::Generic
 		end
 	end
 
-	def ===(maybe)
-		case maybe
+	def ===(value)
+		case value
 		when Literal::Nothing
 			true
 		when Literal::Some
-			@type === maybe.value
+			@type === value.value
 		else
 			false
 		end
