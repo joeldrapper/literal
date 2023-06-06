@@ -22,3 +22,9 @@ Style/MissingRespondToMissing:
 
 Style/ColonMethodCall:
   Enabled: false
+
+Style/NilComparison:
+  Enabled: false
+
+Style/YodaCondition:
+  Enabled: false

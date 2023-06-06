@@ -141,8 +141,15 @@ module Literal::Types
 		Literal::Types::JSONDataType
 	end
 
-	# Ensures the value can be converted to JSON.
-	def _JSONCoercible
-		Literal::Types::JSONCoercibleType
+	# Matches if the value is *frozen*.
+	def _Frozen(type)
+		Literal::Types::FrozenType.new(type)
+	end
+
+	# Similar to `_Intersection`, but allows you to specify attribute constraints as keyword arguments.
+	# @example
+	# 	_Constraint(Array, size: 1..3)
+	def _Constraint(*constraints, **attributes)
+		Literal::Types::ConstraintType.new(*constraints, **attributes)
 	end
 end

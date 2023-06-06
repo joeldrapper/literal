@@ -9,6 +9,6 @@ class Literal::Types::IsType < Literal::Type
 	def inspect = "_Is(#{predicates.map(&:inspect).join(', ')})"
 
 	def ===(value)
-		@predicates.all? { |predicate| value.send(predicate) }
+		@predicates.all? { |predicate| value.public_send(predicate) }
 	end
 end

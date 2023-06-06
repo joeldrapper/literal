@@ -2,14 +2,16 @@
 
 # @api private
 class Literal::Types::ConstraintType < Literal::Type
-	def initialize(attribute, constraint = Literal::Types::TruthyType)
-		@attribute = attribute
-		@constraint = constraint
+	def initialize(*constraints, **attributes)
+		@constraints = constraints
+		@attributes = attributes
 	end
 
-	def inspect = "_Constraint(#{@attribute.inspect}, #{@constraint.inspect})"
+	def inspect = "_Constraint(#{@constraints.inspect}, #{@attributes.inspect})"
 
 	def ===(value)
-		@constraint === value.public_send(@attribute)
+		@constraints.all? { |c| c === value } && @attributes.all? do |method, type|
+			type === value.public_send(method)
+		end
 	end
 end

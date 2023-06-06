@@ -2,6 +2,10 @@
 
 # @api private
 Literal::Types::ProcableType = Literal::Singleton.new(Literal::Type) do
+	def initialize
+		freeze
+	end
+
 	def inspect = "_Procable"
 
 	def ===(value)

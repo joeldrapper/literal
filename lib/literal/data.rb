@@ -19,7 +19,7 @@ class Literal::Data
 
 				def initialize(#{
 					__schema__.each_value.map { |attribute|
-						"#{attribute.name}: #{attribute.default || attribute.type.nil? ? 'nil' : nil}"
+						"#{attribute.name}: #{attribute.default || attribute.type === nil ? 'nil' : nil}"
 					}.join(', ')
 				})
 					@__schema__ = self.class.__schema__

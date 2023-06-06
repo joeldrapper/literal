@@ -9,6 +9,6 @@ Literal::Types::AnyType = Literal::Singleton.new(Literal::Type) do
 	def inspect = "_Any"
 
 	def ===(value)
-		!value.nil?
+		!(nil === value)
 	end
 end

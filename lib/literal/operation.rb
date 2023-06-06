@@ -15,7 +15,7 @@ class Literal::Operation
 
 				def initialize(#{
 					__schema__.map { |n, t|
-						"#{n}: #{t.nil? ? 'nil' : ''}"
+						"#{n}: #{t === nil ? 'nil' : ''}"
 					}.join(', ')
 				})
 					@__schema__ = self.class.__schema__
