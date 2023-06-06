@@ -37,7 +37,7 @@ module Literal::Modifiers::Abstract
 end
 
 if Literal::TRACING
-	TracePoint.trace(:end, :b_return) do |tp|
+	TracePoint.trace(:end) do |tp|
 		it = tp.self
 
 		if it.is_a?(Literal::Modifiers::Abstract) && !it.abstract?
