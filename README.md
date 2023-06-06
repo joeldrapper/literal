@@ -2,25 +2,15 @@
 
 While I’m very excited about [RBS](https://github.com/ruby/rbs) and [Steep](https://github.com/soutaro/steep), they will need significant adoption by libraries before we can really use them in our apps.
 
-In the meantime, you can get a long way by adding lightweight type checking to your main public interfaces (initializers and writer methods) for models, operations, jobs, components, etc.
+In the meantime, I think you can get a long way by adding lightweight type checking to your main public interfaces (initializers and writer methods) for models, operations, jobs, components, etc.
 
 Literal provides a few tools to help you define type-checked structs, data objects and value objects, as well as a mixin for your plain old Ruby objects.
 
 ### What about performance?
 
-Literal uses code generation at startup, rather than dynamic meta-programming, so the performance of a literal initializer, for example, is equivalent to one you write by hand.
+Literal uses code generation at startup, rather than dynamic meta-programming, so the performance of a literal initializer, is equivalent to one you’d write by hand. The performance impact of most of the type-checking is negligible: a single case equality check against the given type.
 
-The performance impact of most of the type-checking is negligible: an if condition with a single case equality check against the given type.
-
-```ruby
-unless expected_type === value
-```
-
-Some of the advanced collection types, such as `_Array` and `_Hash` could have a significant performance impact for large collections, since they need to check every value at runtime. The idea here is to disable these more expensive checks in production.
-
-Another disadvantage is `_Array` and friends don’t control the object itself; they just match against it. That means type-checks need to be run every time the object is passed to another type-checked initializer.
-
-For some use-cases, the `Literal::Array` and `Literal::Hash` types will be better suited, since these maintain type integrity and can be passed around without re-checking.
+Some of the advanced types, such as `_Array` and `_Hash` could have a significant performance impact for large collections, since they need to check every value at runtime. But you can disable expensive type-checking in production, while benefitting from using it in test and development environments.
 
 ## `Literal::Struct`
 
