@@ -117,11 +117,15 @@ The type-checking is really designed for the public interface. Internally, I thi
 
 [Coming soon]
 
-You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This will return a `Literal::Some`. If you created it with `nil` instead, it would return a `Literal::Nothing`. `Literal::Some`s and `Literal::Nothing` both implement the same interface.
+You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This will return a `Literal::Some`. If you created it with `nil` instead, it would return a `Literal::Nothing`. `Literal::Some` and `Literal::Nothing` both implement the same interface, so you can treat them as `Literal::Maybe`.
 
 #### `map`
 
-When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`. Note: it's possible to end up with a `Literal::Some(nil)` when using `map`. To avoid this, use `maybe` instead.
+When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`.
+
+> **Note**
+> 
+> It's possible to end up with a `Literal::Some(nil)` when using `map`. To avoid this, use `maybe` instead.
 
 #### `maybe`
 
