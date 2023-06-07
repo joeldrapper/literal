@@ -1,99 +1,83 @@
 # frozen_string_literal: true
 
 module Literal::Attributes
-	Attribute = Data.define(:name, :type, :reader, :writer, :positional, :default)
-
 	include Literal::Types
-	include Literal::Schema
 
-	def attribute(name, type, reader: false, writer: false, positional: false, &default)
-		__schema__[name] = Attribute.new(
-			name:, type:, reader:, writer:, positional:, default:
-		)
+	def attribute(name, type, special = nil, reader: false, writer: false, positional: false)
+		attribute = Literal::Attribute.new(name:, type:, special:, reader:, writer:, positional:)
 
-		include extension = Module.new
+		literal_types[name] = type
+		literal_attributes << attribute
 
-		extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+		include literal_extension
+
+		define_literal_initializer
+		define_literal_writer(attribute) if writer
+		define_literal_reader(attribute) if reader
+	end
+
+	def literal_attributes
+		return @literal_attributes if defined?(@literal_attributes)
+
+		if superclass.is_a?(Literal::Attributes)
+			@literal_attributes = superclass.literal_attributes.dup
+		else
+			@literal_attributes = Concurrent::Array.new
+		end
+	end
+
+	def literal_types
+		return @literal_types if defined?(@literal_types)
+
+		if superclass.is_a?(Literal::Attributes)
+			@literal_types = superclass.literal_types.dup
+		else
+			@literal_types = Concurrent::Map.new
+		end
+	end
+
+	private
+
+	def define_literal_initializer
+		literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 			# frozen_string_literal: true
 
-			def initialize(#{
-				__schema__.each_value.map { |attribute|
-					if attribute.positional
-						"#{attribute.name} #{attribute.default || attribute.type === nil ? '= nil' : nil}"
-					else
-						"#{attribute.name}: #{attribute.default || attribute.type === nil ? 'nil' : nil}"
-					end
-				}.join(', ')
-			})
-				@__schema__ = self.class.__schema__
-
-				#{
-					__schema__.each_value.map { |attribute|
-						"
-							attribute = @__schema__[:#{attribute.name}]
-
-							#{
-								if attribute.default
-									"#{attribute.name} ||= attribute.default.call"
-								end
-							}
-
-							unless attribute.type === #{attribute.name}
-								raise ::Literal::TypeError.expected(#{attribute.name}, to_be_a: attribute.type)
-							end
-						"
-					}.join("\n")
-				}
-
-				#{
-					__schema__.each_key.map { |n|
-						"@#{n} = #{n}"
-					}.join("\n")
-				}
-			end
+			#{literal_initializer}
 		RUBY
+	end
 
-		if writer
-			writer_name = :"#{name}="
+	def define_literal_writer(attribute)
+		literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+			# frozen_string_literal: true
 
-			extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
-				# frozen_string_literal: true
+			#{literal_writer(attribute)}
+		RUBY
+	end
 
-				def #{writer_name}(value)
-					attribute = @__schema__[:#{name}]
+	def define_literal_reader(attribute)
+		literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+			# frozen_string_literal: true
 
-					unless attribute.type === value
-						raise Literal::TypeError.expected(value, to_be_a: attribute.type)
-					end
+			#{literal_reader(attribute)}
+		RUBY
+	end
 
-					@#{name} = value
-				end
-			RUBY
-
-			case writer
-			when :public
-				public writer_name
-			when :protected
-				protected writer_name
-			else
-				private writer_name
-			end
+	def literal_initializer = <<~RUBY
+		def initialize(#{literal_attributes.map(&:param).compact.join(', ')})
+			@literal_types = self.class.literal_types
+			#{literal_attributes.map(&:type_check).compact.join(';')}
+			#{literal_initializer_body}
 		end
+	RUBY
 
-		if reader
-			extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
-				# frozen_string_literal: true
+	def literal_writer(attribute) = attribute.ivar_writer
+	def literal_reader(attribute) = attribute.ivar_reader
 
-				attr_accessor :#{name}
-			RUBY
+	def literal_initializer_body
+		literal_attributes.map(&:ivar_assignment).compact.join(";")
+	end
 
-			case reader
-				when :public then nil
-				when :protected then protected name
-				else private name
-			end
-		end
-
-		name
+	def literal_extension
+		@literal_extension ||= Module.new
 	end
 end

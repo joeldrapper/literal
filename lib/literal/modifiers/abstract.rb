@@ -10,6 +10,8 @@ module Literal::Modifiers::Abstract
 	end
 
 	def abstract(method_name)
+		@abstract = true
+
 		define_method(method_name) do
 			raise NoMethodError, "You called an abstract method that hasn't been implemented by `#{self.class}`."
 		end
@@ -42,7 +44,11 @@ if Literal::TRACING
 
 		if it.is_a?(Literal::Modifiers::Abstract) && !it.abstract?
 			it.abstract_methods.each do |abstract_method|
-				unless it.method_defined?(abstract_method.name) && it.instance_method(abstract_method.name) != abstract_method
+				next unless it.method_defined?(abstract_method.name)
+
+				method = it.instance_method(abstract_method.name)
+
+				if method == abstract_method
 					raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
 				end
 			end

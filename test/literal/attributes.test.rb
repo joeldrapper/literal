@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-class Foo
+class Person
 	extend Literal::Attributes
 
-	def initialize(foo:)
-		super(foo:)
-		@bar = 1
-	end
-
-	attribute :foo, Integer
+	attribute :name, String, reader: :public, writer: :public
+	attribute :age, Integer, reader: :public, writer: :public
 end
+
+joel = Person.new(name: "Joel", age: 30)
+binding.irb
