@@ -1,4 +1,4 @@
-# Literal [WIP]
+# A Literal Ruby Gem [WIP]
 
 While I’m very excited about [RBS](https://github.com/ruby/rbs) and [Steep](https://github.com/soutaro/steep), they will need significant adoption by libraries before we can really use them in our apps.
 
