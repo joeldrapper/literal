@@ -12,8 +12,7 @@ module Literal
 		loader.inflector.inflect(
 			"lru" => "LRU",
 			"lru_type" => "LRUType",
-			"json_data_type" => "JSONDataType",
-			"json_coercible_type" => "JSONCoercibleType"
+			"json_data_type" => "JSONDataType"
 		)
 		loader.setup
 	end
