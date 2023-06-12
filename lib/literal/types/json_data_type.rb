@@ -5,7 +5,7 @@ Literal::Types::JSONDataType = Literal::Singleton.new(Literal::Type) do
 	def initialize
 		freeze
 	end
-	
+
 	def inspect = "_JSONData"
 
 	if Literal::EXPENSIVE_TYPE_CHECKS

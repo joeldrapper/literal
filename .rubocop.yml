@@ -28,3 +28,6 @@ Style/NilComparison:
 
 Style/YodaCondition:
   Enabled: false
+
+Layout/IndentationWidth:
+  Enabled: false

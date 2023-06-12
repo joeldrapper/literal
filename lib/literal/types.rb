@@ -152,4 +152,8 @@ module Literal::Types
 	def _Constraint(*constraints, **attributes)
 		Literal::Types::ConstraintType.new(*constraints, **attributes)
 	end
+
+	def _Void
+		Literal::Types::VoidType
+	end
 end

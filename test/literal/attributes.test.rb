@@ -8,4 +8,3 @@ class Person
 end
 
 joel = Person.new(name: "Joel", age: 30)
-binding.irb
