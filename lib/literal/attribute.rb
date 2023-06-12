@@ -38,7 +38,7 @@ class Literal::Attribute
 
 	def ivar_writer = <<~RUBY
 		def #{@name}=(value)
-			#{type_check(:value)}
+			#{type_check(:value) if Literal::TYPE_CHECKS}
 			@#{@name} = value
 		end
 
@@ -53,7 +53,7 @@ class Literal::Attribute
 
 	def struct_writer = <<~RUBY
 		def #{@name}=(value)
-			#{type_check(:value)}
+			#{type_check(:value) if Literal::TYPE_CHECKS}
 			@attributes[:#{@name}] = value
 		end
 

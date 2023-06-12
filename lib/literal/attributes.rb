@@ -65,7 +65,7 @@ module Literal::Attributes
 	def literal_initializer = <<~RUBY
 		def initialize(#{literal_attributes.map(&:param).compact.join(', ')})
 			@literal_types = self.class.literal_types
-			#{literal_attributes.map(&:type_check).compact.join(';')}
+			#{literal_attributes.map(&:type_check).compact.join(';') if Literal::TYPE_CHECKS}
 			#{literal_initializer_body}
 		end
 	RUBY

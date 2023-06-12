@@ -11,12 +11,14 @@ class Literal::Data
 
 	def with(**new_attributes)
 		new_attributes.each do |name, value|
-			unless (type = @literal_types[name])
-				raise Literal::ArgumentError, "Unknown attribute `#{name.inspect}`."
-			end
+			if Literal::TYPE_CHECKS
+				unless (type = @literal_types[name])
+					raise Literal::ArgumentError, "Unknown attribute `#{name.inspect}`."
+				end
 
-			unless type === value
-				raise Literal::TypeError.expected(value, to_be_a: attribute.type)
+				unless type === value
+					raise Literal::TypeError.expected(value, to_be_a: attribute.type)
+				end
 			end
 
 			new_attributes[name] = value.frozen? ? value : value.dup
