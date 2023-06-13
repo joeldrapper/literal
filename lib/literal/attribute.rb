@@ -13,6 +13,10 @@ class Literal::Attribute
 
 	attr_reader :type
 
+	def default?
+		nil != @default
+	end
+
 	def default_value
 		case @default
 		when Proc
@@ -32,12 +36,12 @@ class Literal::Attribute
 			"&#{@name}"
 		else
 			if @positional
-				if @default
+				if default?
 					"#{@name} = Literal::Null"
 				else
 					@type === nil ? "#{@name} = nil" : @name
 				end
-			elsif @default
+			elsif default?
 				"#{@name}: Literal::Null"
 			else
 				@type === nil ? "#{@name}: nil" : "#{@name}:"
