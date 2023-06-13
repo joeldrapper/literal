@@ -3,8 +3,8 @@
 class Literal::Data
 	extend Literal::StructAttributes
 
-	def self.attribute(name, type, special = nil, reader: :public, positional: false)
-		super(name, type, special, reader:, writer: false, positional:)
+	def self.attribute(name, type, special = nil, reader: :public, positional: false, default: nil)
+		super(name, type, special, reader:, writer: false, positional:, default:)
 	end
 
 	def self.literal_initializer_body = "#{super}; freeze"
@@ -12,7 +12,7 @@ class Literal::Data
 	def with(**new_attributes)
 		new_attributes.each do |name, value|
 			if Literal::TYPE_CHECKS
-				unless (type = @literal_types[name])
+				unless (type = @literal_attributes[name].type)
 					raise Literal::ArgumentError, "Unknown attribute `#{name.inspect}`."
 				end
 

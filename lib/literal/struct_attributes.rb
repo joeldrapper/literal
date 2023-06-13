@@ -7,7 +7,7 @@ module Literal::StructAttributes
 
 	def literal_initializer_body = <<~RUBY
 		@attributes = {
-			#{literal_attributes.map(&:mapping).join(', ')}
+			#{literal_attributes.each_value.map(&:mapping).join(', ')}
 		}
 	RUBY
 

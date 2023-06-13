@@ -3,11 +3,10 @@
 module Literal::Attributes
 	include Literal::Types
 
-	def attribute(name, type, special = nil, reader: false, writer: false, positional: false)
-		attribute = Literal::Attribute.new(name:, type:, special:, reader:, writer:, positional:)
+	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil)
+		attribute = Literal::Attribute.new(name:, type:, special:, reader:, writer:, positional:, default:)
 
-		literal_types[name] = type
-		literal_attributes << attribute
+		literal_attributes[name] = attribute
 
 		include literal_extension
 
@@ -22,17 +21,7 @@ module Literal::Attributes
 		if superclass.is_a?(Literal::Attributes)
 			@literal_attributes = superclass.literal_attributes.dup
 		else
-			@literal_attributes = Concurrent::Array.new
-		end
-	end
-
-	def literal_types
-		return @literal_types if defined?(@literal_types)
-
-		if superclass.is_a?(Literal::Attributes)
-			@literal_types = superclass.literal_types.dup
-		else
-			@literal_types = Concurrent::Map.new
+			@literal_attributes = Concurrent::Hash.new
 		end
 	end
 
@@ -63,9 +52,10 @@ module Literal::Attributes
 	end
 
 	def literal_initializer = <<~RUBY
-		def initialize(#{literal_attributes.map(&:param).compact.join(', ')})
-			@literal_types = self.class.literal_types
-			#{literal_attributes.map(&:type_check).compact.join(';') if Literal::TYPE_CHECKS}
+		def initialize(#{literal_attributes.each_value.map(&:param).compact.join(', ')})
+			@literal_attributes = self.class.literal_attributes
+			#{literal_attributes.each_value.map(&:default_assignment).compact.join("\n")}
+			#{literal_attributes.each_value.map(&:type_check).compact.join("\n") if Literal::TYPE_CHECKS}
 			#{literal_initializer_body}
 		end
 	RUBY
@@ -74,7 +64,7 @@ module Literal::Attributes
 	def literal_reader(attribute) = attribute.ivar_reader
 
 	def literal_initializer_body
-		literal_attributes.map(&:ivar_assignment).compact.join(";")
+		literal_attributes.each_value.map(&:ivar_assignment).compact.join("\n")
 	end
 
 	def literal_extension

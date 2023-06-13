@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 class Literal::Attribute
-	def initialize(name:, type:, special:, reader:, writer:, positional:)
+	def initialize(name:, type:, special:, reader:, writer:, positional:, default:)
 		@name = name
 		@type = type
 		@special = special
 		@reader = reader
 		@writer = writer
 		@positional = positional
+		@default = default
 	end
+
+	attr_reader :type, :default
 
 	def param
 		case @special
@@ -20,7 +23,13 @@ class Literal::Attribute
 			"&#{@name}"
 		else
 			if @positional
-				@type === nil ? "#{@name} = nil" : @name
+				if @default
+					"#{@name} = Literal::Null"
+				else
+					@type === nil ? "#{@name} = nil" : @name
+				end
+			elsif @default
+				"#{@name}: Literal::Null"
 			else
 				@type === nil ? "#{@name}: nil" : "#{@name}:"
 			end
@@ -28,10 +37,20 @@ class Literal::Attribute
 	end
 
 	def type_check(value = @name) = <<~RUBY
-		unless @literal_types[:#{@name}] === #{value}
-			raise Literal::TypeError.expected(#{value}, to_be_a: @literal_types[:#{@name}])
+		unless @literal_attributes[:#{@name}].type === #{value}
+		raise Literal::TypeError.expected(#{value}, to_be_a: @literal_attributes[:#{@name}].type)
 		end
 	RUBY
+
+	def default_assignment
+		return unless @default
+
+		<<~RUBY
+			if Literal::Null == #{@name}
+				#{@name} = @literal_attributes[:#{@name}].default.call
+			end
+		RUBY
+	end
 
 	def ivar_assignment = "@#{@name} = #{@name}"
 	def mapping = "#{@name}: #{@name}"
