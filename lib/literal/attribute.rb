@@ -11,7 +11,16 @@ class Literal::Attribute
 		@default = default
 	end
 
-	attr_reader :type, :default
+	attr_reader :type
+
+	def default_value
+		case @default
+		when Proc
+			@default.call
+		else
+			@default
+		end
+	end
 
 	def param
 		case @special
@@ -47,7 +56,7 @@ class Literal::Attribute
 
 		<<~RUBY
 			if Literal::Null == #{@name}
-				#{@name} = @literal_attributes[:#{@name}].default.call
+				#{@name} = @literal_attributes[:#{@name}].default_value
 			end
 		RUBY
 	end

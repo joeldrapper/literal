@@ -4,6 +4,10 @@ module Literal::Attributes
 	include Literal::Types
 
 	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil)
+		if default && !(Proc === default || default.frozen?)
+			raise ArgumentError, "The `default` must be a frozen value or a Proc."
+		end
+
 		attribute = Literal::Attribute.new(name:, type:, special:, reader:, writer:, positional:, default:)
 
 		literal_attributes[name] = attribute

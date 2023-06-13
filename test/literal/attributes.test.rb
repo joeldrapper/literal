@@ -4,7 +4,7 @@ class Person
 	extend Literal::Attributes
 
 	attribute :name, String, reader: :public, writer: :public
-	attribute :age, Integer, reader: :public, writer: :public, default: -> { 30 }
+	attribute :age, Integer, reader: :public, writer: :public, default: 30
 end
 
 joel = Person.new(name: "Joel")
