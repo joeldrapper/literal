@@ -71,7 +71,7 @@ module Literal::Types
 		Literal::Types::ClassType.new(type)
 	end
 
-	# Matches if the value is an `Enumerable` and each element matches the given types in order.
+	# Matches if the value is an `Array` and each element matches the given types in order.
 	def _Tuple(*types)
 		raise Literal::ArgumentError, "_Tuple type must have at least one type." if types.size < 1
 
@@ -131,9 +131,9 @@ module Literal::Types
 		Literal::Types::FalsyType
 	end
 
-	# Ensures a value matches the given schema for an Array or Hash.
-	def _Schema(*array, **hash)
-		Literal::Types::SchemaType.new(*array, **hash)
+	# Ensures a value matches the given shape of a Hash
+	def _Shape(**shape)
+		Literal::Types::ShapeType.new(**shape)
 	end
 
 	# Ensures the value is valid JSON data (i.e. it came from JSON.parse).

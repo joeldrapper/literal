@@ -1,37 +1,42 @@
 # frozen_string_literal: true
 
 module Literal::Modifiers::Sig
-	def sig(method_name, **signature)
-		return method_name unless Literal::EXPENSIVE_TYPE_CHECKS
-		raise ArgumentError unless signature.size == 1
+	if Literal::EXPENSIVE_TYPE_CHECKS
+		def sig(method_name, **signature)
+			raise ArgumentError unless signature.size == 1
 
-		types = signature.keys[0]
-		return_type = signature.values[0]
-		keywords = types[-1].is_a?(Hash) ? types.pop : {}
-		original_method = instance_method(method_name)
+			types = signature.keys[0]
+			return_type = signature.values[0]
+			keywords = types[-1].is_a?(Hash) ? types.pop : {}
+			original_method = instance_method(method_name)
 
-		define_method(method_name) do |*a, **k, &b|
-			types.each_with_index do |type, index|
-				unless type === a[index]
-					raise Literal::TypeError.expected(a[index], to_be_a: type)
+			define_method(method_name) do |*a, **k, &b|
+				types.each_with_index do |type, index|
+					unless type === a[index]
+						raise Literal::TypeError.expected(a[index], to_be_a: type)
+					end
 				end
-			end
 
-			keywords.each do |key, type|
-				unless type === k[key]
-					raise Literal::TypeError.expected(k[key], to_be_a: type)
+				keywords.each do |key, type|
+					unless type === k[key]
+						raise Literal::TypeError.expected(k[key], to_be_a: type)
+					end
 				end
+
+				output = original_method.bind(self).call(*a, **k, &b)
+
+				unless return_type === output
+					raise Literal::TypeError.expected(output, to_be_a: return_type)
+				end
+
+				output
 			end
 
-			output = original_method.bind(self).call(*a, **k, &b)
-
-			unless return_type === output
-				raise Literal::TypeError.expected(output, to_be_a: return_type)
-			end
-
-			output
+			method_name
 		end
-
-		method_name
+	else
+		def sig(method_name, **signature)
+			method_name
+		end
 	end
 end

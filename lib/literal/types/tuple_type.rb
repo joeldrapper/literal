@@ -9,6 +9,6 @@ class Literal::Types::TupleType < Literal::Type
 	def inspect = "_Tuple(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
-		Enumerable === value && value.size == @types.size && @types.each_with_index.all? { |t, i| t === value[i] }
+		Array === value && value.size == @types.size && @types.each_with_index.all? { |t, i| t === value[i] }
 	end
 end
