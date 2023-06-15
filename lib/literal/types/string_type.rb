@@ -9,6 +9,6 @@ class Literal::Types::StringType < Literal::Type
 	def inspect = "_String(#{@constraint.inspect})"
 
 	def ===(value)
-		String === value && @constraint === value.length
+		String === value && @constraint === value
 	end
 end
