@@ -68,6 +68,8 @@ class Literal::LRU
 	end
 
 	def clear
-		@hash.clear
+		@mutex.synchronize do
+			@hash.clear
+		end
 	end
 end
