@@ -116,6 +116,11 @@ module Literal::Types
 		Literal::Types::StringType.new(constraint)
 	end
 
+	# Matches if the value is a `Symbol` and matches the given constraint.
+	def _Symbol(constraint)
+		Literal::Types::SymbolType.new(constraint)
+	end
+
 	# Matches if the given type is *not* matched.
 	def _Not(type)
 		Literal::Types::NotType.new(type)
