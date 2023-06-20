@@ -5,11 +5,11 @@ module Literal::Attributes
 
 	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
-			raise ArgumentError, "The `default` must be a frozen value or a Proc."
+			raise Literal::ArgumentError, "The `default` must be a frozen value or a Proc."
 		end
 
 		if :class == name && reader
-			raise ArgumentError, "The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on."
+			raise Literal::ArgumentError, "The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on."
 		end
 
 		attribute = Literal::Attribute.new(name:, type:, special:, reader:, writer:, positional:, default:, coercion:)

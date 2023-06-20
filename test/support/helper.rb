@@ -10,6 +10,17 @@ SimpleCov.start do
 	add_group "Types", "lib/literal/types"
 end
 
+module ToChange
+	def to_change(from:, to:)
+		original = block.call
+		yield
+		changed = block.call
+
+		assert(from === original) { "Expected `#{original.inspect}` to == `#{from.inspect}`." }
+		assert(to === changed) { "Expected `#{changed.inspect}` to == `#{to.inspect}`." }
+	end
+end
+
 require "literal"
 
 Zeitwerk::Loader.eager_load_all
