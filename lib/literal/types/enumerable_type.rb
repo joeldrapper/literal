@@ -14,7 +14,7 @@ class Literal::Types::EnumerableType < Literal::Type
 		end
 	else
 		def ===(value)
-			Enumerable === value && @type === value.first
+			Enumerable === value && (value.empty? || @type === value.first)
 		end
 	end
 end

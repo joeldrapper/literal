@@ -15,7 +15,7 @@ class Literal::Types::HashType < Literal::Type
 		end
 	else
 		def ===(value)
-			Hash === value && @key_type === value.each_key.first && @value_type === value.each_value.first
+			Hash === value && (value.empty? || (@key_type === value.each_key.first && @value_type === value.each_value.first))
 		end
 	end
 end

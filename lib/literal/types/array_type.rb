@@ -14,7 +14,7 @@ class Literal::Types::ArrayType < Literal::Type
 		end
 	else
 		def ===(value)
-			Array === value && @type === value[0]
+			Array === value && (value.empty? || @type === value[0])
 		end
 	end
 end

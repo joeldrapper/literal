@@ -14,7 +14,7 @@ class Literal::Types::SetType < Literal::Type
 		end
 	else
 		def ===(value)
-			Set === value && @type === value.first
+			Set === value && (value.empty? || @type === value.first)
 		end
 	end
 end
