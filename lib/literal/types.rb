@@ -161,4 +161,8 @@ module Literal::Types
 	def _Void
 		Literal::Types::VoidType
 	end
+
+	def _Map(**shape)
+		Literal::Types::MapType
+	end
 end
