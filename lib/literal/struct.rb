@@ -24,4 +24,8 @@ class Literal::Struct
 			literal_attributes: @literal_attributes
 		}
 	end
+
+	def to_h
+		@attributes.dup
+	end
 end

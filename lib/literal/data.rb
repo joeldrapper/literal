@@ -51,4 +51,8 @@ class Literal::Data
 		@attributes.each_value(&:freeze)
 		super
 	end
+
+	def to_h
+		@attributes.dup
+	end
 end
