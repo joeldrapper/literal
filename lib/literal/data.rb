@@ -11,14 +11,18 @@ class Literal::Data
 
 	def self.from_pack(payload)
 		allocate.tap do |object|
-			object.instance_variable_set(:@attributes, payload[:attributes])
-			object.freeze
+			object.instance_eval do
+				@attributes = payload[:attributes]
+				@literal_attributes = payload[:literal_attributes]
+				freeze
+			end
 		end
 	end
 
 	def as_pack
 		{
-			attributes: @attributes
+			attributes: @attributes,
+			literal_attributes: @literal_attributes
 		}
 	end
 

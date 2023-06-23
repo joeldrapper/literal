@@ -9,15 +9,19 @@ class Literal::Struct
 
 	def self.from_pack(payload)
 		allocate.tap do |object|
-			object.instance_variable_set(:@attributes, payload[:attributes])
-			object.freeze if payload[:frozen]
+			object.instance_eval do
+				@attributes = payload[:attributes]
+				@literal_attributes = payload[:literal_attributes]
+				freeze if payload[:frozen?]
+			end
 		end
 	end
 
 	def as_pack
 		{
-			frozen: frozen?,
-			attributes: @attributes
+			frozen?: frozen?,
+			attributes: @attributes,
+			literal_attributes: @literal_attributes
 		}
 	end
 end
