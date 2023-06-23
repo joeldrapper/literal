@@ -9,6 +9,19 @@ class Literal::Data
 
 	def self.literal_initializer_body = "#{super}; freeze"
 
+	def self.from_pack(payload)
+		allocate.tap do |object|
+			object.instance_variable_set(:@attributes, payload[:attributes])
+			object.freeze
+		end
+	end
+
+	def as_pack
+		{
+			attributes: @attributes
+		}
+	end
+
 	def with(**new_attributes)
 		new_attributes.each do |name, value|
 			if Literal::TYPE_CHECKS
