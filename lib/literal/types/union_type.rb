@@ -2,6 +2,8 @@
 
 # @api private
 class Literal::Types::UnionType < Literal::Type
+	include Enumerable
+
 	def initialize(*types)
 		@types = types
 	end
@@ -10,5 +12,9 @@ class Literal::Types::UnionType < Literal::Type
 
 	def ===(value)
 		@types.any? { |type| type === value }
+	end
+
+	def each(&)
+		@types.each(&)
 	end
 end
