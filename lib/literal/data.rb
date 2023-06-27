@@ -1,29 +1,20 @@
 # frozen_string_literal: true
 
-class Literal::Data
-	extend Literal::StructAttributes
-
-	def self.attribute(name, type, special = nil, reader: :public, positional: false, default: nil)
-		super(name, type, special, reader:, writer: false, positional:, default:)
-	end
-
-	def self.literal_initializer_body = "#{super}; freeze"
-
-	def self.from_pack(payload)
-		allocate.tap do |object|
-			object.instance_eval do
-				@attributes = payload[:attributes]
-				@literal_attributes = payload[:literal_attributes]
-				freeze
-			end
+class Literal::Data < Literal::StructLike
+	class << self
+		def attribute(name, type, special = nil, reader: :public, positional: false, default: nil)
+			super(name, type, special, reader:, writer: false, positional:, default:)
 		end
-	end
 
-	def as_pack
-		{
-			attributes: @attributes,
-			literal_attributes: @literal_attributes
-		}
+		private
+
+		def literal_initializer_body = <<~RUBY
+			@attributes = {
+				#{literal_attributes.each_value.map(&:data_mapping).join(', ')}
+			}
+
+			freeze
+		RUBY
 	end
 
 	def with(**new_attributes)
@@ -36,6 +27,10 @@ class Literal::Data
 				unless type === value
 					raise Literal::TypeError.expected(value, to_be_a: attribute.type)
 				end
+
+				unless value.frozen?
+					new_attributes[name] = value.dup.tap(&:freeze)
+				end
 			end
 
 			new_attributes[name] = value.frozen? ? value : value.dup
@@ -47,12 +42,16 @@ class Literal::Data
 		copy
 	end
 
-	def freeze
-		@attributes.each_value(&:freeze)
-		super
+	def marshal_load(data)
+		@attributes = data[:attributes]
+		@literal_attributes = self.class.literal_attributes
+		freeze
 	end
 
-	def to_h
-		@attributes.dup
+	def marshal_dump
+		{
+			v: 1,
+			attributes: @attributes
+		}
 	end
 end

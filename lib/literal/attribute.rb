@@ -70,6 +70,7 @@ class Literal::Attribute
 
 	def ivar_assignment = "@#{@name} = #{escaped_name}"
 	def mapping = "#{@name}: #{escaped_name}"
+	def data_mapping = "#{@name}: #{escaped_name}.frozen? ? #{escaped_name} : #{escaped_name}.dup.tap(&:freeze)"
 
 	def ivar_writer = <<~RUBY
 		def #{@name}=(value)

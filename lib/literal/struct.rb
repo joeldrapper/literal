@@ -1,31 +1,33 @@
 # frozen_string_literal: true
 
-class Literal::Struct
-	extend Literal::StructAttributes
-
-	def self.attribute(name, type, special = nil, reader: :public, writer: :public, positional: false, default: nil)
-		super(name, type, special, reader:, writer:, positional:, default:)
-	end
-
-	def self.from_pack(payload)
-		allocate.tap do |object|
-			object.instance_eval do
-				@attributes = payload[:attributes]
-				@literal_attributes = payload[:literal_attributes]
-				freeze if payload[:frozen?]
-			end
+class Literal::Struct < Literal::StructLike
+	class << self
+		def attribute(name, type, special = nil, reader: :public, writer: :public, positional: false, default: nil)
+			super(name, type, special, reader:, writer:, positional:, default:)
 		end
+
+		private
+
+		def literal_initializer_body = <<~RUBY
+			@attributes = {
+				#{literal_attributes.each_value.map(&:mapping).join(', ')}
+			}
+		RUBY
+
+		def literal_writer(attribute) = attribute.struct_writer
 	end
 
-	def as_pack
+	def marshal_load(data)
+		@attributes = data[:attributes]
+		@literal_attributes = self.class.literal_attributes
+		freeze if data[:frozen?]
+	end
+
+	def marshal_dump
 		{
+			v: 1,
 			frozen?: frozen?,
-			attributes: @attributes,
-			literal_attributes: @literal_attributes
+			attributes: @attributes
 		}
-	end
-
-	def to_h
-		@attributes.dup
 	end
 end

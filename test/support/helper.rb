@@ -24,3 +24,7 @@ end
 require "literal"
 
 Zeitwerk::Loader.eager_load_all
+
+class ExampleStruct < Literal::Struct
+	attribute :name, String
+end
