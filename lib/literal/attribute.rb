@@ -83,7 +83,10 @@ class Literal::Attribute
 	RUBY
 
 	def ivar_reader = <<~RUBY
-		attr_reader :#{@name}
+		def #{@name}
+			raise NoMethodError unless defined? @#{@name}
+			@#{@name}
+		end
 
 		#{visibility(@reader)} :#{@name}
 	RUBY
