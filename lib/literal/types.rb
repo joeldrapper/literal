@@ -5,14 +5,14 @@ module Literal::Types
 
 	# Matches if *any* given type is matched.
 	def _Union(*types)
-		raise Literal::ArgumentError, "_Union type must have at least two types." if types.size < 2
+		raise Literal::ArgumentError, "_Union type must have at least one type." if types.size < 1
 
 		Literal::Types::UnionType.new(*types)
 	end
 
 	# Matches if *all* given types are matched.
 	def _Intersection(*types)
-		raise Literal::ArgumentError, "_Intersection type must have at least two types." if types.size < 2
+		raise Literal::ArgumentError, "_Intersection type must have at least one type." if types.size < 1
 
 		Literal::Types::IntersectionType.new(*types)
 	end
