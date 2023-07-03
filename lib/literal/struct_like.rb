@@ -12,6 +12,11 @@ class Literal::StructLike
 	end
 
 	def ==(other)
-		@attributes == other.attributes
+		case other
+		when Literal::StructLike
+			@attributes == other.attributes
+		else
+			false
+		end
 	end
 end
