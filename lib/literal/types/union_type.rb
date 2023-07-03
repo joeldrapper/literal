@@ -17,4 +17,12 @@ class Literal::Types::UnionType < Literal::Type
 	def each(&)
 		@types.each(&)
 	end
+
+	def [](key)
+		index.fetch(key)
+	end
+
+	def index
+		@index ||= @types.index_by(&:itself)
+	end
 end
