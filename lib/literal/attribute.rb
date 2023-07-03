@@ -20,10 +20,10 @@ class Literal::Attribute
 		nil != @default
 	end
 
-	def default_value(context)
+	def default_value
 		case @default
 		when Proc
-			context.instance_exec(&@default)
+			@default.call
 		else
 			@default
 		end
@@ -63,7 +63,7 @@ class Literal::Attribute
 
 		<<~RUBY
 			if Literal::Null == #{escaped_name}
-			#{escaped_name} = @literal_attributes[:#{@name}].default_value(self)
+			#{escaped_name} = @literal_attributes[:#{@name}].default_value
 			end
 		RUBY
 	end
