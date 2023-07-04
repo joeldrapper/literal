@@ -2,7 +2,8 @@
 
 # @api private
 class Literal::Types::ShapeType < Literal::Type
-	def initialize(**shape)
+	def initialize(*constraints, **shape)
+		@constraints = constraints
 		@shape = shape
 	end
 
@@ -11,6 +12,6 @@ class Literal::Types::ShapeType < Literal::Type
 	end
 
 	def ===(other)
-		Hash === other && (@shape.size == other.size) && @shape.all? { |k, t| t === other[k] }
+		@constraints.all? { |c| c === other } && @shape.all? { |k, t| t === other[k] } && other.keys.all? { |k| @shape.key?(k) }
 	end
 end

@@ -137,8 +137,8 @@ module Literal::Types
 	end
 
 	# Ensures a value matches the given shape of a Hash
-	def _Shape(**shape)
-		Literal::Types::ShapeType.new(**shape)
+	def _Shape(*constraints, **shape)
+		Literal::Types::ShapeType.new(*constraints, **shape)
 	end
 
 	# Ensures the value is valid JSON data (i.e. it came from JSON.parse).
