@@ -77,6 +77,8 @@ module Literal::Attributes
 
 			# Initializer Body
 			#{literal_initializer_body}
+
+			after_initialization if respond_to?(:after_initialization)
 		end
 	RUBY
 
