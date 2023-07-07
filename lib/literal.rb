@@ -45,4 +45,9 @@ module Literal
 	def self.LRU(key_type, value_type)
 		Literal::LRUType.new(key_type, value_type)
 	end
+
+	# @return [Literal::Variant]
+	def self.Variant(*types)
+		Literal::Variant.new(yield, *types)
+	end
 end

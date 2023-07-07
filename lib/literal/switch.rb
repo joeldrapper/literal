@@ -24,13 +24,15 @@ class Literal::Switch
 	end
 
 	def call(value, ...)
-		self[value].call(...)
+		self[value]&.call(...)
 	end
 
 	def [](value)
 		@handled_cases.each do |condition, block|
 			return block if condition === value
 		end
+
+		nil
 	end
 
 	private
