@@ -24,7 +24,7 @@ class Literal::Switch
 	end
 
 	def call(value, ...)
-		self[value]&.call(...)
+		self[value]&.call(value, ...)
 	end
 
 	def [](value)

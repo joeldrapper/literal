@@ -34,6 +34,6 @@ class Literal::Result < Literal::Monad
 
 	# @yieldparam switch [Literal::Switch]
 	def handle(&)
-		Literal::Switch.new(Literal::Success, Literal::Failure, &).call(self, @value)
+		Literal::Switch.new(Literal::Success, Literal::Failure, &)[self].call(@value)
 	end
 end

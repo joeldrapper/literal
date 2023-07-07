@@ -15,7 +15,7 @@ class Literal::Variant
 	end
 
 	def handle(&)
-		Literal::Switch.new(*@types, &).call(@value, @value)
+		Literal::Switch.new(*@types, &).call(@value)
 	end
 
 	alias_method :call, :handle

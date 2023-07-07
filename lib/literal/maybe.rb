@@ -18,6 +18,6 @@ class Literal::Maybe < Literal::Monad
 
 	# @return [void]
 	def handle(&)
-		Literal::Switch.new(Literal::Some, Literal::Nothing, &).call(self, @value)
+		Literal::Switch.new(Literal::Some, Literal::Nothing, &)[self].call(@value)
 	end
 end
