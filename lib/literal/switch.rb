@@ -9,8 +9,18 @@ class Literal::Switch
 
 		freeze
 
-		ensure_no_excess_cases
-		ensure_no_missing_cases
+		keys = @handled_cases.keys
+
+		excess_cases = keys - @required_cases
+		missing_cases = @required_cases - keys
+
+		if excess_cases.any?
+			raise ArgumentError, "Excess case(s): #{excess_cases.join(', ')}."
+		end
+
+		if missing_cases.any?
+			raise ArgumentError, "Missing case(s): #{missing_cases.join(', ')}."
+		end
 	end
 
 	def on(*conditions, &block)
@@ -34,21 +44,4 @@ class Literal::Switch
 
 		nil
 	end
-
-	private
-
-	def ensure_no_excess_cases
-		if excess_cases.any?
-			raise ArgumentError, "Excess case(s): #{excess_cases.join(', ')}."
-		end
-	end
-
-	def ensure_no_missing_cases
-		if missing_cases.any?
-			raise ArgumentError, "Missing case(s): #{missing_cases.join(', ')}."
-		end
-	end
-
-	def excess_cases = @handled_cases.keys - @required_cases
-	def missing_cases = @required_cases - @handled_cases.keys
 end
