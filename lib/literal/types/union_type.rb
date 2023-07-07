@@ -25,4 +25,12 @@ class Literal::Types::UnionType < Literal::Type
 	def index
 		@index ||= @types.index_by(&:itself)
 	end
+
+	def variant(value = Literal::Null)
+		if Literal::Null == value
+			Literal::Variant.new(yield, *@types)
+		else
+			Literal::Variant.new(value, *@types)
+		end
+	end
 end
