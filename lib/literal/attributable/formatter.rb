@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class Literal::Attributes::Formatter < Literal::Formatter
+class Literal::Attributable::Formatter < Literal::Formatter
 	# TODO: Replace this with a test.
 	module AbstractNodeMethods
 		extend Literal::Modifiers::Abstract
 
-		Literal::Attributes::Nodes.nodes.each do |node|
+		Literal::Attributable::Nodes.nodes.each do |node|
 			abstract node
 		end
 	end
@@ -67,9 +67,15 @@ class Literal::Attributes::Formatter < Literal::Formatter
 	end
 
 	def HashLiteral(node)
-		text "{ "
-		visit_each(node.mappings) { text ","; newline }
-		text " }"
+		text "{"
+
+		indent do
+			visit_each(node.mappings) { text ","; newline }
+		end
+
+		newline
+
+		text "}"
 	end
 
 	def InitializerCallback(node)
@@ -118,10 +124,8 @@ class Literal::Attributes::Formatter < Literal::Formatter
 	end
 
 	def Section(node)
-		if node.body
-			comment node.name if node.name
-			visit_each(node.body) { newline; newline }
-		end
+		comment node.name if node.name
+		visit_each(node.body) { newline; newline } if node.body
 	end
 
 	def Symbol(node)

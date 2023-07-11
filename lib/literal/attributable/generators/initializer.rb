@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Literal::Attributes::Generators
+module Literal::Attributable::Generators
 	class Initializer < Base
 		def initialize(attributes)
 			@attributes = attributes

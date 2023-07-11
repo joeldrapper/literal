@@ -16,6 +16,14 @@ class Literal::Attribute
 
 	attr_reader :name, :type, :special, :reader, :writer, :positional, :default, :coercion
 
+	def reader?
+		!!@reader
+	end
+
+	def writer?
+		!!@writer
+	end
+
 	def default?
 		nil != @default
 	end

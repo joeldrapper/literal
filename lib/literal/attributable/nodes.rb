@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Literal::Attributes::Nodes
+module Literal::Attributable::Nodes
 	@nodes = Concurrent::Array.new
 	self.class.attr_reader :nodes
 

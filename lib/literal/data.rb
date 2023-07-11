@@ -1,13 +1,29 @@
 # frozen_string_literal: true
 
-class Literal::Data < Literal::StructLike
+class Literal::Data < Literal::Structish
 	class << self
 		def attribute(name, type, special = nil, reader: :public, positional: false, default: nil)
 			super(name, type, special, reader:, writer: false, positional:, default:)
 		end
 
+		private
+
+		def define_literal_methods(attribute)
+			literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+				# frozen_string_literal: true
+
+				#{generate_literal_initializer}
+
+				#{generate_literal_reader(attribute) if attribute.reader?}
+			RUBY
+		end
+
 		def generate_literal_initializer
 			Generators::DataInitializer.new(literal_attributes).call
+		end
+
+		def generate_literal_reader(attribute)
+			Generators::StructReader.new(attribute).call
 		end
 	end
 
