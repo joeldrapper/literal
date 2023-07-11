@@ -48,6 +48,10 @@ module Literal
 
 	# @return [Literal::Variant]
 	def self.Variant(*types)
-		Literal::Variant.new(yield, *types)
+		if block_given?
+			Literal::Variant.new(yield, *types)
+		else
+			Literal::VariantType.new(*types)
+		end
 	end
 end

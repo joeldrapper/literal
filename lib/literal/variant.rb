@@ -10,17 +10,35 @@ class Literal::Variant
 		@types = types
 	end
 
+	def self.rescue(...)
+		Literal::VariantType.new.rescue(...)
+	end
+
+	attr_reader :value
+
 	def union
 		Literal::Types::UnionType.new(*@types)
 	end
 
-	def handle(&)
-		Literal::Switch.new(*@types, &).call(@value)
+	def handle(&block)
+		if block
+			Literal::Switch.new(*@types, &block).call(@value)
+		else
+			self
+		end
 	end
 
 	alias_method :call, :handle
 
 	def to_proc
 		method(:call).to_proc
+	end
+
+	def maybe(type)
+		if type === @value
+			Literal::Some.new(@value)
+		else
+			Literal::Nothing
+		end
 	end
 end
