@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Struct < Literal::StructLike
+class Literal::Struct < Literal::Structish
 	class << self
 		def attribute(name, type, special = nil, reader: :public, writer: :public, positional: false, default: nil)
 			super(name, type, special, reader:, writer:, positional:, default:)
@@ -8,13 +8,17 @@ class Literal::Struct < Literal::StructLike
 
 		private
 
-		def literal_initializer_body = <<~RUBY
-			@attributes = {
-				#{literal_attributes.each_value.map(&:mapping).join(', ')}
-			}
-		RUBY
+		def generate_literal_initializer
+			Generators::StructInitializer.new(literal_attributes).call
+		end
 
-		def literal_writer(attribute) = attribute.struct_writer
+		def generate_literal_writer(attribute)
+			Generators::StructWriter.new(attribute).call
+		end
+
+		def generate_literal_reader(attribute)
+			Generators::StructReader.new(attribute).call
+		end
 	end
 
 	def marshal_load(data)

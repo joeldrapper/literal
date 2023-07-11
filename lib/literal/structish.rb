@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-class Literal::StructLike
-	extend Literal::Attributes
+class Literal::Structish
+	extend Literal::Attributable
 
 	protected attr_reader :attributes
-
-	def self.literal_reader(attribute) = attribute.struct_reader
 
 	def to_h
 		@attributes.dup
@@ -13,7 +11,7 @@ class Literal::StructLike
 
 	def ==(other)
 		case other
-		when Literal::StructLike
+		when Literal::Structish
 			@attributes == other.attributes
 		else
 			false

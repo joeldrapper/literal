@@ -14,123 +14,40 @@ class Literal::Attribute
 		@coercion = coercion
 	end
 
-	attr_reader :type, :coercion
+	attr_reader :name, :type, :special, :reader, :writer, :positional, :default, :coercion
+
+	def reader?
+		!!@reader
+	end
+
+	def writer?
+		!!@writer
+	end
 
 	def default?
 		nil != @default
 	end
 
-	def default_value
-		case @default
-		when Proc
-			@default.call
-		else
-			@default
-		end
+	def positional?
+		!!@positional
 	end
 
-	def param
-		case @special
-		when :*
-			"*#{@name}"
-		when :**
-			"**#{@name}"
-		when :&
-			"&#{@name}"
-		else
-			if @positional
-				if default?
-					"#{@name} = Literal::Null"
-				else
-					@type === nil ? "#{@name} = nil" : @name
-				end
-			elsif default?
-				"#{@name}: Literal::Null"
-			else
-				@type === nil ? "#{@name}: nil" : "#{@name}:"
-			end
-		end
+	def coercion?
+		!!@coercion
 	end
 
-	def type_check(value = escaped_name) = <<~RUBY
-		unless @literal_attributes[:#{@name}].type === #{value}
-		raise Literal::TypeError.expected(#{value}, to_be_a: @literal_attributes[:#{@name}].type)
-		end
-	RUBY
-
-	def default_assignment
-		return if nil == @default
-
-		<<~RUBY
-			if Literal::Null == #{escaped_name}
-			#{escaped_name} = @literal_attributes[:#{@name}].default_value
-			end
-		RUBY
+	def escape?
+		!!RUBY_KEYWORDS[@name]
 	end
 
-	def ivar_assignment = "@#{@name} = #{escaped_name}"
-	def mapping = "#{@name}: #{escaped_name}"
-	def data_mapping = "#{@name}: #{escaped_name}.frozen? ? #{escaped_name} : #{escaped_name}.dup.tap(&:freeze)"
-
-	def ivar_writer = <<~RUBY
-		def #{@name}=(value)
-			#{coerce(:value)}
-			#{type_check(:value) if Literal::TYPE_CHECKS}
-			@#{@name} = value
-		end
-
-		#{visibility(@writer)} :#{@name}=
-	RUBY
-
-	def ivar_reader = <<~RUBY
-		def #{@name}
-			raise NoMethodError unless defined? @#{@name}
-			@#{@name}
-		end
-
-		#{visibility(@reader)} :#{@name}
-	RUBY
-
-	def struct_writer = <<~RUBY
-		def #{@name}=(value)
-			#{coerce(:value)}
-			#{type_check(:value) if Literal::TYPE_CHECKS}
-			@attributes[:#{@name}] = value
-		end
-
-		#{visibility(@writer)} :#{@name}=
-	RUBY
-
-	def struct_reader = <<~RUBY
-		def #{@name}
-			@attributes[:#{@name}]
-		end
-
-		#{visibility(@reader)} :#{@name}
-	RUBY
-
-	def escape_keywords
-		if (escaped = RUBY_KEYWORDS[@name])
-			"#{escaped} = binding.local_variable_get(:#{@name})"
-		end
-	end
-
-	def coerce(name = escaped_name)
-		return unless @coercion
-
-		"#{name} = @literal_attributes[:#{@name}].coercion.call(#{name})"
-	end
-
-	def escaped_name
+	def escaped
 		RUBY_KEYWORDS[@name] || @name
 	end
 
-	def visibility(value)
-		case value
-		when :public, :private, :protected
-			value
-		else
-			:private
+	def default_value
+		case @default
+			when Proc then @default.call
+			else @default
 		end
 	end
 end
