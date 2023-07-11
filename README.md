@@ -124,7 +124,7 @@ You can create a `Literal::Maybe` with `Literal::Maybe(Integer).new(1)`. This wi
 When called on a `Literal::Some`, yields the value to the block and returns its result wrapped in a `Literal::Some`. When called on `Literal::Nothing`, returns `self`.
 
 > **Note**
-> 
+>
 > It's possible to end up with a `Literal::Some(nil)` when using `map`. To avoid this, use `maybe` instead.
 
 #### `maybe`

@@ -6,15 +6,9 @@ class Literal::Data < Literal::StructLike
 			super(name, type, special, reader:, writer: false, positional:, default:)
 		end
 
-		private
-
-		def literal_initializer_body = <<~RUBY
-			@attributes = {
-				#{literal_attributes.each_value.map(&:data_mapping).join(', ')}
-			}
-
-			freeze
-		RUBY
+		def generate_literal_initializer
+			Generators::DataInitializer.new(literal_attributes).call
+		end
 	end
 
 	def with(**new_attributes)

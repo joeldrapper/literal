@@ -5,16 +5,6 @@ class Literal::Struct < Literal::StructLike
 		def attribute(name, type, special = nil, reader: :public, writer: :public, positional: false, default: nil)
 			super(name, type, special, reader:, writer:, positional:, default:)
 		end
-
-		private
-
-		def literal_initializer_body = <<~RUBY
-			@attributes = {
-				#{literal_attributes.each_value.map(&:mapping).join(', ')}
-			}
-		RUBY
-
-		def literal_writer(attribute) = attribute.struct_writer
 	end
 
 	def marshal_load(data)
