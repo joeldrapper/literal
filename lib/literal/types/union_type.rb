@@ -26,6 +26,10 @@ class Literal::Types::UnionType < Literal::Type
 		@index ||= @types.index_by(&:itself)
 	end
 
+	def handle(value, &)
+		Literal::Variant.new(value, *@types).handle(&)
+	end
+
 	def variant(value = Literal::Null)
 		if Literal::Null == value
 			Literal::Variant.new(yield, *@types)
