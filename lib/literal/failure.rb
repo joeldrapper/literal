@@ -29,4 +29,12 @@ class Literal::Failure < Literal::Result
 	def then = self
 	def maybe = self
 	def filter = self
+
+	def deconstruct
+		[@value]
+	end
+
+	def deconstruct_keys(_)
+		{ failure: @value }
+	end
 end

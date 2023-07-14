@@ -33,4 +33,12 @@ class Literal::Types::UnionType < Literal::Type
 			Literal::Variant.new(value, *@types)
 		end
 	end
+
+	def deconstruct
+		@types
+	end
+
+	def deconstruct_keys(_)
+		{ types: @types }
+	end
 end

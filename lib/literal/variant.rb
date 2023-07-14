@@ -16,6 +16,14 @@ class Literal::Variant
 
 	attr_reader :value
 
+	def deconstruct
+		[value]
+	end
+
+	def deconstruct_keys(_)
+		{ value: @value }
+	end
+
 	def union
 		Literal::Types::UnionType.new(*@types)
 	end

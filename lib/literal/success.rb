@@ -70,4 +70,12 @@ class Literal::Success < Literal::Result
 			)
 		end
 	end
+
+	def deconstruct
+		[@value]
+	end
+
+	def deconstruct_keys(_)
+		{ success: @value }
+	end
 end

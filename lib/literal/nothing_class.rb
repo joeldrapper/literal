@@ -29,4 +29,12 @@ class Literal::NothingClass < Literal::Maybe
 	def ===(value)
 		self == value
 	end
+
+	def deconstruct
+		[]
+	end
+
+	def deconstruct_keys(_)
+		{}
+	end
 end

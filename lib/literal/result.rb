@@ -27,6 +27,12 @@ class Literal::Result < Literal::Monad
 	# @!method raise!
 	abstract :raise!
 
+	# @!method deconstruct
+	abstract :deconstruct
+
+	# @!method deconstruct_keys(_)
+	abstract :deconstruct_keys
+
 	def initialize(value)
 		@value = value
 		freeze

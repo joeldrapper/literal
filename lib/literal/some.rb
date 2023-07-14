@@ -50,4 +50,12 @@ class Literal::Some < Literal::Maybe
 	def filter
 		yield @value ? self : Literal::Nothing
 	end
+
+	def deconstruct
+		[@value]
+	end
+
+	def deconstruct_keys(_)
+		{ value: @value }
+	end
 end

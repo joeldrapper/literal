@@ -16,6 +16,12 @@ class Literal::Maybe < Literal::Monad
 	# 	@return [Boolean]
 	abstract :something?
 
+	# @!method deconstruct
+	abstract :deconstruct
+
+	# @!method deconstruct_keys(_)
+	abstract :deconstruct_keys
+
 	# @return [void]
 	def handle(&)
 		Literal::Switch.new(Literal::Some, Literal::Nothing, &)[self].call(@value)
