@@ -7,11 +7,8 @@ module Literal::Attributable::Generators
 		def body
 			[
 				assign_schema,
-				escape_keywords,
-				coerce_attributes,
-				assign_defaults,
-				check_types,
-				assign_values,
+				init_attributes_ivar,
+				handle_attributes,
 				initializer_callback,
 				freeze_object
 			]
@@ -21,9 +18,12 @@ module Literal::Attributable::Generators
 			Ref.new("freeze")
 		end
 
-		def mapping(attribute)
-			Mapping.new(
-				left: Symbol.new(attribute.name),
+		def assign_value(attribute)
+			Assignment.new(
+				left: Access.new(
+					collection: Ref.new("@attributes"),
+					key: Symbol.new(attribute.name)
+				),
 				right: Ref.new("#{attribute.escaped}.frozen? ? #{attribute.escaped} : #{attribute.escaped}.freeze")
 			)
 		end

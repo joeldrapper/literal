@@ -54,11 +54,7 @@ module Literal::Attributable::Generators
 		def body
 			[
 				assign_schema,
-				escape_keywords,
-				coerce_attributes,
-				assign_defaults,
-				check_types,
-				assign_values,
+				handle_attributes,
 				initializer_callback
 			]
 		end
@@ -67,42 +63,40 @@ module Literal::Attributable::Generators
 			AssignSchema.new
 		end
 
-		def escape_keywords
+		def handle_attributes
 			Section.new(
-				name: "Escape keywords",
-				body: @attributes.each_value.select(&:escape?).map do |attribute|
-					KeywordEscape.new(attribute)
-				end.compact
-			)
-		end
-
-		def coerce_attributes
-			Section.new(
-				name: "Coerce attributes",
-				body: @attributes.each_value.select(&:coercion).map do |attribute|
-					AttributeCoercion.new(attribute)
-				end
-			)
-		end
-
-		def assign_defaults
-			Section.new(
-				name: "Assign defaults",
-				body: @attributes.each_value.select(&:default?).map do |attribute|
-					DefaultAssignment.new(attribute)
-				end
-			)
-		end
-
-		def check_types
-			Section.new(
-				name: "Check types",
+				name: "Handle attributes",
 				body: @attributes.each_value.map do |attribute|
-					TypeCheck.new(
-						attribute_name: attribute.name,
-						variable_name: attribute.escaped
+					Section.new(
+						name: attribute.name,
+						body: [
+							escape_keyword(attribute),
+							coerce_attribute(attribute),
+							assign_default(attribute),
+							check_type(attribute),
+							assign_value(attribute)
+						].compact
 					)
 				end
+			)
+		end
+
+		def escape_keyword(attribute)
+			KeywordEscape.new(attribute) if attribute.escape?
+		end
+
+		def coerce_attribute(attribute)
+			AttributeCoercion.new(attribute) if attribute.coercion?
+		end
+
+		def assign_default(attribute)
+			DefaultAssignment.new(attribute) if attribute.default?
+		end
+
+		def check_type(attribute)
+			TypeCheck.new(
+				attribute_name: attribute.name,
+				variable_name: attribute.escaped
 			)
 		end
 
