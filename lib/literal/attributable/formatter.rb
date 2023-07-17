@@ -30,7 +30,7 @@ class Literal::Attributable::Formatter < Literal::Formatter
 	end
 
 	def AttributeCoercion(node)
-		text "#{node.attribute.name} = @literal_attributes[:#{node.attribute.name}].coercion.call(#{node.attribute.name})"
+		text "#{node.attribute.name} = @literal_attributes[:#{node.attribute.name}].coerce(#{node.attribute.name}, context: self)"
 	end
 
 	def BlockParam(node)

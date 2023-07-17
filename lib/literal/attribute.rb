@@ -36,6 +36,10 @@ class Literal::Attribute
 		!!@coercion
 	end
 
+	def coerce(value, context:)
+		context.instance_exec(value, &@coercion)
+	end
+
 	def escape?
 		!!RUBY_KEYWORDS[@name]
 	end
