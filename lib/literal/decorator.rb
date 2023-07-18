@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Delegator < BasicObject
+class Literal::Decorator < BasicObject
 	extend ::Literal::Attributes
 
 	def method_missing(method, ...)

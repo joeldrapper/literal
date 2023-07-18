@@ -55,8 +55,8 @@ module Literal
 		end
 	end
 
-	def self.Delegator(object_type)
-		Class.new(Literal::Delegator) do
+	def self.Decorator(object_type)
+		Class.new(Literal::Decorator) do
 			attribute :__object__, object_type, positional: true, reader: :public, writer: :private
 		end
 	end
