@@ -165,4 +165,8 @@ module Literal::Types
 	def _Map(**shape)
 		Literal::Types::MapType
 	end
+
+	def _Never
+		Literal::Types::NeverType
+	end
 end
