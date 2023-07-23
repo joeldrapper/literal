@@ -22,16 +22,19 @@ class Literal::Struct < Literal::Structish
 	end
 
 	def marshal_load(data)
-		@attributes = data[:attributes]
+		case data
+		when Hash
+			@attributes = data[:attributes]
+			freeze if data[:frozen?]
+		when Array
+			@attributes = data[1]
+			freeze if data[2]
+		end
+
 		@literal_attributes = self.class.literal_attributes
-		freeze if data[:frozen?]
 	end
 
 	def marshal_dump
-		{
-			v: 1,
-			frozen?: frozen?,
-			attributes: @attributes
-		}
+		[2, @attributes, frozen?]
 	end
 end

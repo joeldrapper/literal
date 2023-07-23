@@ -53,15 +53,18 @@ class Literal::Data < Literal::Structish
 	end
 
 	def marshal_load(data)
-		@attributes = data[:attributes]
+		case data
+		when Hash
+			@attributes = data[:attributes]
+		when Array
+			@attributes = data[1]
+		end
+
 		@literal_attributes = self.class.literal_attributes
 		freeze
 	end
 
 	def marshal_dump
-		{
-			v: 1,
-			attributes: @attributes
-		}
+		[2, @attributes]
 	end
 end
