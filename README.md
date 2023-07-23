@@ -170,7 +170,7 @@ If we call `left` on a `Literal::Right`, we'll get `Literal::Nothing`. However, 
 
 [Coming soon]
 
-## `Literal::Switch`
+## `Literal::Case`
 
 [Coming soon]
 

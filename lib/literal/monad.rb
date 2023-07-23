@@ -20,7 +20,7 @@ class Literal::Monad
 
 	# @!method handle
 	# 	@return [void]
-	# 	@yieldparam switch [Literal::Switch]
+	# 	@yieldparam switch [Literal::Case]
 	abstract :handle
 
 	# @!method value_or

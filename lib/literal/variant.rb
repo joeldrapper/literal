@@ -30,7 +30,7 @@ class Literal::Variant
 
 	def handle(&block)
 		if block
-			Literal::Switch.new(*@types, &block).call(@value)
+			Literal::Case.new(*@types, &block).call(@value)
 		else
 			self
 		end

@@ -38,8 +38,8 @@ class Literal::Result < Literal::Monad
 		freeze
 	end
 
-	# @yieldparam switch [Literal::Switch]
+	# @yieldparam switch [Literal::Case]
 	def handle(&)
-		Literal::Switch.new(Literal::Success, Literal::Failure, &)[self].call(@value)
+		Literal::Case.new(Literal::Success, Literal::Failure, &)[self].call(@value)
 	end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Switch
+class Literal::Case
 	def initialize(*required_cases, &)
 		@required_cases = required_cases
 		@handled_cases = {}
@@ -23,7 +23,7 @@ class Literal::Switch
 		end
 	end
 
-	def on(*conditions, &block)
+	def when(*conditions, &block)
 		conditions.each do |condition|
 			@handled_cases[condition] = block
 		end
