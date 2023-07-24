@@ -54,7 +54,7 @@ class Literal::Data < Literal::Structish
 
 	def marshal_load(data)
 		case data
-		when Hash
+		when Hash # TODO: Remove this branch.
 			@attributes = data[:attributes]
 		when Array
 			@attributes = data[1]

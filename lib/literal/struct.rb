@@ -23,7 +23,7 @@ class Literal::Struct < Literal::Structish
 
 	def marshal_load(data)
 		case data
-		when Hash
+		when Hash # TODO: Remove this branch.
 			@attributes = data[:attributes]
 			freeze if data[:frozen?]
 		when Array

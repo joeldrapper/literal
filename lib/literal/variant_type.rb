@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::VariantType < Literal::Type
+class Literal::VariantType < Literal::Generic
 	def initialize(*types)
 		@types = types
 	end
@@ -9,10 +9,18 @@ class Literal::VariantType < Literal::Type
 
 	alias_method :===, :==
 
-	def new(value)
-		Literal::Variant.new(value, *@types)
+	# Create a new variant
+	def new(value = Literal::Null)
+		if Literal::Null != value
+			Literal::Variant.new(value, *@types)
+		elsif block_given?
+			Literal::Variant.new(yield, *@types)
+		else
+			raise Literal::ArgumentError, "A value or block must be provided."
+		end
 	end
 
+	# Will rescue and return any exception that is a member of the variant union.
 	def try
 		begin
 			value = yield
@@ -23,9 +31,16 @@ class Literal::VariantType < Literal::Type
 		Literal::Variant.new(value, *@types)
 	end
 
+	# Will rescue and return given exceptions, as long as they are members of the variant union.
 	def rescue(*exceptions)
-		unless exceptions.all? { |exception| Class === exception && exception < Exception }
-			raise Literal::TypeError
+		exceptions.each do |exception|
+			unless Class === exception && exception < Exception
+				raise Literal::TypeError, "The exception must be a subclass of Exception."
+			end
+
+			unless @types.include?(exception)
+				raise Literal::ArgumentError, "The exception must be a member of the variant union."
+			end
 		end
 
 		begin
@@ -34,7 +49,7 @@ class Literal::VariantType < Literal::Type
 			value = e
 		end
 
-		Literal::Variant.new(value, *@types, *exceptions)
+		Literal::Variant.new(value, *@types)
 	end
 
 	private

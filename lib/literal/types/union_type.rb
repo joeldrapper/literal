@@ -31,10 +31,12 @@ class Literal::Types::UnionType < Literal::Type
 	end
 
 	def variant(value = Literal::Null)
-		if Literal::Null == value
+		if Literal::Null != value
+			Literal::Variant.new(value, *@types)
+		elsif block_given?
 			Literal::Variant.new(yield, *@types)
 		else
-			Literal::Variant.new(value, *@types)
+			Literal::VariantType.new(*@types)
 		end
 	end
 
