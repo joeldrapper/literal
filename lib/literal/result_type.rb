@@ -10,15 +10,11 @@ class Literal::ResultType < Literal::Generic
 
 	def new(value)
 		case value
-		when @type
-			Literal::Success.new(value)
-		when StandardError
-			Literal::Failure.new(value)
+		when Literal::Success(@type), Literal::Failure
+			value
 		else
 			Literal::Failure.new(
-				Literal::TypeError.new(
-					"Expected `#{value.inspect}` to be a `#{@type.inspect}`."
-				)
+				Literal::TypeError.expected(value, to_be_a: self)
 			)
 		end
 	end
@@ -35,16 +31,7 @@ class Literal::ResultType < Literal::Generic
 	end
 
 	def try
-		output = yield
-		if @type === output
-			Literal::Success.new(output)
-		else
-			Literal::Failure.new(
-				Literal::TypeError.new(
-					"Expected `#{output.inspect}` to be a `#{@type.inspect}`."
-				)
-			)
-		end
+		new(yield(self))
 	rescue StandardError => e
 		Literal::Failure.new(e)
 	end

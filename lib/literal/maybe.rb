@@ -22,8 +22,11 @@ class Literal::Maybe < Literal::Monad
 	# @!method deconstruct_keys(_)
 	abstract :deconstruct_keys
 
+	# @!method maybe
+	abstract :maybe
+
 	# @return [void]
-	def handle(&)
-		Literal::Case.new(Literal::Some, Literal::Nothing, &)[self].call(@value)
+	def call(&)
+		Literal::Variant(Literal::Some, Literal::Nothing).new(self).call(&)
 	end
 end

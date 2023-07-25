@@ -20,7 +20,13 @@ class Literal::Some < Literal::Maybe
 	# @return [true]
 	def something? = true
 
-	def value_or = @value
+	def value_or
+		if block_given?
+			@value
+		else
+			raise Literal::ArgumentError "no block given"
+		end
+	end
 
 	def map
 		Literal::Some.new(

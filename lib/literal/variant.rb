@@ -3,7 +3,7 @@
 class Literal::Variant
 	def initialize(value, *types)
 		unless types.any? { |type| type === value }
-			raise Literal::TypeError
+			raise Literal::TypeError.expected(value, to_be_a: Literal::Types::UnionType.new(*types))
 		end
 
 		@value = value
@@ -28,7 +28,7 @@ class Literal::Variant
 		Literal::Types::UnionType.new(*@types)
 	end
 
-	def handle(&block)
+	def call(&block)
 		if block
 			Literal::Case.new(*@types, &block).call(@value)
 		else
@@ -36,7 +36,7 @@ class Literal::Variant
 		end
 	end
 
-	alias_method :call, :handle
+	alias_method :handle, :call
 
 	def to_proc
 		method(:call).to_proc

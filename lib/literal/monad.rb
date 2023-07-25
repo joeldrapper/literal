@@ -12,19 +12,20 @@ class Literal::Monad
 	# @!method then
 	abstract :then
 
-	# @!method maybe
-	abstract :maybe
-
 	# @!method filter
 	abstract :filter
 
 	# @!method handle
 	# 	@return [void]
 	# 	@yieldparam switch [Literal::Case]
-	abstract :handle
+	abstract :call
 
 	# @!method value_or
 	abstract :value_or
+
+	def handle(...)
+		call(...)
+	end
 
 	def bind
 		yield @value

@@ -17,7 +17,14 @@ class Literal::Success < Literal::Result
 	def failure = Literal::Nothing
 
 	def raise! = self
-	def value_or = @value
+
+	def value_or
+		if block_given?
+			@value
+		else
+			raise Literal::ArgumentError, "Expected block."
+		end
+	end
 
 	def map
 		Literal::Success.new(yield @value)
@@ -40,22 +47,6 @@ class Literal::Success < Literal::Result
 				Literal::TypeError.expected(output, to_be_a: Literal::Result)
 			)
 		end
-	end
-
-	# @return [Literal::Result]
-	def maybe
-		case (output = yield @value)
-		when nil
-			Literal::Failure.new(
-				RuntimeError.new(
-					"Nil value returned from block."
-				)
-			)
-		else
-			Literal::Success.new(output)
-		end
-	rescue StandardError => e
-		Literal::Failure.new(e)
 	end
 
 	# @return [Literal::Result]

@@ -21,13 +21,12 @@ class Literal::Failure < Literal::Result
 	end
 
 	def value_or
-		yield
+		yield(@value)
 	end
 
 	def map = self
 	def bind = self
 	def then = self
-	def maybe = self
 	def filter = self
 
 	def deconstruct

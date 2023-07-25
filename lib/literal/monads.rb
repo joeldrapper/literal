@@ -17,12 +17,16 @@ module Literal::Monads
 		Literal::EitherType.new(left_type, right_type)
 	end
 
-	def Result(type)
-		Literal::ResultType.new(type)
+	def Result(type, &)
+		if block_given?
+			Literal::ResultType.new(type).try(&)
+		else
+			Literal::ResultType.new(type)
+		end
 	end
 
-	def Try(type, &)
-		Literal::ResultType.new(type).try(&)
+	def Success(type)
+		Literal::SuccessType.new(type)
 	end
 
 	def Some(type)
