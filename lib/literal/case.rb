@@ -25,7 +25,7 @@ class Literal::Case
 
 	def when(*conditions, &block)
 		conditions.each do |condition|
-			@handled_cases[condition] = block
+			@handled_cases[condition] = block || proc { |it| it }
 		end
 	end
 
@@ -34,7 +34,12 @@ class Literal::Case
 	end
 
 	def call(value, ...)
-		self[value]&.call(value, ...)
+		block = self[value]
+		if block
+			block.call(value, ...)
+		else
+			raise Literal::ArgumentError
+		end
 	end
 
 	def [](value)
