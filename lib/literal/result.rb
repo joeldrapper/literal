@@ -42,6 +42,6 @@ class Literal::Result < Literal::Monad
 
 	# @yieldparam switch [Literal::Case]
 	def call(&)
-		Literal::Variant(Literal::Success, Literal::Failure).new(self).call(&)
+		Literal::Case.new(Literal::Success, Literal::Failure, &)[self].call(@value)
 	end
 end

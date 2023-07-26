@@ -27,6 +27,6 @@ class Literal::Maybe < Literal::Monad
 
 	# @return [void]
 	def call(&)
-		Literal::Variant(Literal::Some, Literal::Nothing).new(self).call(&)
+		Literal::Case.new(Literal::Some, Literal::Nothing, &)[self].call(@value)
 	end
 end

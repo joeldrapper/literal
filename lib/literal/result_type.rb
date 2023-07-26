@@ -10,11 +10,15 @@ class Literal::ResultType < Literal::Generic
 
 	def new(value)
 		case value
-		when Literal::Success(@type), Literal::Failure
-			value
+		when @type
+			Literal::Success.new(value)
+		when Exception
+			Literal::Failure.new(value)
 		else
 			Literal::Failure.new(
-				Literal::TypeError.expected(value, to_be_a: self)
+				Literal::TypeError.expected(value,
+					to_be_a: Literal::Types::UnionType.new(@type, Exception)
+				)
 			)
 		end
 	end
