@@ -20,10 +20,10 @@ class Literal::NothingClass < Literal::Maybe
 
 	def value_or = yield
 
+	def fmap = self
 	def map = self
 	def bind = self
 	def then = self
-	def maybe = self
 	def filter = self
 
 	def ===(value)

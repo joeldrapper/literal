@@ -24,9 +24,10 @@ class Literal::Failure < Literal::Result
 		yield(@value)
 	end
 
-	def map = self
+	def fmap = self
+	def map(type = nil) = self
 	def bind = self
-	def then = self
+	def then(type = nil) = self
 	def filter = self
 
 	def deconstruct

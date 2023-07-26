@@ -26,8 +26,22 @@ class Literal::Success < Literal::Result
 		end
 	end
 
-	def map
+	def fmap
 		Literal::Success.new(yield @value)
+	end
+
+	def map(type = Literal::Null)
+		output = yield @value
+
+		if Literal::Null == type
+			Literal::Success.new(output)
+		elsif type === output
+			Literal::Success.new(output)
+		else
+			Literal::Failure.new(
+				Literal::TypeError.expected(output, to_be_a: type)
+			)
+		end
 	rescue StandardError => e
 		Literal::Failure.new(e)
 	end
@@ -38,13 +52,22 @@ class Literal::Success < Literal::Result
 		Literal::Failure.new(e)
 	end
 
-	def then
+	def then(type = Literal::Null)
 		output = yield @value
-		if Literal::Result === output
+
+		if Literal::Null == type
+			if Literal::Result === output
+				output
+			else
+				Literal::Failure.new(
+					Literal::TypeError.expected(output, to_be_a: Literal::Result)
+				)
+			end
+		elsif Literal::Result(type) === output
 			output
 		else
 			Literal::Failure.new(
-				Literal::TypeError.expected(output, to_be_a: Literal::Result)
+				Literal::TypeError.expected(output, to_be_a: Literal::Result(type))
 			)
 		end
 	end

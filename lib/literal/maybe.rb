@@ -22,9 +22,6 @@ class Literal::Maybe < Literal::Monad
 	# @!method deconstruct_keys(_)
 	abstract :deconstruct_keys
 
-	# @!method maybe
-	abstract :maybe
-
 	# @return [void]
 	def call(&)
 		Literal::Case.new(Literal::Some, Literal::Nothing, &)[self].call(@value)

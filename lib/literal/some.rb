@@ -28,7 +28,7 @@ class Literal::Some < Literal::Maybe
 		end
 	end
 
-	def map
+	def fmap
 		Literal::Some.new(
 			yield @value
 		)
@@ -44,7 +44,7 @@ class Literal::Some < Literal::Maybe
 		end
 	end
 
-	def maybe
+	def map
 		case (output = yield @value)
 		when nil
 			Literal::Nothing
