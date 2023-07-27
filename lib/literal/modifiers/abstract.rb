@@ -14,10 +14,6 @@ module Literal::Modifiers::Abstract
 
 		abstract_methods << instance_method(method_name)
 
-		define_method(method_name) do |*, **|
-			raise NoMethodError, "You called an abstract method that hasn't been implemented by `#{self.class}`."
-		end
-
 		method_name
 	end
 
@@ -45,8 +41,6 @@ if Literal::TRACING
 
 		if it.is_a?(Literal::Modifiers::Abstract) && !it.abstract?
 			it.abstract_methods.each do |abstract_method|
-				next unless it.method_defined?(abstract_method.name)
-
 				method = it.instance_method(abstract_method.name)
 
 				if method == abstract_method
