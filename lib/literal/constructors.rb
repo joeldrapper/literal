@@ -26,4 +26,14 @@ module Literal::Constructors
 			attribute :__object__, object_type, positional: true, reader: :public, writer: :private
 		end
 	end
+
+	def Value(type, &)
+		value_class = Literal::ValueClasses[type]
+
+		unless value_class
+			raise Literal::ArgumentError, "Invalid value type."
+		end
+
+		Class.new(value_class, &)
+	end
 end
