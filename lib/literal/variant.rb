@@ -3,7 +3,7 @@
 class Literal::Variant
 	def initialize(value, *types)
 		unless types.any? { |type| type === value }
-			raise Literal::TypeError.expected(value, to_be_a: Literal::Types::UnionType.new(*types))
+			raise Literal::TypeError.expected(value, to_be_a: Literal::Union.new(*types))
 		end
 
 		@value = value
@@ -25,7 +25,7 @@ class Literal::Variant
 	end
 
 	def union
-		Literal::Types::UnionType.new(*@types)
+		Literal::Union.new(*@types)
 	end
 
 	def call(&block)

@@ -17,7 +17,7 @@ class Literal::ResultType < Literal::Generic
 		else
 			Literal::Failure.new(
 				Literal::TypeError.expected(value,
-					to_be_a: Literal::Types::UnionType.new(@type, Exception)
+					to_be_a: Literal::Union.new(@type, Exception)
 				)
 			)
 		end

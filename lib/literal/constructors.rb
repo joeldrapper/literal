@@ -27,6 +27,11 @@ module Literal::Constructors
 		end
 	end
 
+	# @return [Literal::Union]
+	def Union(*types)
+		Literal::Union.new(*types)
+	end
+
 	def Value(type, &)
 		value_class = Literal::ValueClasses[type]
 
