@@ -169,4 +169,8 @@ module Literal::Types
 	def _Never
 		Literal::Types::NeverType
 	end
+
+	def _Descendant(type)
+		Literal::Types::DescendantType.new(type)
+	end
 end
