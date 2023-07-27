@@ -18,6 +18,8 @@ class Literal::Success < Literal::Result
 
 	def raise! = self
 
+	def value_or_raise! = @value
+
 	def value_or
 		if block_given?
 			@value

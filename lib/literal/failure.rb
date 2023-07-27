@@ -20,6 +20,8 @@ class Literal::Failure < Literal::Result
 		raise @value
 	end
 
+	alias_method :value_or_raise!, :raise!
+
 	def value_or
 		yield(@value)
 	end
