@@ -4,5 +4,5 @@
 class Literal::Generic < Literal::Type
 	abstract!
 
-	abstract :new
+	abstract def new(...) = nil
 end

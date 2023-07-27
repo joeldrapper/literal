@@ -6,6 +6,6 @@ class Literal::Type
 
 	abstract!
 
-	abstract :===
-	abstract :inspect
+	abstract def ===(value) = nil
+	abstract def inspect = nil
 end

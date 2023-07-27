@@ -6,32 +6,35 @@ class Literal::Result < Literal::Monad
 
 	# @!method inspect
 	# 	@return [String]
-	abstract :inspect
+	abstract def inspect = nil
 
 	# @!method success?
 	# 	@return [Boolean]
-	abstract :success?
+	abstract def success? = nil
 
 	# @!method failure?
 	# 	@return [Boolean]
-	abstract :failure?
+	abstract def failure? = nil
 
 	# @!method success
 	# 	@return [Literal::Maybe]
-	abstract :success
+	abstract def success = nil
 
 	# @!method failure
 	# 	@return [Literal::Maybe]
-	abstract :failure
+	abstract def failure = nil
 
 	# @!method raise!
-	abstract :raise!
+	abstract def raise! = nil
 
 	# @!method deconstruct
-	abstract :deconstruct
+	abstract def deconstruct = nil
 
 	# @!method deconstruct_keys(_)
-	abstract :deconstruct_keys
+	abstract def deconstruct_keys(_) = nil
+
+	# @!method value_or_raise!
+	abstract def value_or_raise! = nil
 
 	def initialize(value)
 		@value = value

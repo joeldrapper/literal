@@ -5,9 +5,9 @@ class Literal::Attributable::Formatter < Literal::Formatter
 	module AbstractNodeMethods
 		extend Literal::Modifiers::Abstract
 
-		Literal::Attributable::Nodes.nodes.each do |node|
-			abstract node
-		end
+		# Literal::Attributable::Nodes.nodes.each do |node|
+		# 	abstract node
+		# end
 	end
 
 	include AbstractNodeMethods

@@ -12,11 +12,12 @@ module Literal::Modifiers::Abstract
 	def abstract(method_name)
 		@abstract = true
 
-		define_method(method_name) do
+		abstract_methods << instance_method(method_name)
+
+		define_method(method_name) do |*, **|
 			raise NoMethodError, "You called an abstract method that hasn't been implemented by `#{self.class}`."
 		end
 
-		abstract_methods << instance_method(method_name)
 		method_name
 	end
 
@@ -49,6 +50,26 @@ if Literal::TRACING
 				method = it.instance_method(abstract_method.name)
 
 				if method == abstract_method
+					raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
+				end
+
+				sig = abstract_method.parameters.map(&:first)
+				sig_req = sig.count(:req)
+				sig_keyreq = sig.count(:keyreq)
+
+				imp = method.parameters.map(&:first)
+				imp_req = imp.count(:req)
+				imp_keyreq = imp.count(:keyreq)
+
+				# If the required arguments are the same,
+				# or the implementation has a rest argument (*/**),
+				# or the signature has a rest argument (*/**)
+				# 	and the implementation has at least as many required arguments as the signature.
+
+				positional_match = sig_req == imp_req || imp.include?(:rest) || (sig.include?(:rest) && imp_req >= sig_req)
+				keyword_match = sig_keyreq == imp_keyreq || imp.include?(:keyrest) || (sig.include?(:keyrest) && imp_keyreq >= sig_keyreq)
+
+				unless positional_match && keyword_match
 					raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
 				end
 			end

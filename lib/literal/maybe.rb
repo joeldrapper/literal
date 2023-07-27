@@ -6,21 +6,21 @@ class Literal::Maybe < Literal::Monad
 
 	# @!method empty?
 	# 	@return [Boolean]
-	abstract :empty?
+	abstract def empty? = nil
 
 	# @!method nothing?
 	# 	@return [Boolean]
-	abstract :nothing?
+	abstract def nothing? = nil
 
 	# @!method something?
 	# 	@return [Boolean]
-	abstract :something?
+	abstract def something? = nil
 
 	# @!method deconstruct
-	abstract :deconstruct
+	abstract def deconstruct = nil
 
 	# @!method deconstruct_keys(_)
-	abstract :deconstruct_keys
+	abstract def deconstruct_keys(_) = nil
 
 	# @return [void]
 	def call(&)
