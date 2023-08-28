@@ -17,4 +17,13 @@ class Literal::Structish
 			false
 		end
 	end
+
+	def deconstruct
+		@attributes.values
+	end
+
+	def deconstruct_keys(keys)
+		h = to_h
+		keys ? h.slice(*keys) : h
+	end
 end
