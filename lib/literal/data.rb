@@ -47,7 +47,7 @@ class Literal::Data < Literal::Structish
 		end
 
 		copy = dup
-		copy.instance_variable_set(:@attributes, @attributes.dup.merge(new_attributes))
+		copy.instance_variable_set(:@attributes, @attributes.merge(new_attributes))
 		copy.freeze
 		copy
 	end
