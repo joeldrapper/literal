@@ -23,6 +23,14 @@ class Literal::Array
 		Literal::Array(@type).new(@value.map(&))
 	end
 
+	def map(type = Literal::Null, &)
+		if Literal::Null == type
+			@value.map(&)
+		else
+			Literal::Array(@type).new(@value.map(&))
+		end
+	end
+
 	def map!(type = @type, &block)
 		@value.map! do |item|
 			output = block.call(item)
