@@ -13,7 +13,7 @@ class Literal::Types::RangeType < Literal::Type
 			(
 				@type === value.begin && (nil === value.end || @type === value.end)
 			) || (
-				@type === value.end && (nil === value.begin || @type === value.begin)
+				@type === value.end && nil === value.begin
 			)
 		)
 	end
