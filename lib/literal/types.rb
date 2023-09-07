@@ -94,6 +94,11 @@ module Literal::Types
 		Literal::Types::FloatType.new(constraint)
 	end
 
+	# Matches if the value is a `Range` of the given type.
+	def _Range(type)
+		Literal::Types::RangeType.new(type)
+	end
+
 	# Matches if the value responds to `#call`.
 	def _Callable(type = nil)
 		Literal::Types::CallableType
