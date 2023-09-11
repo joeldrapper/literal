@@ -24,7 +24,7 @@ class Literal::Some < Literal::Maybe
 		if block_given?
 			@value
 		else
-			raise Literal::ArgumentError "no block given"
+			raise Literal::ArgumentError, "no block given"
 		end
 	end
 
@@ -54,7 +54,7 @@ class Literal::Some < Literal::Maybe
 	end
 
 	def filter
-		yield @value ? self : Literal::Nothing
+		yield(@value) ? self : Literal::Nothing
 	end
 
 	def deconstruct
