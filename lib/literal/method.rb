@@ -22,14 +22,24 @@ class Literal::Method
 	def <(other)
 		# Match positional arguments
 		return false unless rest? || (
-			number_of_required_positional_parameters >=
+			number_of_required_positional_parameters ==
 				other.number_of_required_positional_parameters
+		) || (
+			other.rest? && (
+				number_of_required_positional_parameters >=
+					other.number_of_required_positional_parameters
+			)
 		)
 
 		# Match keyword arguments
 		return false unless keyrest? || (
-			number_of_required_keyword_parameters >=
+			number_of_required_keyword_parameters ==
 				other.number_of_required_keyword_parameters
+		) || (
+			other.keyrest? && (
+				number_of_required_keyword_parameters >=
+					other.number_of_required_keyword_parameters
+			)
 		)
 
 		# Match visibility
