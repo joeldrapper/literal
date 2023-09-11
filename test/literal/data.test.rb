@@ -37,6 +37,22 @@ test "#to_h returns attributes as new hash" do
 	expect(hash[:name]).to_be :frozen?
 end
 
+test "#[]" do
+	person = Person.new(name: "John", age: 30)
+	expect(person[:name]) == "John"
+end
+
+test "#[]= with valid type" do
+	person = Person.new(name: "John", age: 30)
+	person[:name] = "Joe"
+	expect(person.name) == "Joe"
+end
+
+test "#[]= with invalid type" do
+	person = Person.new(name: "John", age: 30)
+	expect { person[:name] = 1 }.to_raise Literal::TypeError
+end
+
 test "#deconstruct returns attributes as array" do
 	person = Person.new(name: "John", age: 30)
 	expect(person.deconstruct) == ["John", 30]

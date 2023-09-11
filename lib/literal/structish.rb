@@ -18,6 +18,20 @@ class Literal::Structish
 		end
 	end
 
+	def [](key)
+		@attributes[key]
+	end
+
+	def []=(key, value)
+		type = @literal_attributes[key].type
+
+		if type === value
+			@attributes[key] = value
+		else
+			raise Literal::TypeError.expected(value, to_be_a: type)
+		end
+	end
+
 	def deconstruct
 		@attributes.values
 	end
