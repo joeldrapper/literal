@@ -12,7 +12,7 @@ module Literal::Modifiers::Abstract
 	def abstract(method_name)
 		@abstract = true
 
-		abstract_methods << instance_method(method_name)
+		abstract_methods << Literal::Method.new(method_name, self)
 
 		method_name
 	end
@@ -41,29 +41,9 @@ if Literal::TRACING
 
 		if it.is_a?(Literal::Modifiers::Abstract) && !it.abstract?
 			it.abstract_methods.each do |abstract_method|
-				method = it.instance_method(abstract_method.name)
+				method = Literal::Method.new(abstract_method.name, it)
 
-				if method == abstract_method
-					raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
-				end
-
-				sig = abstract_method.parameters.map(&:first)
-				sig_req = sig.count(:req)
-				sig_keyreq = sig.count(:keyreq)
-
-				imp = method.parameters.map(&:first)
-				imp_req = imp.count(:req)
-				imp_keyreq = imp.count(:keyreq)
-
-				# If the required arguments are the same,
-				# or the implementation has a rest argument (*/**),
-				# or the signature has a rest argument (*/**)
-				# 	and the implementation has at least as many required arguments as the signature.
-
-				positional_match = sig_req == imp_req || imp.include?(:rest) || (sig.include?(:rest) && imp_req >= sig_req)
-				keyword_match = sig_keyreq == imp_keyreq || imp.include?(:keyrest) || (sig.include?(:keyrest) && imp_keyreq >= sig_keyreq)
-
-				unless positional_match && keyword_match
+				unless method < abstract_method
 					raise "Abstract method `##{abstract_method.name}` not implemented in `#{it}`."
 				end
 			end
