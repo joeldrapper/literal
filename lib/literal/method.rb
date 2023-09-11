@@ -20,6 +20,8 @@ class Literal::Method
 	end
 
 	def <(other)
+		return false if self == other
+
 		# Match positional arguments
 		return false unless rest? || (
 			number_of_required_positional_parameters ==
