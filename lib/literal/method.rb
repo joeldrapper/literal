@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+#  @api private
 class Literal::Method
 	def initialize(name, object_class)
 		@name = name
