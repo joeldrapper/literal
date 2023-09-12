@@ -12,8 +12,11 @@ class Literal::Method
 		@rest = @parameters.include?(:rest)
 		@keyrest = @parameters.include?(:keyrest)
 
-		@number_of_required_positional_parameters	= nil
-		@number_of_required_keyword_parameters	= nil
+		@number_of_required_positional_parameters	= @parameters.count(:req)
+		@number_of_optional_positional_parameters	= @parameters.count(:opt)
+
+		@number_of_required_keyword_parameters = @parameters.count(:keyreq)
+		@number_of_optional_keyword_parameters = @parameters.count(:key)
 
 		@visibility = if @object_class.public_instance_methods.include?(name)
 			:public
@@ -31,7 +34,9 @@ class Literal::Method
 		:rest,
 		:keyrest,
 		:number_of_required_positional_parameters,
+		:number_of_optional_positional_parameters,
 		:number_of_required_keyword_parameters,
+		:number_of_optional_keyword_parameters,
 		:visibility
 
 	alias_method :rest?, :rest
@@ -48,29 +53,29 @@ class Literal::Method
 					visibility_match?(other)
 	end
 
+	def number_of_positional_parameters
+		@number_of_required_positional_parameters + @number_of_optional_positional_parameters
+	end
+
+	def number_of_keyword_parameters
+		@number_of_required_keyword_parameters + @number_of_optional_keyword_parameters
+	end
+
 	private
 
 	def positional_parameters_match?(other)
-		rest? || (
-			number_of_required_positional_parameters ==
-				other.number_of_required_positional_parameters
-		) || (
-			other.rest? && (
-				number_of_required_positional_parameters >=
-					other.number_of_required_positional_parameters
-			)
+		number_of_required_positional_parameters <= other.number_of_required_positional_parameters && (
+			rest? || (!other.rest? && (
+				number_of_positional_parameters >= other.number_of_positional_parameters
+			))
 		)
 	end
 
 	def keyword_parameters_match?(other)
-		keyrest? || (
-			number_of_required_keyword_parameters ==
-				other.number_of_required_keyword_parameters
-		) || (
-			other.keyrest? && (
-				number_of_required_keyword_parameters >=
-					other.number_of_required_keyword_parameters
-			)
+		number_of_required_keyword_parameters <= other.number_of_required_keyword_parameters && (
+			keyrest? || (!other.keyrest? && (
+				number_of_keyword_parameters >= other.number_of_keyword_parameters
+			))
 		)
 	end
 
