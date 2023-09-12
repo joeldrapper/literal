@@ -9,8 +9,8 @@ let def abstract_class
 		abstract def test_3(*a); end
 		abstract def test_4(a:, b:); end
 		abstract def test_5(a:, **b); end
-		abstract def test_6(a:, b: 1); end # todo: more thoughts on w default values
-		abstract def test_7(a, b = 1); end #  todo: more thoughts on w default values
+		abstract def test_6(a:, b: 1); end
+		abstract def test_7(a, b = 1); end
 
 		protected abstract def protected_method(a, b); end
 
@@ -61,7 +61,8 @@ let def invalid_concrete_class
 		def test_4_2(a:, b:, c:); end
 		def test_5_1(a:); end
 		def test_5_2(a:, b:, **c); end
-		def test_6(a:); end
+		def test_6_1(a:); end
+		def test_6_2(a:, b:); end
 		def test_7_1(a); end
 		# It is a violation to change optional params to required
 		def test_7_2(a, b); end
@@ -121,7 +122,8 @@ describe "#<" do
 		refute Literal::Method.new(:test_4_2, invalid_concrete_class) < test_4_abstract_method
 		refute Literal::Method.new(:test_5_1, invalid_concrete_class) < test_5_abstract_method
 		refute Literal::Method.new(:test_5_2, invalid_concrete_class) < test_5_abstract_method
-		refute Literal::Method.new(:test_6, invalid_concrete_class) < test_6_abstract_method
+		refute Literal::Method.new(:test_6_1, invalid_concrete_class) < test_6_abstract_method
+		refute Literal::Method.new(:test_6_2, invalid_concrete_class) < test_6_abstract_method
 		refute Literal::Method.new(:test_7_1, invalid_concrete_class) < test_7_abstract_method
 		refute Literal::Method.new(:test_7_2, invalid_concrete_class) < test_7_abstract_method
 
