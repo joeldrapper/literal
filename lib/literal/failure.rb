@@ -40,11 +40,19 @@ class Literal::Failure < Literal::Result
 		{ failure: @value }
 	end
 
-	def lift(&)
-		Literal::Failure::Lift.new(@value, &).call
+	def lift(*, &block)
+		if block
+			Literal::Lift.new(*, &block).with_failure(@value)
+		else
+			self
+		end
 	end
 
-	def lift!(&)
-		Literal::Failure::Lift.new(@value, &).call!
+	def lift!(*, &block)
+		if block
+			Literal::Lift.new(*, &block).with_failure!(@value)
+		else
+			self
+		end
 	end
 end

@@ -95,17 +95,17 @@ class Literal::Success < Literal::Result
 		{ success: @value }
 	end
 
-	def lift(&block)
+	def lift(*, &block)
 		if block
-			Literal::Success::Lift.new(@value, &block).call
+			Literal::Lift.new(*, &block).with_success(@value)
 		else
 			self
 		end
 	end
 
-	def lift!(&block)
+	def lift!(*, &block)
 		if block
-			Literal::Success::Lift.new(@value, &block).call!
+			Literal::Lift.new(*, &block).with_success!(@value)
 		else
 			self
 		end
