@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-let def whatever = Literal::Array(Integer).new([1, 2, 3])
+let def whatever = Literal::Array(Integer).new(1, 2, 3)
 
 describe "#<<" do
 	test "with valid item" do
@@ -15,7 +15,7 @@ end
 
 describe "dup" do
 	test do
-		array = Literal::Array(Integer).new([1, 2, 3])
+		array = Literal::Array(Integer).new(1, 2, 3)
 		duplicate = array.dup
 
 		array << 4
@@ -26,7 +26,7 @@ end
 
 describe "#+" do
 	test do
-		a = Literal::Array(Integer).new([1, 2, 3])
+		a = Literal::Array(Integer).new(1, 2, 3)
 		b = [4, 5, 6]
 
 		both = a + b

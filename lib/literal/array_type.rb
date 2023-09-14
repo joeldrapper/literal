@@ -17,13 +17,11 @@ class Literal::ArrayType < Literal::Generic
 		end
 	end
 
-	def new(value)
-		value = value.to_a
-
+	def new(*value)
 		if Literal::_Array(@type) === value
 			Literal::Array.new(value, type: @type)
 		else
-			Literal::TypeError.expected(item, to_be_a: @type)
+			Literal::TypeError.expected(value, to_be_a: @type)
 		end
 	end
 end
