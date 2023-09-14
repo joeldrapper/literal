@@ -94,4 +94,20 @@ class Literal::Success < Literal::Result
 	def deconstruct_keys(_)
 		{ success: @value }
 	end
+
+	def lift(&block)
+		if block
+			Literal::Success::Lift.new(@value, &block).call
+		else
+			self
+		end
+	end
+
+	def lift!(&block)
+		if block
+			Literal::Success::Lift.new(@value, &block).call!
+		else
+			self
+		end
+	end
 end
