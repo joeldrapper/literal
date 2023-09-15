@@ -20,30 +20,28 @@ class Literal::Lift
 		missing_cases = @required_failure_cases - keys
 
 		if excess_cases.any?
-			raise ArgumentError, "Excess case(s): #{excess_cases.join(', ')}."
+			raise ArgumentError, "Excess case(s): #{excess_cases.map(&:inspect).join(', ')}."
 		end
 
 		if missing_cases.any?
-			raise ArgumentError, "Missing case(s): #{missing_cases.join(', ')}."
+			raise ArgumentError, "Missing case(s): #{missing_cases.map(&:inspect).join(', ')}."
 		end
 	end
 
 	def with_success(value)
-		raise ArgumentError, "Success case" unless @success_case
-		raise ArgumentError, "Failure case" unless @failure_case
+		ensure_success_case! and ensure_failure_case!
 
 		@success_case.call(value)
 	end
 
 	def with_success!(value)
-		raise ArgumentError, "Success case" unless @success_case
+		ensure_success_case!
 
 		@success_case.call(value)
 	end
 
 	def with_failure(value)
-		raise ArgumentError, "Success case" unless @success_case
-		raise ArgumentError, "Failure case" unless @failure_case
+		ensure_success_case! and ensure_failure_case!
 
 		@handled_failure_cases.each do |condition, block|
 			return block.call(value) if condition === value
@@ -53,7 +51,7 @@ class Literal::Lift
 	end
 
 	def with_failure!(value)
-		raise ArgumentError, "Success case" unless @success_case
+		ensure_success_case!
 
 		@handled_failure_cases.each do |condition, block|
 			return block.call(value) if condition === value
@@ -76,5 +74,15 @@ class Literal::Lift
 				@handled_failure_cases[type] = block || proc { |it| it }
 			end
 		end
+	end
+
+	private
+
+	def ensure_success_case!
+		@success_case ? true : raise(ArgumentError, "You need to define a success case.")
+	end
+
+	def ensure_failure_case!
+		@failure_case ? true : raise(ArgumentError, "You need to define a failure case.")
 	end
 end
