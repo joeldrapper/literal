@@ -33,7 +33,7 @@ class Literal::Success < Literal::Result
 	end
 
 	def map(type = Literal::Null)
-		output = yield @value
+		output = yield(@value)
 
 		if Literal::Null == type
 			Literal::Success.new(output)
@@ -55,7 +55,7 @@ class Literal::Success < Literal::Result
 	end
 
 	def then(type = Literal::Null)
-		output = yield @value
+		output = yield(@value)
 
 		if Literal::Null == type
 			if Literal::Result === output
@@ -104,18 +104,10 @@ class Literal::Success < Literal::Result
 	end
 
 	def lift(*, &block)
-		if block
-			Literal::Lift.new(*, &block).with_success(@value)
-		else
-			self
-		end
+		block ? Literal::Lift.new(*, &block).with_success(@value) : self
 	end
 
 	def lift!(*, &block)
-		if block
-			Literal::Lift.new(*, &block).with_success!(@value)
-		else
-			self
-		end
+		block ? Literal::Lift.new(*, &block).with_success!(@value) : self
 	end
 end
