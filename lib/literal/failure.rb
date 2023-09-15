@@ -48,18 +48,10 @@ class Literal::Failure < Literal::Result
 	end
 
 	def lift(*, &block)
-		if block
-			Literal::Lift.new(*, &block).with_failure(@value)
-		else
-			self
-		end
+		block ? Literal::Lift.new(*, &block).with_failure(@value) : self
 	end
 
 	def lift!(*, &block)
-		if block
-			Literal::Lift.new(*, &block).with_failure!(@value)
-		else
-			self
-		end
+		block ? Literal::Lift.new(*, &block).with_failure!(@value) : self
 	end
 end

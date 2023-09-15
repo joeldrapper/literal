@@ -34,22 +34,35 @@ class Literal::Some < Literal::Maybe
 		)
 	end
 
-	def then
-		output = yield @value
+	def then(type = Literal::Null)
+		output = yield(@value)
 
-		if Literal::Maybe === output
+		if Literal::Null == type
+			if Literal::Maybe === output
+				output
+			else
+				raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe)
+			end
+		elsif Literal::Maybe === output && type === output.value
 			output
 		else
-			raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe)
+			raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe(type))
 		end
 	end
 
-	def map
-		case (output = yield @value)
-		when nil
-			Literal::Nothing
-		else
+	def map(type = Literal::Null)
+		output = yield(@value)
+
+		if Literal::Null == type
+			if nil == output
+				Literal::Nothing
+			else
+				Literal::Some.new(output)
+			end
+		elsif type === output
 			Literal::Some.new(output)
+		else
+			raise Literal::TypeError.expected(output, to_be_a: type)
 		end
 	end
 
