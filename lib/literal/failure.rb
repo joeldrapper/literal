@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class Literal::Failure < Literal::Result
+	DECONSTRUCTION_TEMPLATE = {
+		message: -> (error) { error.message },
+		exception: -> (error) { error.exception },
+		full_message: -> (error) { error.full_message },
+		detailed_message: -> (error) { error.detailed_message }
+	}
+
 	# @return [String]
 	def inspect = "Literal::Failure(#{@value.inspect})"
 
@@ -36,8 +43,8 @@ class Literal::Failure < Literal::Result
 		[@value]
 	end
 
-	def deconstruct_keys(_)
-		{ failure: @value }
+	def deconstruct_keys(keys)
+		DECONSTRUCTION_TEMPLATE.slice(*keys).transform_values { |v| v.call(@value) }
 	end
 
 	def lift(*, &block)

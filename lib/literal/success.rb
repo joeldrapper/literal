@@ -88,11 +88,19 @@ class Literal::Success < Literal::Result
 	end
 
 	def deconstruct
-		[@value]
+		if @value.respond_to?(:deconstruct)
+			@value.deconstruct
+		else
+			[@value]
+		end
 	end
 
-	def deconstruct_keys(_)
-		{ success: @value }
+	def deconstruct_keys(keys)
+		if @value.respond_to?(:deconstruct_keys)
+			@value.deconstruct_keys(keys)
+		else
+			{ value: @value }
+		end
 	end
 
 	def lift(*, &block)

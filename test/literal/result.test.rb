@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # # frozen_string_literal: true
 
 # include Literal::Monads
@@ -91,7 +92,7 @@ describe "Result(Hash)" do
 
 		describe "with #lift" do
 			test "with success" do
-				test_lift { {foo: "bar" } }
+				test_lift { { foo: "bar" } }
 			end
 
 			test "with checked failure" do
@@ -116,7 +117,7 @@ describe "Result(Hash)" do
 		describe "with pattern matching" do
 			def test_lift_pattern_matching(&block)
 				case fetch_something(block)
-				in Literal::Success(success: {foo:})
+				in Literal::Success(foo:)
 					# if deconstruct_keys was changed to delegate to the value then you could avoid the `success:`
 					assert foo == "bar"
 				in Literal::Failure(CardError | ConnectionError => e)
@@ -127,7 +128,7 @@ describe "Result(Hash)" do
 			end
 
 			test "with success" do
-				test_lift_pattern_matching { {foo: "bar" } }
+				test_lift_pattern_matching { { foo: "bar" } }
 			end
 
 			test "with checked failure" do
@@ -143,11 +144,20 @@ describe "Result(Hash)" do
 				expect do
 					case fetch_something(proc { raise StandardError })
 					in Literal::Success(success: {foo:})
-						# success
+					# success
 					in Literal::Failure(CardError | ConnectionError => e)
 						# error
 					end
 				end.to_raise(NoMatchingPatternError)
+			end
+
+			test "pattern matching on an exception" do
+				case fetch_something(proc { raise StandardError, "Hello" })
+				in Literal::Failure(message: "Hello", detailed_message:)
+					assert true
+				else
+					assert false
+				end
 			end
 		end
 	end
