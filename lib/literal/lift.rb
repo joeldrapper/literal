@@ -68,9 +68,9 @@ class Literal::Lift
 		@success_case = block
 	end
 
-	def failure(*types, &)
+	def failure(*types, &block)
 		if types.length == 0
-			@failure_case = true
+			@failure_case = block
 		else
 			types.each do |type|
 				@handled_failure_cases[type] = block || proc { |it| it }
