@@ -11,14 +11,38 @@ class Literal::ResultType < Literal::Generic
 	def new(value)
 		case value
 		when @type
+			return Literal::Success.new(value)
+		when Literal::Failure
+			return value
+		when Literal::Success
+			if @type === value.value
+				return value
+			end
+		end
+
+		Literal::Failure.new(
+			Literal::TypeError.expected(value,
+				to_be_a: Literal::Union.new(@type, Exception)
+			)
+		)
+	end
+
+	def success(value)
+		if @type === value
 			Literal::Success.new(value)
-		when Exception
+		else
+			Literal::Failure.new(
+				Literal::TypeError.expected(value, to_be_a: @type)
+			)
+		end
+	end
+
+	def failure(value)
+		if Exception === value
 			Literal::Failure.new(value)
 		else
 			Literal::Failure.new(
-				Literal::TypeError.expected(value,
-					to_be_a: Literal::Union.new(@type, Exception)
-				)
+				Literal::TypeError.expected(value, to_be_a: Exception)
 			)
 		end
 	end
