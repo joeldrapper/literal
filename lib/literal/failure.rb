@@ -39,4 +39,20 @@ class Literal::Failure < Literal::Result
 	def deconstruct_keys(_)
 		{ failure: @value }
 	end
+
+	def lift(*, &block)
+		if block
+			Literal::Lift.new(*, &block).with_failure(@value)
+		else
+			self
+		end
+	end
+
+	def lift!(*, &block)
+		if block
+			Literal::Lift.new(*, &block).with_failure!(@value)
+		else
+			self
+		end
+	end
 end
