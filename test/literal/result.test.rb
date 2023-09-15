@@ -71,23 +71,23 @@ describe "Result(Hash)" do
 	class CardError < StandardError; end
 	class ConnectionError < StandardError; end
 
-	def fetch_something(result, &)
-		Literal::Result(Hash, &result).lift(CardError, ConnectionError, &)
+	def test_lift(&block)
+		fetch_something(block) do |res|
+			res.success do |h|
+				assert h[:foo] == "bar"
+			end
+			res.failure(CardError, ConnectionError) do |e|
+				assert e.message == "Bar"
+			end
+			res.failure do |e|
+				assert e.message == "Other"
+			end
+		end
 	end
 
 	describe "#lift" do
-		def test_lift(&block)
-			fetch_something(block) do |res|
-				res.success do |h|
-					assert h[:foo] == "bar"
-				end
-				res.failure(CardError, ConnectionError) do |e|
-					assert e.message == "Bar"
-				end
-				res.failure do |e|
-					assert e.message == "Other"
-				end
-			end
+		def fetch_something(result, &)
+			Literal::Result(Hash, &result).lift(CardError, ConnectionError, &)
 		end
 
 		describe "with #lift" do
@@ -158,6 +158,36 @@ describe "Result(Hash)" do
 				else
 					assert false
 				end
+			end
+		end
+	end
+
+	describe "#lift!" do
+		def fetch_something(result, &)
+			Literal::Result(Hash, &result).lift!(CardError, ConnectionError, &)
+		end
+
+		describe "with #lift!" do
+			test "with success" do
+				test_lift { { foo: "bar" } }
+			end
+
+			test "with checked failure" do
+				test_lift { raise CardError, "Bar" }
+				test_lift { raise ConnectionError, "Bar" }
+			end
+
+			test "with unchecked failure" do
+				test_lift { raise StandardError, "Other" }
+			end
+
+			test "raises original error on missing failure case" do
+				expect do
+					fetch_something(proc { raise StandardError }) do |res|
+						res.success {}
+						res.failure(CardError, ConnectionError) {}
+					end
+				end.to_raise(StandardError)
 			end
 		end
 	end

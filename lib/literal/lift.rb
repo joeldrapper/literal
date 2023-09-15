@@ -57,7 +57,7 @@ class Literal::Lift
 			return block.call(value) if condition === value
 		end
 
-		return @failure_case&.call(value)
+		return @failure_case.call(value) if @failure_case
 
 		raise(value)
 	end
