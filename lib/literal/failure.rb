@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class Literal::Failure < Literal::Result
-	DECONSTRUCTION_TEMPLATE = {
-		message: -> (error) { error.message },
-		exception: -> (error) { error.exception },
-		full_message: -> (error) { error.full_message },
-		detailed_message: -> (error) { error.detailed_message }
-	}
+	EXCEPTION_DECONSTRUCT_KEYS = [:detailed_message, :backtrace, :backtrace_locations, :cause, :full_message, :message, :exception]
+	DECONSTRUCTION_TEMPLATE = EXCEPTION_DECONSTRUCT_KEYS.each_with_object({}) do |key, hash|
+		hash[key] = -> (error) { error.send(key) if error.respond_to?(key) }
+	end
 
 	# @return [String]
 	def inspect = "Literal::Failure(#{@value.inspect})"

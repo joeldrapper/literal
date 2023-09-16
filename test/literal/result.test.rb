@@ -68,7 +68,11 @@
 include Literal::Monads
 
 describe "Result(Hash)" do
-	class CardError < StandardError; end
+	class CardError < StandardError
+		def detailed_message(highlight: false, **opt)
+			"CardError details"
+		end
+	end
 	class ConnectionError < StandardError; end
 
 	def test_lift(&block)
@@ -118,7 +122,6 @@ describe "Result(Hash)" do
 			def test_lift_pattern_matching(&block)
 				case fetch_something(block)
 				in Literal::Success(foo:)
-					# if deconstruct_keys was changed to delegate to the value then you could avoid the `success:`
 					assert foo == "bar"
 				in Literal::Failure(CardError | ConnectionError => e)
 					assert e.message == "Bar"
@@ -143,8 +146,8 @@ describe "Result(Hash)" do
 			test "raises on missing failure case" do
 				expect do
 					case fetch_something(proc { raise StandardError })
-					in Literal::Success(success: {foo:})
-					# success
+					in Literal::Success(foo:)
+						# success
 					in Literal::Failure(CardError | ConnectionError => e)
 						# error
 					end
@@ -153,11 +156,32 @@ describe "Result(Hash)" do
 
 			test "pattern matching on an exception" do
 				case fetch_something(proc { raise StandardError, "Hello" })
-				in Literal::Failure(message: "Hello", detailed_message:)
+				in Literal::Failure(message: "Hello")
 					assert true
 				else
 					assert false
 				end
+			end
+
+			test "pattern matching on an custom exception" do
+				res = fetch_something(proc { raise CardError, "Hello" })
+				assert((res in Literal::Failure(CardError => e)))
+				refute((res in Literal::Failure(ConnectionError => e)))
+				assert((res in Literal::Failure(Exception)))
+				assert((res in Literal::Failure(message: "Hello")))
+				refute((res in Literal::Failure(message: "Bye")))
+				assert((res in Literal::Failure(detailed_message: "CardError details")))
+				res => Literal::Failure(full_message:)
+				assert full_message.include?("result.test.rb")
+
+				res = Result(String) do
+					raise StandardError, "Hello"
+				rescue StandardError => _e
+					raise CardError, "Hello"
+				end
+				assert((res in Literal::Failure(cause: StandardError)))
+				res => Literal::Failure(backtrace_locations: [line1, *])
+				assert line1.path.include?("result.test.rb")
 			end
 		end
 	end
