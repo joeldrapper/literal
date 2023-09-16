@@ -73,6 +73,7 @@ describe "Result(Hash)" do
 			"CardError details"
 		end
 	end
+
 	class ConnectionError < StandardError; end
 
 	def test_lift(&block)
@@ -147,7 +148,7 @@ describe "Result(Hash)" do
 				expect do
 					case fetch_something(proc { raise StandardError })
 					in Literal::Success(foo:)
-						# success
+					# success
 					in Literal::Failure(CardError | ConnectionError => e)
 						# error
 					end
