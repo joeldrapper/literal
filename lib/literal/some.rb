@@ -28,28 +28,12 @@ class Literal::Some < Literal::Maybe
 		end
 	end
 
-	def fmap
-		Literal::Some.new(
-			yield @value
-		)
+	# @return [Literal::Maybe]
+	def filter
+		yield(@value) ? self : Literal::Nothing
 	end
 
-	def then(type = Literal::Null)
-		output = yield(@value)
-
-		if Literal::Null == type
-			if Literal::Maybe === output
-				output
-			else
-				raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe)
-			end
-		elsif Literal::Maybe === output && type === output.value
-			output
-		else
-			raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe(type))
-		end
-	end
-
+	# @return [Literal::Maybe]
 	def map(type = Literal::Null)
 		output = yield(@value)
 
@@ -66,8 +50,32 @@ class Literal::Some < Literal::Maybe
 		end
 	end
 
-	def filter
-		yield(@value) ? self : Literal::Nothing
+	# @return [Literal::Maybe]
+	def then(type = Literal::Null)
+		output = yield(@value)
+
+		if Literal::Null == type
+			if Literal::Maybe === output
+				output
+			else
+				raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe)
+			end
+		elsif Literal::Maybe === output && type === output.value
+			output
+		else
+			raise Literal::TypeError.expected(output, to_be_a: Literal::Maybe(type))
+		end
+	end
+
+	# @return [Literal::Some]
+	def fmap
+		Literal::Some.new(
+			yield(@value)
+		)
+	end
+
+	def bind
+		yield(@value)
 	end
 
 	def deconstruct

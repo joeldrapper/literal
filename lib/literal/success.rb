@@ -28,8 +28,17 @@ class Literal::Success < Literal::Result
 		end
 	end
 
-	def fmap
-		Literal::Success.new(yield @value)
+	# @return [Literal::Result]
+	def filter
+		if yield(@value)
+			self
+		else
+			Literal::Failure.new(
+				RuntimeError.new(
+					"Filter condition not met."
+				)
+			)
+		end
 	end
 
 	def map(type = Literal::Null)
@@ -44,12 +53,6 @@ class Literal::Success < Literal::Result
 				Literal::TypeError.expected(output, to_be_a: type)
 			)
 		end
-	rescue StandardError => e
-		Literal::Failure.new(e)
-	end
-
-	def bind
-		yield @value
 	rescue StandardError => e
 		Literal::Failure.new(e)
 	end
@@ -74,17 +77,14 @@ class Literal::Success < Literal::Result
 		end
 	end
 
-	# @return [Literal::Result]
-	def filter
-		if yield(@value)
-			self
-		else
-			Literal::Failure.new(
-				RuntimeError.new(
-					"Filter condition not met."
-				)
-			)
-		end
+	def fmap
+		Literal::Success.new(yield @value)
+	end
+
+	def bind
+		yield @value
+	rescue StandardError => e
+		Literal::Failure.new(e)
 	end
 
 	def deconstruct

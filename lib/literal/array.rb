@@ -19,16 +19,8 @@ class Literal::Array
 		@value.each(&)
 	end
 
-	def safe_map(type = @type, &)
+	def map(type = @type, &)
 		Literal::Array(@type).new(@value.map(&))
-	end
-
-	def map(type = Literal::Null, &)
-		if Literal::Null == type
-			@value.map(&)
-		else
-			Literal::Array(@type).new(@value.map(&))
-		end
 	end
 
 	def map!(type = @type, &block)
@@ -54,12 +46,12 @@ class Literal::Array
 		self
 	end
 
-	def []=(index, item)
-		unless @type === item
-			raise Literal::TypeError.expected(item, to_be_a: @type)
+	def []=(index, value)
+		unless @type === value
+			raise Literal::TypeError.expected(value, to_be_a: @type)
 		end
 
-		@value[index] = item
+		@value[index] = value
 	end
 
 	def [](index)

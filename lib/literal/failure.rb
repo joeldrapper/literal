@@ -22,20 +22,22 @@ class Literal::Failure < Literal::Result
 	def failure = Literal::Some(@value)
 
 	def raise!
-		raise @value
+		raise(@value)
 	end
 
-	alias_method :value_or_raise!, :raise!
+	def value_or_raise!
+		raise(@value)
+	end
 
 	def value_or
 		yield(@value)
 	end
 
-	def fmap = self
-	def map(type = nil) = self
-	def bind = self
-	def then(type = nil) = self
 	def filter = self
+	def map(type = nil) = self
+	def then(type = nil) = self
+	def fmap = self
+	def bind = self
 
 	def deconstruct
 		[@value]
