@@ -39,10 +39,6 @@ class Literal::Failure < Literal::Result
 	def fmap = self
 	def bind = self
 
-	def deconstruct
-		[@value]
-	end
-
 	def deconstruct_keys(keys)
 		DECONSTRUCTION_TEMPLATE.slice(*keys).transform_values { |v| v.call(@value) }
 	end
