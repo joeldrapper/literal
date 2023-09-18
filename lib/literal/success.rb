@@ -87,14 +87,6 @@ class Literal::Success < Literal::Result
 		Literal::Failure.new(e)
 	end
 
-	def deconstruct
-		if @value.respond_to?(:deconstruct)
-			@value.deconstruct
-		else
-			[@value]
-		end
-	end
-
 	def deconstruct_keys(keys)
 		if @value.respond_to?(:deconstruct_keys)
 			@value.deconstruct_keys(keys)
