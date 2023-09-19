@@ -21,7 +21,12 @@ class Literal::Failure < Literal::Result
 	# @return [Literal::Some]
 	def failure(error = nil)
 		if nil == error || error === @value
-			block_given? ? yield(@value) : Literal::Some.new(@value)
+			if block_given?
+				yield(@value)
+				self
+			else
+				Literal::Some.new(@value)
+			end
 		else
 			Literal::Nothing
 		end

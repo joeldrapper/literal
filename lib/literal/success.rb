@@ -12,7 +12,12 @@ class Literal::Success < Literal::Result
 
 	# @return [Literal::Some]
 	def success
-		block_given? ? yield(@value) : Literal::Some.new(@value)
+		if block_given?
+			yield(@value)
+			self
+		else
+			Literal::Some.new(@value)
+		end
 	end
 
 	# @return [Literal::NothingClass]
