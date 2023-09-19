@@ -19,7 +19,13 @@ class Literal::Failure < Literal::Result
 	def success = Literal::Nothing
 
 	# @return [Literal::Some]
-	def failure = Literal::Some(@value)
+	def failure(error = nil)
+		if nil == error || error === @value
+			block_given? ? yield(@value) : Literal::Some.new(@value)
+		else
+			Literal::Nothing
+		end
+	end
 
 	def raise!
 		raise(@value)

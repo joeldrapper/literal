@@ -11,10 +11,12 @@ class Literal::Success < Literal::Result
 	def failure? = false
 
 	# @return [Literal::Some]
-	def success = Literal::Some.new(@value)
+	def success
+		block_given? ? yield(@value) : Literal::Some.new(@value)
+	end
 
 	# @return [Literal::NothingClass]
-	def failure = Literal::Nothing
+	def failure(error = nil) = Literal::Nothing
 
 	def raise! = self
 
