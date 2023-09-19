@@ -28,7 +28,7 @@ class Literal::Failure < Literal::Result
 				Literal::Some.new(@value)
 			end
 		else
-			Literal::Nothing
+			block_given? ? self : Literal::Nothing
 		end
 	end
 
