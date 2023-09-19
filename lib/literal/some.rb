@@ -86,10 +86,10 @@ class Literal::Some < Literal::Maybe
 		{ value: @value }
 	end
 
-	def <=>(other)
-		return unless Literal::Some === other
+	def ==(other)
+		return false unless Literal::Some === other
 
-		@value <=> other.value
+		@value == other.value
 	end
 
 	def eql?(other)

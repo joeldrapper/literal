@@ -47,13 +47,7 @@ class Literal::NothingClass < Literal::Maybe
 		{}
 	end
 
-	def <=>(other)
-		return unless Literal::NothingClass === other
-
-		0
-	end
-
 	def eql?(other)
-		Literal::NothingClass === other
+		Literal::Nothing == other
 	end
 end

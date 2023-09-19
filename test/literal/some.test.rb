@@ -84,45 +84,4 @@ describe "Some(Integer)" do
 		assert some_val_1 != 1
 		assert some_val_1 != Literal::Nothing
 	end
-
-	test "#<=>" do
-		expect(some_val_1 <=> some_int_monad.new(1)) == 0
-		expect(some_val_1 <=> some_int_monad.new(2)) == -1
-		expect(some_val_1 <=> some_int_monad.new(0)) == 1
-		expect(some_val_1 <=> 1) == nil
-		expect(some_val_1 <=> Literal::Nothing) == nil
-	end
-
-	# Test for Comparable
-
-	test "#between?" do
-		assert some_val_1.between?(some_int_monad.new(0), some_int_monad.new(1))
-		refute some_val_1.between?(some_val_2, some_int_monad.new(3))
-		expect { some_val_1.between?(some_val_1, Literal::Nothing) }.to_raise ArgumentError
-	end
-
-	test "#<" do
-		assert some_val_1 < some_int_monad.new(2)
-		refute some_val_1 < some_int_monad.new(1)
-	end
-
-	test "#<=" do
-		assert some_val_1 <= some_int_monad.new(1)
-		refute some_val_1 <= some_int_monad.new(0)
-	end
-
-	test "#>" do
-		assert some_val_1 > some_int_monad.new(0)
-		refute some_val_1 > some_int_monad.new(1)
-	end
-
-	test "#>=" do
-		assert some_val_1 >= some_int_monad.new(1)
-		refute some_val_1 >= some_val_2
-	end
-
-	test "#clamp" do
-		expect(some_val_1.clamp(some_int_monad.new(0), some_int_monad.new(1))) == some_val_1
-		expect(some_val_1.clamp(some_val_2, some_int_monad.new(3))) == some_val_2
-	end
 end

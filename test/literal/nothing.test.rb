@@ -71,37 +71,3 @@ test "#!=" do
 	assert nothing != Literal::Some(Integer).new(1)
 	refute nothing != Literal::Nothing
 end
-
-test "#<=>" do
-	expect(nothing <=> Literal::Nothing) == 0
-	expect(nothing <=> Literal::Some(Integer).new(1)) == nil
-end
-
-# Test for Comparable
-
-test "#between?" do
-	assert nothing.between?(Literal::Nothing, Literal::Nothing)
-	some = Literal::Some(Integer)
-	expect { nothing.between?(some.new(0), some.new(1)) }.to_raise ArgumentError
-end
-
-test "#<" do
-	refute nothing < Literal::Nothing
-end
-
-test "#<=" do
-	assert nothing <= Literal::Nothing
-end
-
-test "#>" do
-	refute nothing > Literal::Nothing
-end
-
-test "#>=" do
-	assert nothing >= Literal::Nothing
-end
-
-test "#clamp" do
-	expect(nothing.clamp(Literal::Nothing, Literal::Nothing)) == Literal::Nothing
-	expect { nothing.clamp(Literal::Nothing, Literal::Some(Integer).new(1)) }.to_raise ArgumentError
-end
