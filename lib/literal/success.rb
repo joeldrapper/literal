@@ -21,7 +21,7 @@ class Literal::Success < Literal::Result
 	end
 
 	# @return [Literal::NothingClass]
-	def failure(error = nil) = Literal::Nothing
+	def failure(error) = Literal::Nothing
 
 	def raise! = self
 

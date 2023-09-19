@@ -19,8 +19,8 @@ class Literal::Failure < Literal::Result
 	def success = Literal::Nothing
 
 	# @return [Literal::Some]
-	def failure(error = nil)
-		if nil == error || error === @value
+	def failure(error)
+		if error === @value
 			if block_given?
 				yield(@value)
 				self
