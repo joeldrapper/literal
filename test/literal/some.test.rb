@@ -65,4 +65,23 @@ describe "Some(Integer)" do
 	test "#deconstruct_keys" do
 		expect(some_val_1.deconstruct_keys(nil)) == { value: 1 }
 	end
+
+	test "#eql?" do
+		assert some_val_1.eql?(some_int_monad.new(1))
+		refute some_val_1.eql?(some_int_monad.new(2))
+	end
+
+	test "#==" do
+		assert some_val_1 == some_int_monad.new(1)
+		refute some_val_1 == some_int_monad.new(2)
+		refute some_val_1 == 1
+		refute some_val_1 == Literal::Nothing
+	end
+
+	test "#!=" do
+		refute some_val_1 != some_int_monad.new(1)
+		assert some_val_1 != some_int_monad.new(2)
+		assert some_val_1 != 1
+		assert some_val_1 != Literal::Nothing
+	end
 end

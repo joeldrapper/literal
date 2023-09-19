@@ -46,4 +46,8 @@ class Literal::NothingClass < Literal::Maybe
 	def deconstruct_keys(_)
 		{}
 	end
+
+	def eql?(other)
+		Literal::Nothing == other
+	end
 end

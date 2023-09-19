@@ -85,4 +85,16 @@ class Literal::Some < Literal::Maybe
 	def deconstruct_keys(_)
 		{ value: @value }
 	end
+
+	def ==(other)
+		return false unless Literal::Some === other
+
+		@value == other.value
+	end
+
+	def eql?(other)
+		return false unless Literal::Some === other
+
+		@value.eql?(other.value)
+	end
 end
