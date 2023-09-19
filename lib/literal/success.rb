@@ -50,12 +50,10 @@ class Literal::Success < Literal::Result
 		end
 	end
 
-	def map(type = Literal::Null)
+	def map(type)
 		output = yield(@value)
 
-		if Literal::Null == type
-			Literal::Success.new(output)
-		elsif type === output
+		if type === output
 			Literal::Success.new(output)
 		else
 			Literal::Failure.new(
@@ -66,24 +64,18 @@ class Literal::Success < Literal::Result
 		Literal::Failure.new(e)
 	end
 
-	def then(type = Literal::Null)
+	def then(type)
 		output = yield(@value)
 
-		if Literal::Null == type
-			if Literal::Result === output
-				output
-			else
-				Literal::Failure.new(
-					Literal::TypeError.expected(output, to_be_a: Literal::Result)
-				)
-			end
-		elsif Literal::Result(type) === output
+		if Literal::Result(type) === output
 			output
 		else
 			Literal::Failure.new(
 				Literal::TypeError.expected(output, to_be_a: Literal::Result(type))
 			)
 		end
+	rescue StandardError => e
+		Literal::Failure.new(e)
 	end
 
 	def fmap
@@ -111,4 +103,7 @@ class Literal::Success < Literal::Result
 	def lift!(*, &block)
 		block ? Literal::Lift.new(*, &block).with_success!(@value) : self
 	end
+
+	def map_failure(value_type = Exception) = self
+	def then_on_failure(result_type) = self
 end

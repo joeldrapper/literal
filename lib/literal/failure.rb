@@ -45,8 +45,8 @@ class Literal::Failure < Literal::Result
 	end
 
 	def filter = self
-	def map(type = nil) = self
-	def then(type = nil) = self
+	def map(type) = self
+	def then(type) = self
 	def fmap = self
 	def bind = self
 
@@ -60,5 +60,39 @@ class Literal::Failure < Literal::Result
 
 	def lift!(*, &block)
 		block ? Literal::Lift.new(*, &block).with_failure!(@value) : self
+	end
+
+	def map_failure(type = Exception)
+		output = yield(@value)
+
+		unless Exception === output
+			return Literal::Failure.new(
+				Literal::TypeError.expected(output, to_be_a: Exception)
+			)
+		end
+
+		unless type === output
+			return Literal::Failure.new(
+				Literal::TypeError.expected(output, to_be_a: type)
+			)
+		end
+
+		Literal::Failure.new(output)
+	rescue StandardError => e
+		Literal::Failure.new(e)
+	end
+
+	def then_on_failure(result_type)
+		output = yield(@value)
+
+		unless Literal::Result(result_type) === output
+			return Literal::Failure.new(
+				Literal::TypeError.expected(output, to_be_a: Literal::Result(result_type))
+			)
+		end
+
+		output
+	rescue StandardError => e
+		Literal::Failure.new(e)
 	end
 end
