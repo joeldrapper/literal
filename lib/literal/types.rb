@@ -7,7 +7,15 @@ module Literal::Types
 	def _Union(*types)
 		raise Literal::ArgumentError, "_Union type must have at least one type." if types.size < 1
 
-		Literal::Union.new(*types)
+		Literal::Union.new(
+			*types.map do |type|
+				if Literal::Union === type
+					type.types
+				else
+					type
+				end
+			end.flatten
+		)
 	end
 
 	# Matches if *all* given types are matched.

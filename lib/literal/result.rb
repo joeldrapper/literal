@@ -2,7 +2,8 @@
 
 # @abstract
 class Literal::Result < Literal::Monad
-	def initialize(value)
+	def initialize(type, value)
+		@type = type
 		@value = value
 		freeze
 	end
@@ -12,10 +13,5 @@ class Literal::Result < Literal::Monad
 	# @return [Array]
 	def deconstruct
 		[@value]
-	end
-
-	# @yieldparam switch [Literal::Case]
-	def call(&)
-		Literal::Case.new(Literal::Success, Literal::Failure, &)[self].call(@value)
 	end
 end

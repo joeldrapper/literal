@@ -25,7 +25,7 @@ class Literal::Case
 
 	def when(*conditions, &block)
 		conditions.each do |condition|
-			@handled_cases[condition] = block || proc { |it| it }
+			@handled_cases[condition] = block || Literal::IdentityProc
 		end
 	end
 

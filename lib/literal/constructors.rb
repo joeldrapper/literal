@@ -29,7 +29,7 @@ module Literal::Constructors
 
 	# @return [Literal::Union]
 	def Union(*types)
-		Literal::Union.new(*types)
+		Literal::Types::_Union(*types)
 	end
 
 	def Value(type, &)

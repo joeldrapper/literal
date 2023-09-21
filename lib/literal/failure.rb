@@ -19,17 +19,8 @@ class Literal::Failure < Literal::Result
 	def success = Literal::Nothing
 
 	# @return [Literal::Some]
-	def failure(error)
-		if error === @value
-			if block_given?
-				yield(@value)
-				self
-			else
-				Literal::Some.new(@value)
-			end
-		else
-			block_given? ? self : Literal::Nothing
-		end
+	def failure
+		Literal::Some.new(@value)
 	end
 
 	def raise!
@@ -44,7 +35,7 @@ class Literal::Failure < Literal::Result
 		yield(@value)
 	end
 
-	def filter = self
+	def filter = Literal::Nothing
 	def map(type) = self
 	def then(type) = self
 	def fmap = self
@@ -54,45 +45,27 @@ class Literal::Failure < Literal::Result
 		DECONSTRUCTION_TEMPLATE.slice(*keys).transform_values { |v| v.call(@value) }
 	end
 
-	def lift(*, &block)
-		block ? Literal::Lift.new(*, &block).with_failure(@value) : self
-	end
-
-	def lift!(*, &block)
-		block ? Literal::Lift.new(*, &block).with_failure!(@value) : self
-	end
-
 	def map_failure(type = Exception)
 		output = yield(@value)
 
 		unless Exception === output
-			return Literal::Failure.new(
-				Literal::TypeError.expected(output, to_be_a: Exception)
-			)
+			raise Literal::TypeError.expected(output, to_be_a: Exception)
 		end
 
 		unless type === output
-			return Literal::Failure.new(
-				Literal::TypeError.expected(output, to_be_a: type)
-			)
+			raise Literal::TypeError.expected(output, to_be_a: type)
 		end
 
 		Literal::Failure.new(output)
-	rescue StandardError => e
-		Literal::Failure.new(e)
 	end
 
-	def then_on_failure(result_type)
-		output = yield(@value)
-
-		unless Literal::Result(result_type) === output
-			return Literal::Failure.new(
-				Literal::TypeError.expected(output, to_be_a: Literal::Result(result_type))
-			)
+	def call(&block)
+		if block
+			Literal::ResultCase.new(@type, &block).with_failure(@value)
+		else
+			self
 		end
-
-		output
-	rescue StandardError => e
-		Literal::Failure.new(e)
 	end
+
+	alias_method :handle, :call
 end

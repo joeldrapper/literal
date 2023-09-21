@@ -7,6 +7,8 @@ class Literal::Union < Literal::Type
 		@types = types
 	end
 
+	attr_reader :types
+
 	def inspect = "Literal::Union(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
