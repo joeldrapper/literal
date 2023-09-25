@@ -62,11 +62,11 @@ class Literal::Lift
 		raise(value)
 	end
 
-	def success(&block)
+	def on_success(&block)
 		@success_case = block
 	end
 
-	def failure(*types, &block)
+	def on_failure(*types, &block)
 		if types.length == 0
 			@failure_case = block
 		else

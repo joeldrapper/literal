@@ -62,6 +62,19 @@ class Literal::Failure < Literal::Result
 		block ? Literal::Lift.new(*, &block).with_failure!(@value) : self
 	end
 
+	def strictly!(*errors, &)
+		if errors.any? { |error| error === @value }
+			lift!(*errors, &)
+		else
+			raise @value
+		end
+	end
+
+	def to_strictly!(*kwargs)
+		it = self
+		proc { |&block| it.strictly!(*kwargs, &block) }
+	end
+
 	def map_failure(type = Exception)
 		output = yield(@value)
 

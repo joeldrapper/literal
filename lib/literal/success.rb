@@ -104,6 +104,13 @@ class Literal::Success < Literal::Result
 		block ? Literal::Lift.new(*, &block).with_success!(@value) : self
 	end
 
+	alias_method :strictly!, :lift!
+
+	def to_strictly!(*kwargs)
+		it = self
+		proc { |&block| it.strictly!(*kwargs, &block) }
+	end
+
 	def map_failure(value_type = Exception) = self
 	def then_on_failure(result_type) = self
 end
