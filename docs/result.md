@@ -8,9 +8,9 @@ Both success and failure classes implement the same interface and from the outsi
 
 ```ruby
 def download_cat
-	Literal::Result(Cat).try do
-		fetch_cat_from_api
-	end
+  Literal::Result(Cat).try do
+    fetch_cat_from_api
+  end
 end
 ```
 
@@ -26,7 +26,7 @@ The easiest way to open the box is to call `value_or`. This method must be passe
 
 ```ruby
 download_cat.value_or do |error|
-	# handle error
+  # handle error
 end
 ```
 
@@ -36,10 +36,10 @@ Another option is to use pattern matching to open the box.
 
 ```ruby
 case download_cat
-in Literal::Success(Cat) => cat
-	# do something with cat
+in Literal::Success => cat
+  # do something with cat
 in Literal::Failure(message:) => error
-	# handle error
+  # handle error
 end
 ```
 
@@ -71,11 +71,11 @@ What if the `Cat` object doesn't have a name, but instead fetches it with anothe
 
 ```ruby
 class Cat
-	def name
-		Literal::Result(String).try do
-			fetch_name_from_api(self)
-		end
-	end
+  def name
+    Literal::Result(String).try do
+      fetch_name_from_api(self)
+    end
+  end
 end
 ```
 
@@ -115,9 +115,9 @@ Let's revisit the `download_cat` method again:
 
 ```ruby
 def download_cat
-	Literal::Result(Cat).try do
-		fetch_cat_from_api
-	end.handle!(HTTP::Error)
+  Literal::Result(Cat).try do
+    fetch_cat_from_api
+  end.handle!(HTTP::Error)
 end
 ```
 
@@ -132,9 +132,9 @@ First lets update the `download_cat` method to take a block and pass it on to th
 
 ```ruby
 def download_cat(&)
-	Literal::Result(Cat).try do
-		fetch_cat_from_api
-	end.handle!(HTTP::Error, &)
+  Literal::Result(Cat).try do
+    fetch_cat_from_api
+  end.handle!(HTTP::Error, &)
 end
 ```
 
@@ -142,8 +142,8 @@ Now we can call it like this
 
 ```ruby
 download_cat do |r|
-	r.on_success { |cat| do_something_with(cat) }
-	r.on_failure(HTTP::Error) { |error| handle_http_error(error) }
+  r.on_success { |cat| do_something_with(cat) }
+  r.on_failure(HTTP::Error) { |error| handle_http_error(error) }
 end
 ```
 
