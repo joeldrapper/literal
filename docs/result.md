@@ -51,7 +51,7 @@ If you want to know if the box is a success or a failure without opening it, you
 
 ### `map`
 
-You can think of the result box like an Array. It might be an empty Array, or it could contain a Cat. In either case, you can use `map` to transform the contents of the box.
+You can think of the result box like an Array. It might be an empty Array, or it could contain a Cat. In either case, you can use `map` to transform the contents of the box (if there are any contents).
 
 If the box is a failure, the map does nothing and simply returns itself. However, if the box is a success, the map yields the value to the block and returns the result wrapped in a new success box.
 
