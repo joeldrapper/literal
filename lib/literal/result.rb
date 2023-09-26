@@ -18,4 +18,16 @@ class Literal::Result < Literal::Monad
 	def call(&)
 		Literal::Case.new(Literal::Success, Literal::Failure, &)[self].call(@value)
 	end
+
+	def curry_handle!(*args)
+		result = self
+
+		proc do |*a, &block|
+			if block
+				result.handle!(*args, *a, &block)
+			else
+				result.curry_handle!(*args, *a)
+			end
+		end
+	end
 end
