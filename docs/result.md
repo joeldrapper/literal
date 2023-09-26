@@ -79,9 +79,9 @@ class Cat
 end
 ```
 
-Then we'd have a `Result(Result(String))` which means either a `Success(Success(String))` or a `Success(Failure(Exception))` or a `Failure(Exception)`. That's a lot of boxes!
+Then after mapping, we'd have a `Result(Result(String))` which means either a `Success(Success(String))` or a `Success(Failure(Exception))` or a `Failure(Exception)`. That's a lot of boxes!
 
-In this case, we can use `then` instead of `map`. `then` must return a `Result(T)` where `T` is the type of the value in the box (is case, that's a `String`)
+In this case, we can use `then` instead of `map`. `then` must return a `Result(T)` where `T` is the type of the value in the box (in this case, that's a `String`)
 
 ```ruby
 download_cat.then(String, &:name)
