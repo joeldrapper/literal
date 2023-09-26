@@ -25,8 +25,10 @@ class Literal::Result < Literal::Monad
 		proc do |*a, &block|
 			if block
 				result.handle!(*args, *a, &block)
-			else
+			elsif a.length > 0
 				result.curry_handle!(*args, *a)
+			else
+				result
 			end
 		end
 	end
