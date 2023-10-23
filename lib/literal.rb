@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "zeitwerk"
+require "async"
 require "concurrent-ruby"
 
 module Literal
