@@ -58,6 +58,7 @@ module Literal::Attributable
 		literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
 			# frozen_string_literal: true
 
+			undef_method :initialize if method_defined?(:initialize)
 			#{generate_literal_initializer}
 
 			#{generate_literal_reader(attribute) if attribute.reader?}
