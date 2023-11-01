@@ -5,3 +5,5 @@ Literal::Null = Literal::Singleton.new do
 		"Literal::Null"
 	end
 end
+
+Literal::Null.freeze
