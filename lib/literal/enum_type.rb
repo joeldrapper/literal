@@ -31,12 +31,8 @@ class Literal::EnumType < Literal::Type
 				alias_method :to_h, :value
 			end
 
-			instance_exec(&)
+			class_exec(&)
 			deep_freeze
 		end
 	end
-end
-
-def Literal.Enum(type)
-	Literal::EnumType.new(type)
 end

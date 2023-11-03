@@ -6,6 +6,10 @@ module Literal::Constructors
 		Literal::ArrayType.new(type)
 	end
 
+	def Enum(type)
+		Literal::EnumType.new(type)
+	end
+
 	# @return [Literal::LRU]
 	def LRU(key_type, value_type)
 		Literal::LRUType.new(key_type, value_type)
