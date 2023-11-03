@@ -2,6 +2,8 @@
 
 class Literal::Enum
 	class << self
+		include Enumerable
+
 		attr_reader :type
 		attr_reader :members
 
@@ -43,6 +45,18 @@ class Literal::Enum
 			@values.freeze
 			@members.freeze
 			freeze
+		end
+
+		def each(&)
+			@members.each(&)
+		end
+
+		def each_value(&)
+			@values.each_key(&)
+		end
+
+		def [](value)
+			@values[value]
 		end
 	end
 
