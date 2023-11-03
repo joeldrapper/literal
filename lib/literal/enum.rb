@@ -1,85 +1,62 @@
 # frozen_string_literal: true
 
 class Literal::Enum
-	include Enumerable
-
 	class << self
-		def cast(value)
-			@values[value]
-		end
+		attr_reader :type
+		attr_reader :members
 
-		def values
-			@values.keys
-		end
+		def values = @values.keys
 
-		def each(&)
-			@members.each(&)
-		end
-
-		def define(type, &)
-			Class.new(self, &).freeze
-		end
-
-		def method_missing(name, *args, **kwargs, &)
-			return super if frozen? || args.length > 1 || kwargs.any?
+		def respond_to_missing?(name)
+			return super if frozen?
+			return super unless Symbol === name
 			return super unless name[0] =~ /[A-Z]/
 
-			new(name, *args, &)
+			true
 		end
 
-		def new(name, a = nil, b = nil, &)
-			raise ArgumentError if frozen?
+		def method_missing(name, value, *args, **kwargs, &)
+			return super if frozen?
+			return super unless name.is_a?(Symbol)
+			return super unless name[0] == name[0].upcase
 
-			@values ||= Concurrent::Map.new
-			@members ||= Concurrent::Array.new
+			raise ArgumentError if args.length > 0
+			raise ArgumentError if kwargs.length > 0
+			raise ArgumentError if @values.key? value
+			raise ArgumentError if constants.include?(name)
 
-			if !b && a.is_a?(Proc)
-				transitions_to = a
-				value = name
-			else
-				value = a || name
-				transitions_to = b
+			unless @type === value
+				raise Literal::TypeError.expected(value, to_be_a: @type)
 			end
 
-			if self == Literal::Enum
-				raise ArgumentError,
-					"You can't add values to the abstract Enum class itself."
-			end
+			value = value.dup.freeze unless value.frozen?
 
-			if const_defined?(name)
-				raise NameError,
-					"Name conflict: '#{self.name}::#{name}' is already defined."
-			end
-
-			if @values[value]
-				raise NameError,
-					"Value conflict: the value '#{value}' is defined for '#{cast(value).name}'."
-			end
-
-			class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        def #{name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!}?
-          @short_name == "#{name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!}"
-        end
-			RUBY
-
-			member = super(name, value)
-			member.define_singleton_method(:transitions_to, transitions_to) if transitions_to
-			member.instance_eval(&) if block_given?
-			member.freeze
-
-			const_set(name, member)
-			@members << member
+			member = new(name, value)
+			const_set name, member
 			@values[value] = member
+			@members << member
 
-			member
+			define_method("#{name.to_s.downcase.gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')}?") { self == member }
+		end
+
+		def deep_freeze
+			@values.freeze
+			@members.freeze
+			freeze
 		end
 	end
 
 	def initialize(name, value)
-		@name = "#{self.class.name}::#{name}"
+		@name = name
 		@value = value
-		@short_name = name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!
+		freeze
 	end
 
-	attr_accessor :name, :value, :short_name
+	attr_reader :value
+
+	def name
+		"#{self.class.name}::#{@name}"
+	end
+
+	alias_method :inspect, :name
 end
