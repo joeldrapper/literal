@@ -59,6 +59,10 @@ class Literal::Enum
 		end
 
 		alias_method :cast, :[]
+
+		def to_proc
+			method(:cast).to_proc
+		end
 	end
 
 	def initialize(name, value, &block)

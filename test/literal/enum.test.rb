@@ -30,4 +30,6 @@ test do
 	refute on.respond_to?(:to_i)
 
   expect(Color.reject { |c| c.red? }) == [Color::Green, Color::Blue, Color::LightRed]
+
+  expect([0, 4].map(&Color)) == [Color::Red, Color::LightRed]
 end
