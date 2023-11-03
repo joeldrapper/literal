@@ -11,7 +11,7 @@ class Literal::Enum
 		def respond_to_missing?(name)
 			return super if frozen?
 			return super unless Symbol === name
-			return super unless name[0] =~ /[A-Z]/
+			return super unless ("A".."Z").include? name[0]
 
 			true
 		end
