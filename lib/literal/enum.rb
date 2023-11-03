@@ -37,7 +37,7 @@ class Literal::Enum
 			@values[value] = member
 			@members << member
 
-			define_method("#{name.to_s.downcase.gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')}?") { self == member }
+			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
 		def deep_freeze
