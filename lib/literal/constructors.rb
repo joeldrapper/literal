@@ -1,9 +1,20 @@
 # frozen_string_literal: true
 
 module Literal::Constructors
-	# @return [Literal::Array]
 	def Array(type)
 		Literal::ArrayType.new(type)
+	end
+
+	def Future(type)
+		Literal::FutureType.new(type)
+	end
+
+	def FutureProxy(type)
+		Literal::FutureProxyType.new(type)
+	end
+
+	def FutureEnumerable(type)
+		Literal::FutureEnumerableType.new(type)
 	end
 
 	# @return [Literal::LRU]
