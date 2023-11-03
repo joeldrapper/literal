@@ -1,85 +1,78 @@
 # frozen_string_literal: true
 
 class Literal::Enum
-	include Enumerable
-
 	class << self
-		def cast(value)
-			@values[value]
+		include Enumerable
+
+		attr_reader :type, :members
+
+		def values = @values.keys
+
+		def respond_to_missing?(name)
+			return super if frozen?
+			return super unless Symbol === name
+			return super unless name[0] =~ /[A-Z]/
+
+			true
 		end
 
-		def values
-			@values.keys
+		def method_missing(name, value, *args, **kwargs, &)
+			return super if frozen?
+			return super unless name.is_a?(Symbol)
+			return super unless name[0] == name[0].upcase
+
+			raise ArgumentError if args.length > 0
+			raise ArgumentError if kwargs.length > 0
+			raise ArgumentError if @values.key? value
+			raise ArgumentError if constants.include?(name)
+
+			unless @type === value
+				raise Literal::TypeError.expected(value, to_be_a: @type)
+			end
+
+			value = value.dup.freeze unless value.frozen?
+
+			member = new(name, value, &)
+			const_set name, member
+			@values[value] = member
+			@members << member
+
+			define_method("#{name.to_s.downcase.gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')}?") { self == member }
+		end
+
+		def deep_freeze
+			@values.freeze
+			@members.freeze
+			freeze
 		end
 
 		def each(&)
 			@members.each(&)
 		end
 
-		def define(type, &)
-			Class.new(self, &).freeze
+		def each_value(&)
+			@values.each_key(&)
 		end
 
-		def method_missing(name, *args, **kwargs, &)
-			return super if frozen? || args.length > 1 || kwargs.any?
-			return super unless name[0] =~ /[A-Z]/
-
-			new(name, *args, &)
+		def [](value)
+			@values[value]
 		end
 
-		def new(name, a = nil, b = nil, &)
-			raise ArgumentError if frozen?
-
-			@values ||= Concurrent::Map.new
-			@members ||= Concurrent::Array.new
-
-			if !b && a.is_a?(Proc)
-				transitions_to = a
-				value = name
-			else
-				value = a || name
-				transitions_to = b
-			end
-
-			if self == Literal::Enum
-				raise ArgumentError,
-					"You can't add values to the abstract Enum class itself."
-			end
-
-			if const_defined?(name)
-				raise NameError,
-					"Name conflict: '#{self.name}::#{name}' is already defined."
-			end
-
-			if @values[value]
-				raise NameError,
-					"Value conflict: the value '#{value}' is defined for '#{cast(value).name}'."
-			end
-
-			class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        def #{name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!}?
-          @short_name == "#{name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!}"
-        end
-			RUBY
-
-			member = super(name, value)
-			member.define_singleton_method(:transitions_to, transitions_to) if transitions_to
-			member.instance_eval(&) if block_given?
-			member.freeze
-
-			const_set(name, member)
-			@members << member
-			@values[value] = member
-
-			member
-		end
+		alias_method :cast, :[]
 	end
 
-	def initialize(name, value)
-		@name = "#{self.class.name}::#{name}"
+	def initialize(name, value, &block)
+		@name = name
 		@value = value
-		@short_name = name.to_s.gsub(/([a-z])([A-Z])/, '\1_\2').downcase!
+		instance_exec(&block) if block
+		freeze
 	end
 
-	attr_accessor :name, :value, :short_name
+	attr_reader :value
+
+	def name
+		"#{self.class.name}::#{@name}"
+	end
+
+	alias_method :inspect, :name
 end
