@@ -5,5 +5,3 @@ Color = Literal::Enum(Integer).define do
 	Green(1)
 	Blue(3)
 end
-
-binding.irb

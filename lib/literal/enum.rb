@@ -4,8 +4,7 @@ class Literal::Enum
 	class << self
 		include Enumerable
 
-		attr_reader :type
-		attr_reader :members
+		attr_reader :type, :members
 
 		def values = @values.keys
 
@@ -33,7 +32,7 @@ class Literal::Enum
 
 			value = value.dup.freeze unless value.frozen?
 
-			member = new(name, value)
+			member = new(name, value, &)
 			const_set name, member
 			@values[value] = member
 			@members << member
@@ -58,11 +57,14 @@ class Literal::Enum
 		def [](value)
 			@values[value]
 		end
+
+		alias_method :cast, :[]
 	end
 
-	def initialize(name, value)
+	def initialize(name, value, &block)
 		@name = name
 		@value = value
+		instance_exec(&block) if block
 		freeze
 	end
 
