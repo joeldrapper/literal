@@ -15,11 +15,11 @@ class Literal::Case
 		missing_cases = @required_cases - keys
 
 		if excess_cases.any?
-			raise ArgumentError, "Excess case(s): #{excess_cases.join(', ')}."
+			raise ArgumentError, "Excess case(s): #{excess_cases.map(&:inspect).join(', ')}."
 		end
 
 		if missing_cases.any?
-			raise ArgumentError, "Missing case(s): #{missing_cases.join(', ')}."
+			raise ArgumentError, "Missing case(s): #{missing_cases.map(&:inspect).join(', ')}."
 		end
 	end
 

@@ -78,9 +78,27 @@ class Literal::Enum
 		"#{self.class.name}::#{@name}"
 	end
 
+	alias_method :inspect, :name
+
+	def siblings
+		self.class.members
+	end
+
 	def _dump(level)
 		Marshal.dump(@value)
 	end
 
-	alias_method :inspect, :name
+	def call(&block)
+		if block
+			Literal::Case.new(*siblings, &block).call(self)
+		else
+			self
+		end
+	end
+
+	alias_method :handle, :call
+
+	def to_proc
+		method(:call).to_proc
+	end
 end

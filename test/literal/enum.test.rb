@@ -6,6 +6,16 @@ Color = Literal::Enum(Integer).define do
 	Blue(3)
 end
 
+test "handle" do
+	output = Color::Red.handle do |c|
+		c.when(Color::Red) { "red" }
+		c.when(Color::Green) { "green" }
+		c.when(Color::Blue) { "blue" }
+	end
+
+	expect(output) == "red"
+end
+
 test "the enum class is frozen" do
 	assert Color.frozen?
 end
