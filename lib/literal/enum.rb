@@ -8,12 +8,16 @@ class Literal::Enum
 
 		def values = @values.keys
 
-		def respond_to_missing?(name)
+		def respond_to_missing?(name, include_private = false)
 			return super if frozen?
 			return super unless Symbol === name
 			return super unless name[0] =~ /[A-Z]/
 
 			true
+		end
+
+		def _load(data)
+			self[Marshal.load(data)]
 		end
 
 		def method_missing(name, value, *args, **kwargs, &)
@@ -72,6 +76,10 @@ class Literal::Enum
 
 	def name
 		"#{self.class.name}::#{@name}"
+	end
+
+	def _dump(level)
+		Marshal.dump(@value)
 	end
 
 	alias_method :inspect, :name
