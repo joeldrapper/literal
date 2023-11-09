@@ -11,7 +11,7 @@ class Literal::Enum
 		def respond_to_missing?(name, include_private = false)
 			return super if frozen?
 			return super unless Symbol === name
-			return super unless name[0] =~ /[A-Z]/
+			return super unless ("A".."Z").include? name[0]
 
 			true
 		end
@@ -41,7 +41,7 @@ class Literal::Enum
 			@values[value] = member
 			@members << member
 
-			define_method("#{name.to_s.downcase.gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')}?") { self == member }
+			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
 		def deep_freeze
@@ -63,6 +63,10 @@ class Literal::Enum
 		end
 
 		alias_method :cast, :[]
+
+		def to_proc
+			method(:cast).to_proc
+		end
 	end
 
 	def initialize(name, value, &block)
