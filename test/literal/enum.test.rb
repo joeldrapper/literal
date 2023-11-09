@@ -10,8 +10,13 @@ Color = Literal::Enum(Integer).define do
 end
 
 Switch = Literal::Enum(_Boolean).define do
-	On(true)
-	Off(false)
+	On(true) do
+		def toggle = Switch::Off
+	end
+
+	Off(false) do
+		def toggle = Switch::On
+	end
 end
 
 test "handle" do
@@ -103,4 +108,8 @@ end
 
 test "enum can be used as a proc to cast values" do
 	expect([0, 4].map(&Color)) == [Color::Red, Color::LightRed]
+end
+
+test "member singleton methods" do
+	expect(Switch::On.toggle) == Switch::Off
 end
