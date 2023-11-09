@@ -19,6 +19,7 @@ test "handle" do
 		c.when(Color::Red) { "red" }
 		c.when(Color::Green) { "green" }
 		c.when(Color::Blue) { "blue" }
+		c.when(Color::LightRed) { "light red" }
 	end
 
 	expect(output) == "red"
@@ -30,7 +31,7 @@ end
 
 test "the enum class is enumerable" do
 	expect(Color).to_be_an Enumerable
-	expect(Color.map(&:value)) == [0, 1, 3]
+	expect(Color.map(&:value)) == [0, 1, 3, 4]
 	expect(Color.reject { |c| c.red? }) == [Color::Green, Color::Blue, Color::LightRed]
 end
 
@@ -71,7 +72,7 @@ test "the enum members are frozen" do
 end
 
 test "values" do
-	expect(Color.values) == [0, 1, 3]
+	expect(Color.values) == [0, 1, 3, 4]
 end
 
 test "predicates" do
