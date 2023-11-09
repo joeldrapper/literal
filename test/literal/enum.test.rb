@@ -14,26 +14,6 @@ Switch = Literal::Enum(_Boolean).define do
 	Off(false)
 end
 
-test do
-	color = Color::Red
-	assert color.is_a?(Color)
-	assert color.red?
-	refute color.light_red?
-	expect(color.value) == 0
-	expect(color.to_i) == 0
-
-	expect(Color.cast(4)) == Color::LightRed
-
-	on = Switch::On
-	assert on.on?
-	refute on.off?
-	refute on.respond_to?(:to_i)
-
-  expect(Color.reject { |c| c.red? }) == [Color::Green, Color::Blue, Color::LightRed]
-
-  expect([0, 4].map(&Color)) == [Color::Red, Color::LightRed]
-end
-
 test "handle" do
 	output = Color::Red.handle do |c|
 		c.when(Color::Red) { "red" }
@@ -51,6 +31,7 @@ end
 test "the enum class is enumerable" do
 	expect(Color).to_be_an Enumerable
 	expect(Color.map(&:value)) == [0, 1, 3]
+	expect(Color.reject { |c| c.red? }) == [Color::Green, Color::Blue, Color::LightRed]
 end
 
 test "type checking" do
@@ -111,4 +92,14 @@ test "casting a value" do
 	expect(Color[0]) == Color::Red
 	expect(Color[1]) == Color::Green
 	expect(Color[3]) == Color::Blue
+	expect(Color.cast(4)) == Color::LightRed
+end
+
+test "to_i is defined on integer enums" do
+	expect(Color::Red.to_i) == 0
+	refute Switch::On.respond_to?(:to_i)
+end
+
+test "enum can be used as a proc to cast values" do
+	expect([0, 4].map(&Color)) == [Color::Red, Color::LightRed]
 end
