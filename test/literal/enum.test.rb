@@ -3,10 +3,27 @@
 extend Literal::Types
 
 class Color < Literal::Enum(Integer)
-	Red(0)
-	Green(1)
-	Blue(3)
-	LightRed(4)
+	index :rgb
+
+	index :hex do |color|
+		color.rgb.map { |c| c.to_s(16).rjust(2, "0") }.join
+	end
+
+	Red(0) do
+		def rgb = [255, 0, 0]
+	end
+
+	Green(1) do
+		def rgb = [0, 255, 0]
+	end
+
+	Blue(3) do
+		def rgb = [0, 0, 255]
+	end
+
+	LightRed(4) do
+		def rgb = [255, 128, 128]
+	end
 end
 
 class Switch < Literal::Enum(_Boolean)
@@ -17,6 +34,16 @@ class Switch < Literal::Enum(_Boolean)
 	Off(false) do
 		def toggle = Switch::On
 	end
+end
+
+test "index" do
+	expect(
+		Color.where(rgb: [0, 0, 255])
+	) == [Color::Blue]
+
+	expect(
+		Color.where(hex: "0000ff")
+	) == [Color::Blue]
 end
 
 test "handle" do

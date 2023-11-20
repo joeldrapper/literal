@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Literal::Enum
+	include Literal::ModuleDefined
+
 	class << self
 		include Enumerable
 
@@ -17,13 +19,6 @@ class Literal::Enum
 		end
 
 		def inherited(subclass)
-			TracePoint.trace(:end) do |tp|
-				if Class === tp.self && tp.self < Literal::Enum
-					tp.self.deep_freeze
-					tp.disable
-				end
-			end
-
 			subclass.instance_exec do
 				@values = {}
 				@members = []
@@ -54,7 +49,36 @@ class Literal::Enum
 			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
-		def deep_freeze
+		def index(name, &block)
+			raise ArgumentError unless Symbol === name
+			raise ArgumentError if frozen?
+
+			@index_definitions ||= {}
+			@index_definitions[name] = block || name.to_proc
+		end
+
+		def where(**kwargs)
+			unless kwargs.length == 1
+				raise ArgumentError, "You can only specify one index when using `where`."
+			end
+
+			key, value = kwargs.first
+
+			@indexes.fetch(key)[value]
+		end
+
+		def after_defined
+			raise ArgumentError if frozen?
+
+			@indexes = {}
+
+			@index_definitions&.each do |name, block|
+				@indexes[name] = @members.group_by(&block).freeze
+			end
+
+			@index_definitions.freeze
+			@indexes.freeze
+
 			@values.freeze
 			@members.freeze
 			freeze
