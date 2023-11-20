@@ -2,14 +2,14 @@
 
 extend Literal::Types
 
-Color = Literal::Enum(Integer).define do
+class Color < Literal::Enum(Integer)
 	Red(0)
 	Green(1)
 	Blue(3)
 	LightRed(4)
 end
 
-Switch = Literal::Enum(_Boolean).define do
+class Switch < Literal::Enum(_Boolean)
 	On(true) do
 		def toggle = Switch::Off
 	end
@@ -37,12 +37,12 @@ end
 test "the enum class is enumerable" do
 	expect(Color).to_be_an Enumerable
 	expect(Color.map(&:value)) == [0, 1, 3, 4]
-	expect(Color.reject { |c| c.red? }) == [Color::Green, Color::Blue, Color::LightRed]
+	expect(Color.reject(&:red?)) == [Color::Green, Color::Blue, Color::LightRed]
 end
 
 test "type checking" do
 	expect {
-		Literal::Enum(Integer).define do
+		class TypeChecking < Literal::Enum(Integer)
 			Red("red")
 		end
 	}.to_raise(Literal::TypeError)
@@ -56,7 +56,7 @@ end
 
 test "you can't use the same name twice" do
 	expect {
-		Literal::Enum(Integer).define do
+		class SameNameTwice < Literal::Enum(Integer)
 			Red(0)
 			Red(1)
 		end
@@ -65,7 +65,7 @@ end
 
 test "you can't use the same value twice" do
 	expect {
-		Literal::Enum(Integer).define do
+		class SameValueTwice < Literal::Enum(Integer)
 			Red(0)
 			Green(0)
 		end
@@ -87,11 +87,11 @@ test "predicates" do
 end
 
 test "values are frozen" do
-	Example = Literal::Enum(String).define do
+	class ValuesAreFrozen < Literal::Enum(String)
 		Foo(+"foo")
 	end
 
-	assert Example::Foo.value.frozen?
+	assert ValuesAreFrozen::Foo.value.frozen?
 end
 
 test "casting a value" do

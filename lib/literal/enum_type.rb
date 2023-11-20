@@ -18,8 +18,6 @@ class Literal::EnumType < Literal::Type
 
 		Class.new(Literal::Enum) do
 			@type = type
-			@values = {}
-			@members = []
 
 			if Integer == type
 				alias_method :to_i, :value
