@@ -1,13 +1,34 @@
 # frozen_string_literal: true
 
 module Literal::Constructors
+	SpecialisedEnums = {
+		String => Class.new(Literal::Enum) do
+			def type = String
+			alias_method :to_s, :value
+			alias_method :to_str, :value
+		end,
+
+		Integer => Class.new(Literal::Enum) do
+			def type = Integer
+			alias_method :to_i, :value
+		end,
+
+		Array => Class.new(Literal::Enum) do
+			def type = Array
+			alias_method :to_a, :value
+			alias_method :to_ary, :value
+		end
+	}.freeze
+
 	# @return [Literal::Array]
 	def Array(type)
 		Literal::ArrayType.new(type)
 	end
 
 	def Enum(type)
-		Literal::EnumType.new(type)
+		SpecialisedEnums[type] || Class.new(Literal::Enum) do
+			define_method(:type) { type }
+		end
 	end
 
 	# @return [Literal::LRU]

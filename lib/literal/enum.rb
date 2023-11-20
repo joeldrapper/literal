@@ -16,6 +16,20 @@ class Literal::Enum
 			true
 		end
 
+		def inherited(subclass)
+			TracePoint.trace(:end) do |tp|
+				if Class === tp.self && tp.self < Literal::Enum
+					tp.self.deep_freeze
+					tp.disable
+				end
+			end
+
+			subclass.instance_exec do
+				@values = {}
+				@members = []
+			end
+		end
+
 		def _load(data)
 			self[Marshal.load(data)]
 		end
@@ -29,10 +43,6 @@ class Literal::Enum
 			raise ArgumentError if kwargs.length > 0
 			raise ArgumentError if @values.key? value
 			raise ArgumentError if constants.include?(name)
-
-			unless @type === value
-				raise Literal::TypeError.expected(value, to_be_a: @type)
-			end
 
 			value = value.dup.freeze unless value.frozen?
 
@@ -70,6 +80,10 @@ class Literal::Enum
 	end
 
 	def initialize(name, value, &block)
+		unless type === value
+			raise Literal::TypeError.expected(value, to_be_a: type)
+		end
+
 		@name = name
 		@value = value
 		instance_exec(&block) if block

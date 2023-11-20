@@ -2,6 +2,10 @@
 
 let def whatever = Literal::Array(Integer).new(1, 2, 3)
 
+test "variance" do
+	assert Literal::Array(Object) === Literal::Array(Integer).new
+end
+
 describe "#<<" do
 	test "with valid item" do
 		whatever << 4

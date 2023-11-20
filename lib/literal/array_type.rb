@@ -11,7 +11,11 @@ class Literal::ArrayType < Literal::Generic
 	def ===(value)
 		case value
 		when Literal::Array
-			@type == value.type
+			if @type == value.type
+				true
+			elsif Module === @type && Module === value.type && (value.type < @type)
+				true
+			end
 		else
 			false
 		end
