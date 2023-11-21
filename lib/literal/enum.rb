@@ -85,7 +85,7 @@ class Literal::Enum
 				raise ArgumentError, "You can only use `find_by` on unique indexes."
 			end
 
-			@indexes.fetch(key)[value][0]
+			@indexes.fetch(key)[value]&.first
 		end
 
 		def after_defined
