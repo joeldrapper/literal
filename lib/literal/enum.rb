@@ -24,8 +24,6 @@ class Literal::Enum
 			subclass.instance_exec do
 				@values = {}
 				@members = []
-				@index_definitions = {}
-				@indexes = {}
 			end
 		end
 
@@ -56,6 +54,9 @@ class Literal::Enum
 		def index(name, type, unique: false, &block)
 			raise ArgumentError unless Symbol === name
 			raise ArgumentError if frozen?
+
+			@index_definitions ||= {}
+			@indexes = {}
 
 			@index_definitions[name] = IndexDefinition.new(
 				name:, type:, unique:, proc: block || name.to_proc
