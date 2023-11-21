@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Literal::Enum
+	extend Literal::Types
 	include Literal::ModuleDefined
 
 	IndexDefinition = Data.define(:name, :type, :unique, :proc)
