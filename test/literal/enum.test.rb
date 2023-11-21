@@ -39,7 +39,7 @@ class Switch < Literal::Enum(_Boolean)
 	end
 end
 
-test "index" do
+test "where" do
 	expect(
 		Color.where(rgb: [0, 0, 255])
 	) == [Color::Blue]
@@ -47,6 +47,16 @@ test "index" do
 	expect(
 		Color.where(hex: "0000ff")
 	) == [Color::Blue]
+end
+
+test "find_by" do
+	expect(
+		Color.find_by(rgb: [0, 0, 255])
+	) == Color::Blue
+
+	expect(
+		Color.find_by(hex: "0000ff")
+	) == Color::Blue
 end
 
 test "handle" do
