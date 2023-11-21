@@ -3,10 +3,30 @@
 extend Literal::Types
 
 class Color < Literal::Enum(Integer)
-	Red(0)
-	Green(1)
-	Blue(3)
-	LightRed(4)
+	attr_accessor :rgb
+
+	index :rgb, Array, unique: true
+	index :hex, String, unique: true
+
+	def hex
+		rgb.map { |c| c.to_s(16).rjust(2, "0") }.join
+	end
+
+	Red(0) do
+		self.rgb = [255, 0, 0]
+	end
+
+	Green(1) do
+		self.rgb = [0, 255, 0]
+	end
+
+	Blue(3) do
+		self.rgb = [0, 0, 255]
+	end
+
+	LightRed(4) do
+		self.rgb = [255, 128, 128]
+	end
 end
 
 class Switch < Literal::Enum(_Boolean)
@@ -17,6 +37,26 @@ class Switch < Literal::Enum(_Boolean)
 	Off(false) do
 		def toggle = Switch::On
 	end
+end
+
+test "where" do
+	expect(
+		Color.where(rgb: [0, 0, 255])
+	) == [Color::Blue]
+
+	expect(
+		Color.where(hex: "0000ff")
+	) == [Color::Blue]
+end
+
+test "find_by" do
+	expect(
+		Color.find_by(rgb: [0, 0, 255])
+	) == Color::Blue
+
+	expect(
+		Color.find_by(hex: "0000ff")
+	) == Color::Blue
 end
 
 test "handle" do
