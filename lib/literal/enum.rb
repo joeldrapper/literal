@@ -3,6 +3,8 @@
 class Literal::Enum
 	include Literal::ModuleDefined
 
+	IndexDefinition = Data.define(:name, :type, :unique, :proc)
+
 	class << self
 		include Enumerable
 
@@ -22,6 +24,8 @@ class Literal::Enum
 			subclass.instance_exec do
 				@values = {}
 				@members = []
+				@index_definitions = {}
+				@indexes = {}
 			end
 		end
 
@@ -49,12 +53,13 @@ class Literal::Enum
 			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
-		def index(name, &block)
+		def index(name, type, unique: false, &block)
 			raise ArgumentError unless Symbol === name
 			raise ArgumentError if frozen?
 
-			@index_definitions ||= {}
-			@index_definitions[name] = block || name.to_proc
+			@index_definitions[name] = IndexDefinition.new(
+				name:, type:, unique:, proc: block || name.to_proc
+			)
 		end
 
 		def where(**kwargs)
@@ -67,13 +72,37 @@ class Literal::Enum
 			@indexes.fetch(key)[value]
 		end
 
+		def find_by(**kwargs)
+			unless kwargs.length == 1
+				raise ArgumentError, "You can only specify one index when using `find_by`."
+			end
+
+			key, value = kwargs.first
+
+			unless @index_definitions.fetch(key).unique
+				raise ArgumentError, "You can only use `find_by` on unique indexes."
+			end
+
+			@indexes.fetch(key)[value][0]
+		end
+
 		def after_defined
 			raise ArgumentError if frozen?
 
-			@indexes = {}
+			@index_definitions&.each_value do |definition|
+				index = @members.group_by(&definition.proc).freeze
 
-			@index_definitions&.each do |name, block|
-				@indexes[name] = @members.group_by(&block).freeze
+				index.each do |key, value|
+					unless definition.type === key
+						raise Literal::TypeError.expected(key, to_be_a: definition.type)
+					end
+
+					if definition.unique && value.length > 1
+						raise ArgumentError, "Index #{name} is not unique for #{key}."
+					end
+				end
+
+				@indexes[definition.name] = index
 			end
 
 			@index_definitions.freeze

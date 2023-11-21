@@ -3,26 +3,29 @@
 extend Literal::Types
 
 class Color < Literal::Enum(Integer)
-	index :rgb
+	attr_accessor :rgb
 
-	index :hex do |color|
-		color.rgb.map { |c| c.to_s(16).rjust(2, "0") }.join
+	index :rgb, Array, unique: true
+	index :hex, String, unique: true
+
+	def hex
+		rgb.map { |c| c.to_s(16).rjust(2, "0") }.join
 	end
 
 	Red(0) do
-		def rgb = [255, 0, 0]
+		self.rgb = [255, 0, 0]
 	end
 
 	Green(1) do
-		def rgb = [0, 255, 0]
+		self.rgb = [0, 255, 0]
 	end
 
 	Blue(3) do
-		def rgb = [0, 0, 255]
+		self.rgb = [0, 0, 255]
 	end
 
 	LightRed(4) do
-		def rgb = [255, 128, 128]
+		self.rgb = [255, 128, 128]
 	end
 end
 
