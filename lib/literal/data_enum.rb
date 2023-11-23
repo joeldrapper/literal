@@ -48,6 +48,10 @@ class Literal::DataEnum < Literal::Data
 			@data.each(&)
 		end
 
+		def sample
+			@data.sample
+		end
+
 		def where(**kwargs)
 			unless kwargs.length == 1
 				raise ArgumentError, "You can only specify one index when using `where`."
