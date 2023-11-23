@@ -23,7 +23,9 @@ class Literal::DataEnum < Literal::Data
 		end
 
 		def define(...)
+			definition = new(...)
 			@data << new(...)
+			definition
 		end
 
 		def new(...)
