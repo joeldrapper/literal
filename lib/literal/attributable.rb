@@ -44,6 +44,16 @@ module Literal::Attributable
 		define_literal_methods(attribute)
 	end
 
+	def inherited(subclass)
+		literal_attributes = self.literal_attributes
+
+		subclass.instance_exec do
+			@literal_attributes = literal_attributes.dup
+		end
+
+		super
+	end
+
 	def literal_attributes
 		return @literal_attributes if defined?(@literal_attributes)
 
