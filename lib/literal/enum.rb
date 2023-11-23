@@ -52,63 +52,8 @@ class Literal::Enum
 			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
-		def index(name, type, unique: false, &block)
-			raise ArgumentError unless Symbol === name
-			raise ArgumentError if frozen?
-
-			@index_definitions ||= {}
-			@indexes = {}
-
-			@index_definitions[name] = IndexDefinition.new(
-				name:, type:, unique:, proc: block || name.to_proc
-			)
-		end
-
-		def where(**kwargs)
-			unless kwargs.length == 1
-				raise ArgumentError, "You can only specify one index when using `where`."
-			end
-
-			key, value = kwargs.first
-
-			@indexes.fetch(key)[value]
-		end
-
-		def find_by(**kwargs)
-			unless kwargs.length == 1
-				raise ArgumentError, "You can only specify one index when using `find_by`."
-			end
-
-			key, value = kwargs.first
-
-			unless @index_definitions.fetch(key).unique
-				raise ArgumentError, "You can only use `find_by` on unique indexes."
-			end
-
-			@indexes.fetch(key)[value]&.first
-		end
-
 		def after_defined
 			raise ArgumentError if frozen?
-
-			@index_definitions&.each_value do |definition|
-				index = @members.group_by(&definition.proc).freeze
-
-				index.each do |key, value|
-					unless definition.type === key
-						raise Literal::TypeError.expected(key, to_be_a: definition.type)
-					end
-
-					if definition.unique && value.length > 1
-						raise ArgumentError, "Index #{name} is not unique for #{key}."
-					end
-				end
-
-				@indexes[definition.name] = index
-			end
-
-			@index_definitions.freeze
-			@indexes.freeze
 
 			@values.freeze
 			@members.freeze
