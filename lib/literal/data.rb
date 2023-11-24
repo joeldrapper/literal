@@ -6,6 +6,17 @@ class Literal::Data < Literal::Structish
 			super(name, type, special, reader:, writer: false, positional:, default:)
 		end
 
+		def _load(data)
+			data = Marshal.load(data)
+
+			allocate.tap do |instance|
+				instance.instance_exec do
+					@attributes = data[1]
+					freeze
+				end
+			end
+		end
+
 		private
 
 		def define_literal_methods(attribute)
@@ -52,19 +63,9 @@ class Literal::Data < Literal::Structish
 		copy
 	end
 
-	def marshal_load(data)
-		case data
-		when Hash # TODO: Remove this branch.
-			@attributes = data[:attributes]
-		when Array
-			@attributes = data[1]
-		end
-
-		@literal_attributes = self.class.literal_attributes
-		freeze
-	end
-
-	def marshal_dump
-		[2, @attributes]
+	def _dump(level)
+		Marshal.dump(
+			[2, @attributes]
+		)
 	end
 end

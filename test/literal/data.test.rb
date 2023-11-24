@@ -88,3 +88,12 @@ test "pattern matching" do
 	expect { person => ExtendedPerson[name: "x", age: 30, settings: { x: 1 }] }.to_raise NoMatchingPatternError
 	expect { person => ExtendedPerson[String => name, Symbol => age, Hash => settings] }.to_raise NoMatchingPatternError
 end
+
+test "marshalling" do
+	object = ExampleData.new(name: "Joel")
+	dumped = Marshal.dump(object)
+	loaded = Marshal.load(dumped)
+
+	expect(loaded.name) == "Joel"
+	expect(loaded).to_be :frozen?
+end

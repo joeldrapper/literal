@@ -1,31 +1,35 @@
 # frozen_string_literal: true
 
-class Error < Literal::DataEnum
-	attribute :name, String
-	attribute :message, String
+test do
+	assert ExampleDataEnum.frozen?
+	assert ExampleDataEnum.first.frozen?
 
-	index :name, String, unique: true
+	expect(
+		ExampleDataEnum.find_by(name: "Connection Error")
+	) == ExampleDataEnum.first
 
-	define(
-		name: "Connection Error",
-		message: "There was a problem connecting to the server."
-	)
-
-	define(
-		name: "Authentication Error",
-		message: "There was a problem authenticating with the server."
-	)
+	expect(
+		ExampleDataEnum.where(name: "Connection Error")
+	) == [ExampleDataEnum.first]
 end
 
-test do
-	assert Error.frozen?
-	assert Error[0].frozen?
+test "it loads the same instance" do
+	dumped = Marshal.dump(ExampleDataEnum.first)
+	loaded = Marshal.load(dumped)
 
-	expect(
-		Error.find_by(name: "Connection Error")
-	) == Error[0]
+	expect(loaded.object_id) == ExampleDataEnum.first.object_id
+end
 
-	expect(
-		Error.where(name: "Connection Error")
-	) == [Error[0]]
+test "it loads a new instance" do
+	untracked = ExampleDataEnum.allocate.tap do |instance|
+		instance.instance_exec do
+			@attributes = { name: "New", message: "New message" }
+		end
+	end
+
+	dumped = Marshal.dump(untracked)
+	loaded = Marshal.load(dumped)
+
+	expect(loaded.object_id) != untracked.object_id
+	expect(loaded.name) == "New"
 end

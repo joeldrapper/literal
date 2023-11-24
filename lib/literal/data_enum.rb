@@ -14,7 +14,7 @@ class Literal::DataEnum < Literal::Data
 			index_definitions = @index_definitions
 
 			subclass.instance_exec do
-				@data = []
+				@members = {}
 				@index_definitions = index_definitions.dup
 				@indexes = {}
 			end
@@ -24,17 +24,22 @@ class Literal::DataEnum < Literal::Data
 
 		def define(...)
 			definition = new(...)
-			@data << new(...)
+			@members[definition.to_h] = new(...)
 			definition
 		end
 
-		def new(...)
-			raise ArgumentError if frozen?
+		def _load(data)
+			data = Marshal.load(data)
 
-			super
+			self[data[1]] || allocate.tap do |instance|
+				instance.instance_exec do
+					@attributes = data[1]
+					freeze
+				end
+			end
 		end
 
-		def allocate(...)
+		def new(...)
 			raise ArgumentError if frozen?
 
 			super
@@ -45,11 +50,11 @@ class Literal::DataEnum < Literal::Data
 		end
 
 		def each(&)
-			@data.each(&)
+			@members.each_value(&)
 		end
 
 		def sample
-			@data.sample
+			@members.sample
 		end
 
 		def where(**kwargs)
@@ -88,13 +93,13 @@ class Literal::DataEnum < Literal::Data
 			raise ArgumentError if frozen?
 
 			build_indexes
-			@data.freeze
+			@members.freeze
 			freeze
 		end
 
 		private def build_indexes
 			@index_definitions.each_value do |definition|
-				index = @data.group_by(&definition.block).freeze
+				index = @members.values.group_by(&definition.block).freeze
 
 				index.each do |key, values|
 					unless definition.type === key
@@ -110,12 +115,12 @@ class Literal::DataEnum < Literal::Data
 			end
 		end
 
-		def [](index)
-			@data[index]
+		def [](key)
+			@members[key]
 		end
 
 		def size
-			@data.size
+			@members.size
 		end
 	end
 end
