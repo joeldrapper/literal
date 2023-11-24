@@ -54,7 +54,7 @@ class Literal::DataEnum < Literal::Data
 		end
 
 		def sample
-			@members.sample
+			@members.values.sample
 		end
 
 		def where(**kwargs)
