@@ -12,6 +12,7 @@ class Literal::Data < Literal::Structish
 			allocate.tap do |instance|
 				instance.instance_exec do
 					@attributes = data[1]
+					@literal_attributes = self.class.literal_attributes
 					freeze
 				end
 			end
@@ -67,5 +68,11 @@ class Literal::Data < Literal::Structish
 		Marshal.dump(
 			[2, @attributes]
 		)
+	end
+
+	def marshal_load(data)
+		@attributes = data[1]
+		@literal_attributes = self.class.literal_attributes
+		freeze
 	end
 end

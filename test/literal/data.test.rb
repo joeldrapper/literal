@@ -97,3 +97,8 @@ test "marshalling" do
 	expect(loaded.name) == "Joel"
 	expect(loaded).to_be :frozen?
 end
+
+test "marshalling with old data" do
+	dumped = "\x04\bU:\x10ExampleData[\ai\a{\x06:\tnameI\"\tJoel\x06:\x06ET"
+	loaded = Marshal.load(dumped)
+end
