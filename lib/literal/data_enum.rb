@@ -45,7 +45,7 @@ class Literal::DataEnum < Literal::Data
 			super
 		end
 
-		def index(name, type, unique: false, &block)
+		def index(name, type, unique: true, &block)
 			@index_definitions[name] = Index.new(name:, type:, unique:, block: block || name.to_proc)
 		end
 
