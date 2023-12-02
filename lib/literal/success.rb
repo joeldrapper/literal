@@ -96,12 +96,8 @@ class Literal::Success < Literal::Result
 		end
 	end
 
-	def lift(*, &block)
-		block ? Literal::Lift.new(*, &block).with_success(@value) : self
-	end
-
-	def lift!(*, &block)
-		block ? Literal::Lift.new(*, &block).with_success!(@value) : self
+	def handle!(*, &block)
+		block ? Literal::ResultCase.new(*, &block).with_success!(@value) : self
 	end
 
 	def map_failure(value_type = Exception) = self

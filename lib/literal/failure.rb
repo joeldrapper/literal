@@ -54,12 +54,12 @@ class Literal::Failure < Literal::Result
 		DECONSTRUCTION_TEMPLATE.slice(*keys).transform_values { |v| v.call(@value) }
 	end
 
-	def lift(*, &block)
-		block ? Literal::Lift.new(*, &block).with_failure(@value) : self
-	end
-
-	def lift!(*, &block)
-		block ? Literal::Lift.new(*, &block).with_failure!(@value) : self
+	def handle!(*errors, &block)
+		if errors.any? { |error| error === @value }
+			block ? Literal::ResultCase.new(*errors, &block).with_failure!(@value) : self
+		else
+			raise @value
+		end
 	end
 
 	def map_failure(type = Exception)

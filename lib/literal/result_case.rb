@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-class Literal::Lift
+class Literal::ResultCase
 	def initialize(*required_failure_cases, &block)
 		@success_case = nil
-		@failure_case = nil
 
 		@required_failure_cases = required_failure_cases
 		@handled_failure_cases = {}
@@ -28,26 +27,10 @@ class Literal::Lift
 		end
 	end
 
-	def with_success(value)
-		ensure_success_case! and ensure_failure_case!
-
-		@success_case.call(value)
-	end
-
 	def with_success!(value)
 		ensure_success_case!
 
 		@success_case.call(value)
-	end
-
-	def with_failure(value)
-		ensure_success_case! and ensure_failure_case!
-
-		@handled_failure_cases.each do |condition, block|
-			return block.call(value) if condition === value
-		end
-
-		@failure_case.call(value)
 	end
 
 	def with_failure!(value)
@@ -57,16 +40,14 @@ class Literal::Lift
 			return block.call(value) if condition === value
 		end
 
-		return @failure_case.call(value) if @failure_case
-
 		raise(value)
 	end
 
-	def success(&block)
+	def on_success(&block)
 		@success_case = block
 	end
 
-	def failure(*types, &block)
+	def on_failure(*types, &block)
 		if types.length == 0
 			@failure_case = block
 		else
@@ -80,9 +61,5 @@ class Literal::Lift
 
 	def ensure_success_case!
 		@success_case ? true : raise(ArgumentError, "You need to define a success case.")
-	end
-
-	def ensure_failure_case!
-		@failure_case ? true : raise(ArgumentError, "You need to define a failure case.")
 	end
 end

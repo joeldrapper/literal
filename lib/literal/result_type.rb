@@ -12,6 +12,8 @@ class Literal::ResultType < Literal::Generic
 		case value
 		when @type
 			return Literal::Success.new(value)
+		when Exception
+			return Literal::Failure.new(value)
 		when Literal::Failure
 			return value
 		when Literal::Success
@@ -56,6 +58,12 @@ class Literal::ResultType < Literal::Generic
 		else
 			false
 		end
+	end
+
+	def rescue(*exceptions, &)
+		new(yield(self))
+	rescue *exceptions => e
+		Literal::Failure.new(e)
 	end
 
 	def try
