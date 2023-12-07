@@ -4,7 +4,7 @@ require "securerandom"
 
 test do
 	[0.1, 0.01, 0.001, 0.0001, 0.00001].each do |error_rate|
-		samples = 1_000_000
+		samples = 100_000
 
 		bf = Literal::BloomFilter.create("foo", "bar", "baz", "bing", "bong", "boo", error_rate:)
 
@@ -19,7 +19,7 @@ test do
 		assert bf.contains?("bong")
 		assert bf.contains?("boo")
 
-		assert errors < (expected_errors * 5)
+		assert errors < (expected_errors * 3)
 	end
 end
 

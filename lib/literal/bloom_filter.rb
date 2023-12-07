@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "base64"
+require "digest"
 
 class Literal::BloomFilter
 	def initialize(size:, hash_count:, bit_array: Array.new(size, false))
@@ -51,6 +52,10 @@ class Literal::BloomFilter
 	end
 
 	def insert(item)
+		unless String === item
+			raise Literal::TypeError.expected(item, to_be_a: String)
+		end
+
 		hash_indices(item).each { |i| @bit_array[i] = true }
 	end
 
@@ -82,7 +87,7 @@ class Literal::BloomFilter
 
 	private def hash_indices(item)
 		(0...@hash_count).map do |i|
-			[item, i].hash.abs % @size
+			Digest::SHA256.hexdigest("#{item}#{i}").to_i(16).abs % @size
 		end
 	end
 end
