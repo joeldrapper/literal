@@ -22,9 +22,12 @@ class Literal::Enum
 		end
 
 		def inherited(subclass)
+			type = @type
+
 			subclass.instance_exec do
 				@values = {}
 				@members = []
+				@type = type
 			end
 		end
 
@@ -94,6 +97,10 @@ class Literal::Enum
 
 	def name
 		"#{self.class.name}::#{@name}"
+	end
+
+	def type
+		self.class.type
 	end
 
 	alias_method :inspect, :name

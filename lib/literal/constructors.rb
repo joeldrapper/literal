@@ -3,18 +3,21 @@
 module Literal::Constructors
 	SpecialisedEnums = {
 		String => Class.new(Literal::Enum) do
-			def type = String
+			@type = String
+
 			alias_method :to_s, :value
 			alias_method :to_str, :value
 		end,
 
 		Integer => Class.new(Literal::Enum) do
-			def type = Integer
+			@type = Integer
+
 			alias_method :to_i, :value
 		end,
 
 		Array => Class.new(Literal::Enum) do
-			def type = Array
+			@type = Array
+
 			alias_method :to_a, :value
 			alias_method :to_ary, :value
 		end
@@ -27,7 +30,7 @@ module Literal::Constructors
 
 	def Enum(type)
 		SpecialisedEnums[type] || Class.new(Literal::Enum) do
-			define_method(:type) { type }
+			@type = type
 		end
 	end
 
