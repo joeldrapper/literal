@@ -34,6 +34,10 @@ test "the enum class is frozen" do
 	assert Color.frozen?
 end
 
+test "the enum class has a type" do
+	expect(Color.type) == Integer
+end
+
 test "the enum class is enumerable" do
 	expect(Color).to_be_an Enumerable
 	expect(Color.map(&:value)) == [0, 1, 3, 4]
