@@ -2,6 +2,6 @@
 
 module Literal::Memoized
 	def reset_memoized
-		@memoized = Concurrent::Map.new
+		@__memoized__ = Concurrent::Map.new
 	end
 end
