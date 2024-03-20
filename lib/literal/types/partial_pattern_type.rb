@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class Literal::Types::PatternType < Literal::Type
+class Literal::Types::PartialPatternType < Literal::Type
 	def initialize(*pattern)
 		@pattern = pattern
 	end
 
-	def inspect = "_Pattern(#{@pattern.inspect})"
+	def inspect = "_PartialPattern(#{@pattern.inspect})"
 
 	def ===(value)
 		Array === value && matches(value)
@@ -30,6 +30,6 @@ class Literal::Types::PatternType < Literal::Type
 			end
 		end
 
-		i == size
+		true
 	end
 end

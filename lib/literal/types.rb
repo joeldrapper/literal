@@ -86,6 +86,10 @@ module Literal::Types
 		Literal::Types::PatternType.new(*array_pattern)
 	end
 
+	def _PartialPattern(*pattern)
+		Literal::Types::PartialPatternType.new(*pattern)
+	end
+
 	def _Rest(type = Literal::Null)
 		Literal::Types::RestType.new(
 			Literal::Null === type ? _Void : type
