@@ -78,6 +78,20 @@ module Literal::Types
 		Literal::Types::TupleType.new(*types)
 	end
 
+	def _Optional(type)
+		Literal::Types::OptionalType.new(type)
+	end
+
+	def _Pattern(*array_pattern)
+		Literal::Types::PatternType.new(*array_pattern)
+	end
+
+	def _Rest(type = Literal::Null)
+		Literal::Types::RestType.new(
+			Literal::Null === type ? _Void : type
+		)
+	end
+
 	# Matches if the value is an `Integer` and matches the given constraint.
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Integer` instead of `_Integer`.
