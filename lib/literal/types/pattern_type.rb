@@ -13,12 +13,14 @@ class Literal::Types::PatternType < Literal::Type
 
 	private def matches(value)
 		i = 0
+		size = value.size
+
 		@array_pattern.each do |type|
 			case type
 			when Literal::Types::OptionalType
 				i += 1 if type === value[i]
 			when Literal::Types::RestType
-				i += 1 while type === value[i]
+				i += 1 while type === value[i] && i < size
 			else
 				if type === value[i]
 					i += 1
@@ -28,6 +30,6 @@ class Literal::Types::PatternType < Literal::Type
 			end
 		end
 
-		i == value.size
+		i == size
 	end
 end

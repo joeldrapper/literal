@@ -5,7 +5,7 @@ class Literal::Types::OptionalType < Literal::Type
 		@type = type
 	end
 
-	def inspect = "_Optional(#{@type})"
+	def inspect = "_Optional(#{@type.inspect})"
 
 	def ===(value)
 		@type === value
