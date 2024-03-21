@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::IntersectionType < Literal::Type
+class Literal::Types::IntersectionType
 	def initialize(*types)
 		@types = types
 	end

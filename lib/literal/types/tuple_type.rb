@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::TupleType < Literal::Type
+class Literal::Types::TupleType
 	def initialize(*types)
 		@types = types
 	end

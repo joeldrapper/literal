@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Union < Literal::Type
+class Literal::Union
 	include Enumerable
 
 	def initialize(*types)

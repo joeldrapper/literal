@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::ProcableType = Literal::Singleton.new(Literal::Type) do
+Literal::Types::ProcableType = Literal::Singleton.new do
 	def initialize
 		freeze
 	end

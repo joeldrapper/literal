@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::Types::DescendantType < Literal::Type
+class Literal::Types::DescendantType
 	def initialize(type)
 		@type = type
 	end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::EnumerableType < Literal::Type
+class Literal::Types::EnumerableType
 	def initialize(type)
 		@type = type
 	end

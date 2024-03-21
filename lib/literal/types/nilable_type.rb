@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::NilableType < Literal::Type
+class Literal::Types::NilableType
 	def initialize(type)
 		@type = type
 	end

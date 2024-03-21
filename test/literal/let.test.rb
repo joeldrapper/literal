@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Foo
-	extend Literal::Modifiers
+	extend Literal::Memoization
+
 	memoize def bar(key)
 		if key == 1
 			nil

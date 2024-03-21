@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::ShapeType < Literal::Type
+class Literal::Types::ShapeType
 	def initialize(*constraints, **shape)
 		@constraints = constraints
 		@shape = shape

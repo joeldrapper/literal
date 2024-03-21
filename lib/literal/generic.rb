@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Generic < Literal::Type
+class Literal::Generic
+	extend Literal::Modifiers::Abstract
 	abstract!
 end

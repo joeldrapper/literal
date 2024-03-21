@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::StringType < Literal::Type
+class Literal::Types::StringType
 	def initialize(constraint)
 		@constraint = constraint
 	end

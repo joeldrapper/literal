@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::MapType < Literal::Type
+class Literal::Types::MapType
 	def initialize(**shape)
 		@shape = shape
 	end

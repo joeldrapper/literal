@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Literal::EnumType < Literal::Type
+class Literal::EnumType
 	def initialize(type)
 		@type = type
 	end
