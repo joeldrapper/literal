@@ -38,6 +38,18 @@ test "#eql? compares attributes" do
 	refute(person.eql?(another))
 end
 
+class StudentStruct < PersonStruct
+	def ==(other)
+		super && other.is_a?(StudentStruct)
+	end
+end
+
+test "#eql? works with subclass overrides #==" do
+	person = PersonStruct.new(name: "John", age: 30)
+	student = StudentStruct.new(name: "John", age: 30)
+	refute(student.eql? person)
+end
+
 test "does not freeze attribute values" do
 	person = PersonStruct.new(name: "John", age: 30, settings: { x: 1 })
 	expect(person.settings).not_to_be :frozen?
