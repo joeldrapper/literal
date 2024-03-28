@@ -1,10 +1,8 @@
 GIT
-  remote: https://github.com/joeldrapper/green_dots.git
-  revision: 776745d38c9523e403b445eeef8b374ffb130f8b
+  remote: https://github.com/joeldrapper/quickdraw.git
+  revision: 4bcaaacff990d52b943371ca7152b7b7484433ea
   specs:
-    green_dots (0.1.0)
-      concurrent-ruby
-      zeitwerk
+    quickdraw (0.1.0)
 
 PATH
   remote: .
@@ -129,8 +127,8 @@ DEPENDENCIES
   dry-initializer
   dry-struct
   dry-types
-  green_dots!
   literal!
+  quickdraw!
   rack
   rackup
   rubocop

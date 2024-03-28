@@ -3,10 +3,10 @@
 include Literal::Monads
 
 describe "Either(Integer, String)" do
-	let def either = Either(Integer, String)
+	def either = Either(Integer, String)
 
-	let def left = either.new(1)
-	let def right = either.new("foo")
+	def left = either.new(1)
+	def right = either.new("foo")
 
 	test "===" do
 		assert either === left

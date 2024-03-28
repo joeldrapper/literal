@@ -5,11 +5,11 @@
 # include Literal::Monads
 
 # describe "Result(String)" do
-# 	let def result = Result(String)
+# 	def result = Result(String)
 
-# 	let def success = result.new("Foo")
+# 	def success = result.new("Foo")
 
-# 	let def failure
+# 	def failure
 # 		result.new(
 # 			StandardError.new("Bar")
 # 		)

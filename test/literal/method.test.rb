@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-let def abstract_class
+def abstract_class
 	Class.new do
 		extend Literal::Modifiers::Abstract
 
@@ -18,7 +18,7 @@ let def abstract_class
 	end
 end
 
-let def valid_concrete_class
+def valid_concrete_class
 	Class.new do
 		def test_1_1(*a); end
 		def test_1_2(a, *b); end
@@ -45,7 +45,7 @@ let def valid_concrete_class
 	end
 end
 
-let def invalid_concrete_class
+def invalid_concrete_class
 	Class.new do
 		def test_1_1(a); end
 		def test_1_2(a, b); end
@@ -75,16 +75,16 @@ let def invalid_concrete_class
 	end
 end
 
-let def test_1_abstract_method = Literal::Method.new(:test_1, abstract_class)
-let def test_2_abstract_method = Literal::Method.new(:test_2, abstract_class)
-let def test_3_abstract_method = Literal::Method.new(:test_3, abstract_class)
-let def test_4_abstract_method = Literal::Method.new(:test_4, abstract_class)
-let def test_5_abstract_method = Literal::Method.new(:test_5, abstract_class)
-let def test_6_abstract_method = Literal::Method.new(:test_6, abstract_class)
-let def test_7_abstract_method = Literal::Method.new(:test_7, abstract_class)
+def test_1_abstract_method = Literal::Method.new(:test_1, abstract_class)
+def test_2_abstract_method = Literal::Method.new(:test_2, abstract_class)
+def test_3_abstract_method = Literal::Method.new(:test_3, abstract_class)
+def test_4_abstract_method = Literal::Method.new(:test_4, abstract_class)
+def test_5_abstract_method = Literal::Method.new(:test_5, abstract_class)
+def test_6_abstract_method = Literal::Method.new(:test_6, abstract_class)
+def test_7_abstract_method = Literal::Method.new(:test_7, abstract_class)
 
-let def protected_abstract_method = Literal::Method.new(:protected_method, abstract_class)
-let def private_abstract_method = Literal::Method.new(:private_method, abstract_class)
+def protected_abstract_method = Literal::Method.new(:protected_method, abstract_class)
+def private_abstract_method = Literal::Method.new(:private_method, abstract_class)
 
 describe "#<" do
 	test "returns true if the concrete implementation method conforms to the abstract method" do
