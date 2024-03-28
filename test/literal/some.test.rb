@@ -3,10 +3,10 @@
 include Literal::Monads
 
 describe "Some(Integer)" do
-	let def some_int_monad = Some(Integer)
+	def some_int_monad = Some(Integer)
 
-	let def some_val_1 = some_int_monad.new(1)
-	let def some_val_2 = some_int_monad.new(2)
+	def some_val_1 = some_int_monad.new(1)
+	def some_val_2 = some_int_monad.new(2)
 
 	test "===" do
 		assert some_int_monad === some_val_1

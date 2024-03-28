@@ -229,5 +229,5 @@ It’s worth noting that while Ruby’s built-in `Data` objects are themselves f
 ## Running tests
 
 ```bash
-bundle exec gd
+bundle exec qt
 ```

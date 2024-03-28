@@ -2,7 +2,7 @@
 
 include Literal::Monads
 
-let def nothing = Literal::Nothing
+def nothing = Literal::Nothing
 
 test "#inspect" do
 	expect(nothing.inspect) == "Literal::Nothing"

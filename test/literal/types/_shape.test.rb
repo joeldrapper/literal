@@ -2,7 +2,7 @@
 
 include Literal::Types
 
-let def schema = _Shape(Hash, name: String, age: Integer)
+def schema = _Shape(Hash, name: String, age: Integer)
 
 test "inspect" do
 	expect(schema.inspect) == "_Shape({:name=>String, :age=>Integer})"

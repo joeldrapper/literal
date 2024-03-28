@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-let def whatever = Literal::Array(Integer).new(1, 2, 3)
+def whatever = Literal::Array(Integer).new(1, 2, 3)
 
 test "variance" do
 	assert Literal::Array(Object) === Literal::Array(Integer).new
