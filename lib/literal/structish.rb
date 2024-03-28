@@ -18,6 +18,8 @@ class Literal::Structish
 		end
 	end
 
+	alias_method :eql?, :==
+
 	def [](key)
 		@attributes[key]
 	end

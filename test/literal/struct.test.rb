@@ -22,6 +22,22 @@ test "#to_h returns attributes as new hash" do
 	expect(hash).not_to_be :frozen?
 end
 
+test "#== compares attributes" do
+	person = PersonStruct.new(name: "John", age: 30)
+	other = PersonStruct.new(name: "John", age: 30)
+	another = PersonStruct.new(name: "John", age: 40)
+	assert(person == other)
+	refute(person == another)
+end
+
+test "#eql? compares attributes" do
+	person = PersonStruct.new(name: "John", age: 30)
+	other = PersonStruct.new(name: "John", age: 30)
+	another = PersonStruct.new(name: "John", age: 40)
+	assert(person.eql?(other))
+	refute(person.eql?(another))
+end
+
 test "does not freeze attribute values" do
 	person = PersonStruct.new(name: "John", age: 30, settings: { x: 1 })
 	expect(person.settings).not_to_be :frozen?
