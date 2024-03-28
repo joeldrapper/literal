@@ -161,9 +161,9 @@ if Literal::TYPE_CHECKS
 	end
 end
 
-def build_attributes_class(&)
+def build_attributes_class(&block)
 	Class.new do
 		extend Literal::Attributes
-		class_eval(&)
+		class_eval(&block)
 	end
 end
