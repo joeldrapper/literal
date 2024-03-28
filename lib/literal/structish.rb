@@ -18,7 +18,9 @@ class Literal::Structish
 		end
 	end
 
-	alias_method :eql?, :==
+	def eql?(other)
+		self == other
+	end
 
 	def [](key)
 		@attributes[key]
