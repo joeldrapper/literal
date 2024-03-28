@@ -11,4 +11,12 @@ class Literal::Types::NilableType
 	def ===(value)
 		nil === value || @type === value
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+
+	protected
+
+	attr_reader :type
 end
