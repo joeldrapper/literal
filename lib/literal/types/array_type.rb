@@ -17,4 +17,12 @@ class Literal::Types::ArrayType
 			Array === value && (value.empty? || @type === value[0])
 		end
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+
+	protected
+
+	attr_reader :type
 end
