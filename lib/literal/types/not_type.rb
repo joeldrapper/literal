@@ -11,4 +11,12 @@ class Literal::Types::NotType
 	def ===(value)
 		!(@type === value)
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+
+	protected
+
+	attr_reader :type
 end

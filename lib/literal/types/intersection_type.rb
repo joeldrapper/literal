@@ -15,4 +15,12 @@ class Literal::Types::IntersectionType
 	def nil?
 		@types.all?(&:nil?)
 	end
+
+	def ==(other)
+		self.class == other.class && @types == other.types
+	end
+
+	protected
+
+	attr_reader :types
 end

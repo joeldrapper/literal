@@ -11,4 +11,8 @@ Literal::Types::LambdaType = Literal::Singleton.new do
 	def ===(value)
 		Proc === value && value.lambda?
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

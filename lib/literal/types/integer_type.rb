@@ -11,4 +11,12 @@ class Literal::Types::IntegerType
 	def ===(value)
 		Integer === value && @range === value
 	end
+
+	def ==(other)
+		self.class == other.class && @range == other.range
+	end
+
+	protected
+
+	attr_reader :range
 end

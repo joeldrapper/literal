@@ -11,4 +11,8 @@ class Literal::Types::InterfaceType
 	def ===(value)
 		@methods.all? { |m| value.respond_to?(m) }
 	end
+
+	def ==(other)
+		self.class == other.class && @methods == other.instance_variable_get(:@methods)
+	end
 end

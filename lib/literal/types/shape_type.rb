@@ -14,4 +14,12 @@ class Literal::Types::ShapeType
 	def ===(other)
 		@constraints.all? { |c| c === other } && @shape.all? { |k, t| t === other[k] } && other.keys.all? { |k| @shape.key?(k) }
 	end
+
+	def ==(other)
+		self.class == other.class && @constraints == other.constraints && @shape == other.shape
+	end
+
+	protected
+
+	attr_reader :constraints, :shape
 end

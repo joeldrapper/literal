@@ -11,4 +11,12 @@ class Literal::Types::TupleType
 	def ===(value)
 		Array === value && value.size == @types.size && @types.each_with_index.all? { |t, i| t === value[i] }
 	end
+
+	def ==(other)
+		self.class == other.class && @types == other.types
+	end
+
+	protected
+
+	attr_reader :types
 end
