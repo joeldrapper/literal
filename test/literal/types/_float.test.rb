@@ -13,6 +13,7 @@ end
 
 test "== method" do
 	assert _Float(0..1) == _Float(0..1)
+	assert _Float(0..1).eql?(_Float(0..1))
 	assert _Float(0..10) != _Float(0..1)
 	assert _Float(0..1) != _Float(1..2)
 	assert _Float(0..1) != nil

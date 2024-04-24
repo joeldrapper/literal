@@ -11,3 +11,12 @@ test "===" do
 
 	refute _Callable === 1
 end
+
+test "== method" do
+	assert _Callable == _Callable
+	assert _Callable.eql?(_Callable)
+	assert _Callable != _Array(String)
+	assert _Callable != nil
+	assert _Callable != Object.new
+end
+

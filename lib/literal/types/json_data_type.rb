@@ -31,4 +31,8 @@ Literal::Types::JSONDataType = Literal::Singleton.new do
 			end
 		end
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

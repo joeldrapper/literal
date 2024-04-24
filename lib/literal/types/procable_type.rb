@@ -11,4 +11,8 @@ Literal::Types::ProcableType = Literal::Singleton.new do
 	def ===(value)
 		Proc === value || value.respond_to?(:to_proc)
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

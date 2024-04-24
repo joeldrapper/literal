@@ -11,4 +11,8 @@ Literal::Types::TruthyType = Literal::Singleton.new do
 	def ===(value)
 		!!value
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

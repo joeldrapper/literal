@@ -19,3 +19,11 @@ test "===" do
 	refute _JSONData === Object.new
 	refute _JSONData === { 1 => 2 }
 end
+
+test "== method" do
+	assert _JSONData == _JSONData
+	assert _JSONData.eql?(_JSONData)
+	assert _JSONData != _Any
+	assert _JSONData != nil
+	assert _JSONData != Object.new
+end

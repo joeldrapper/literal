@@ -11,4 +11,8 @@ Literal::Types::AnyType = Literal::Singleton.new do
 	def ===(value)
 		!(nil === value)
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

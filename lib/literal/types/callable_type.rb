@@ -11,4 +11,8 @@ Literal::Types::CallableType = Literal::Singleton.new do
 	def ===(value)
 		value.respond_to?(:call)
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

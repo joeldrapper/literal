@@ -11,4 +11,8 @@ Literal::Types::VoidType = Literal::Singleton.new do
 	def ===(_value)
 		true
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end

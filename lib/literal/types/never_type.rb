@@ -11,4 +11,8 @@ Literal::Types::NeverType = Literal::Singleton.new do
 	def ===(value)
 		false
 	end
+
+	def ==(other)
+		equal?(other)
+	end
 end
