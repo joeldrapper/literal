@@ -2,11 +2,15 @@
 
 include Literal::Types
 
-test do
-	assert FalsyType === false
-	assert FalsyType === nil
+FalsyObjects = Set[false, nil]
+TruthyObject = Fixtures::Objects - FalsyObjects
 
-	Fixtures::TruthyObjects.each do |object|
+test do
+	FalsyObjects.each do |object|
+		assert FalsyType === object
+	end
+
+	TruthyObject.each do |object|
 		refute FalsyType === object
 	end
 end

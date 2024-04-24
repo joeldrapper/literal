@@ -4,7 +4,7 @@ require "literal"
 require "securerandom"
 
 module Fixtures
-	TruthyObjects = [
+	Objects = Set[
 		SecureRandom.hex,
 		SecureRandom.hex.freeze,
 		0,
@@ -18,11 +18,7 @@ module Fixtures
 		Integer,
 		Float,
 		Array,
-		SecureRandom
-	].freeze
-
-	Objects = [
-		*TruthyObjects,
+		SecureRandom,
 		false
-	]
+	].freeze
 end
