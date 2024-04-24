@@ -1,7 +1,27 @@
 # frozen_string_literal: true
 
 module Literal::Types
-	include Literal::Monads
+	autoload :AnyType, "literal/types/any_type"
+	autoload :ArrayType, "literal/types/array_type"
+	autoload :BooleanType, "literal/types/boolean_type"
+	autoload :CallableType, "literal/types/callable_type"
+	autoload :ClassType, "literal/types/class_type"
+	autoload :ConstraintType, "literal/types/constraint_type"
+	autoload :DependantType, "literal/types/dependant_type"
+	autoload :EnumerableType, "literal/types/enumerable_type"
+	autoload :FalsyType, "literal/types/falsy_type"
+	autoload :LambdaType, "literal/types/lambda_type"
+	autoload :FrozenType, "literal/types/frozen_type"
+	autoload :JSONDataType, "literal/types/json_data_type"
+	autoload :InterfaceType, "literal/types/interface_type"
+	autoload :NotType, "literal/types/not_type"
+	autoload :SetType, "literal/types/set_type"
+	autoload :TupleType, "literal/types/tuple_type"
+	autoload :IntegerType, "literal/types/integer_type"
+	autoload :TruthyType, "literal/types/truthy_type"
+	autoload :FloatType, "literal/types/float_type"
+	autoload :HashType, "literal/types/hash_type"
+	autoload :StringType, "literal/types/string_type"
 
 	# Matches if *any* given type is matched.
 	def _Union(*types)

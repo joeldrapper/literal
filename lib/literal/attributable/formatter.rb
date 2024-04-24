@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 class Literal::Attributable::Formatter < Literal::Formatter
-	# TODO: Replace this with a test.
-	module AbstractNodeMethods
-		extend Literal::Modifiers::Abstract
-
-		# Literal::Attributable::Nodes.nodes.each do |node|
-		# 	abstract node
-		# end
-	end
-
-	include AbstractNodeMethods
-
 	def Access(node)
 		visit node.collection
 		text "["
