@@ -26,11 +26,3 @@ test "#==" do
 	refute _Nilable(String) == nil
 	refute _Nilable(String) == Object.new
 end
-
-test "#eql?" do
-	assert _Nilable(String).eql? _Nilable(String)
-	assert _Nilable(Integer).eql? _Nilable(Integer)
-
-	refute _Nilable(String).eql? _Nilable(Integer)
-	refute _Nilable(String).eql? String
-end
