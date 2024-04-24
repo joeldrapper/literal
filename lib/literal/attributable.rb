@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Literal::Attributable
+	autoload :Generators, "literal/attributable/generators"
+	autoload :Nodes, "literal/attributable/nodes"
+	autoload :Formatter, "literal/attributable/formatter"
+
 	include Literal::Types
 
 	Visibility = [:private, :protected, :public].freeze
@@ -60,7 +64,7 @@ module Literal::Attributable
 		if superclass.is_a?(Literal::Attributable)
 			@literal_attributes = superclass.literal_attributes.dup
 		else
-			@literal_attributes = Concurrent::Hash.new
+			@literal_attributes = Literal::ConcurrentHash.new
 		end
 	end
 

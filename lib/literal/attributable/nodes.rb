@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Literal::Attributable::Nodes
-	@nodes = Concurrent::Array.new
+	@nodes = Literal::ConcurrentArray.new
 	self.class.attr_reader :nodes
 
 	def self.node(name, *attributes)

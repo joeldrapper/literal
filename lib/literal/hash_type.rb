@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::HashType < Literal::Generic
+class Literal::HashType
 	def initialize(key_type, value_type)
 		@key_type = key_type
 		@value_type = value_type
