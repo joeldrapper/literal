@@ -12,7 +12,6 @@ Literal::Types::BooleanType = Literal::Singleton.new do
 		true == value || false == value
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

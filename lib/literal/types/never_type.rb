@@ -12,7 +12,6 @@ Literal::Types::NeverType = Literal::Singleton.new do
 		false
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

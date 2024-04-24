@@ -15,6 +15,7 @@ class Literal::Types::TupleType
 	def ==(other)
 		self.class == other.class && @types == other.types
 	end
+	alias_method :eql?, :==
 
 	protected
 

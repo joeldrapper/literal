@@ -17,4 +17,5 @@ class Literal::Types::MapType
 	def ==(other)
 		self.class == other.class && @shape == other.instance_variable_get(:@shape)
 	end
+	alias_method :eql?, :==
 end

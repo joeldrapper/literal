@@ -15,6 +15,7 @@ class Literal::Types::FloatType
 	def ==(other)
 		self.class == other.class && @range == other.range
 	end
+	alias_method :eql?, :==
 
 	protected
 

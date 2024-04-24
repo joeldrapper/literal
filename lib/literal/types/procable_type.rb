@@ -12,7 +12,6 @@ Literal::Types::ProcableType = Literal::Singleton.new do
 		Proc === value || value.respond_to?(:to_proc)
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

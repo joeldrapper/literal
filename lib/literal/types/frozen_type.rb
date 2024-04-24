@@ -15,6 +15,7 @@ class Literal::Types::FrozenType
 	def ==(other)
 		self.class == other.class && @type == other.type
 	end
+	alias_method :eql?, :==
 
 	protected
 

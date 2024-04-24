@@ -22,6 +22,7 @@ class Literal::Types::HashType
 	def ==(other)
 		self.class == other.class && @key_type == other.key_type && @value_type == other.value_type
 	end
+	alias_method :eql?, :==
 
 	protected
 

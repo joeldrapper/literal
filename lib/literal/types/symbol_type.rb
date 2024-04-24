@@ -15,6 +15,7 @@ class Literal::Types::SymbolType
 	def ==(other)
 		self.class == other.class && @constraint == other.constraint
 	end
+	alias_method :eql?, :==
 
 	protected
 

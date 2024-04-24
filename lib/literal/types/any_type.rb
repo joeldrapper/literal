@@ -12,7 +12,6 @@ Literal::Types::AnyType = Literal::Singleton.new do
 		!(nil === value)
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

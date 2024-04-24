@@ -15,4 +15,5 @@ class Literal::Types::InterfaceType
 	def ==(other)
 		self.class == other.class && @methods == other.instance_variable_get(:@methods)
 	end
+	alias_method :eql?, :==
 end

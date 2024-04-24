@@ -16,6 +16,7 @@ class Literal::Union
 	def ==(other)
 		self.class == other.class && @types == other.types
 	end
+	alias_method :eql?, :==
 
 	def each(&)
 		@types.each(&)

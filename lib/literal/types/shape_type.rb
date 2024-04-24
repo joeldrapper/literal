@@ -18,6 +18,7 @@ class Literal::Types::ShapeType
 	def ==(other)
 		self.class == other.class && @constraints == other.constraints && @shape == other.shape
 	end
+	alias_method :eql?, :==
 
 	protected
 

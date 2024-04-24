@@ -32,7 +32,6 @@ Literal::Types::JSONDataType = Literal::Singleton.new do
 		end
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

@@ -18,6 +18,7 @@ class Literal::Types::ConstraintType
 	def ==(other)
 		self.class == other.class && @constraints == other.constraints && @attributes == other.attributes
 	end
+	alias_method :eql?, :==
 
 	protected
 

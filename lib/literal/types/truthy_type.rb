@@ -12,7 +12,6 @@ Literal::Types::TruthyType = Literal::Singleton.new do
 		!!value
 	end
 
-	def ==(other)
-		equal?(other)
-	end
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end
