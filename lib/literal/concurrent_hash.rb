@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# @api private
 class Literal::ConcurrentHash
 	def initialize
 		@hash = {}

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# @api private
 class Literal::ConcurrentArray
 	def initialize
 		@value = []

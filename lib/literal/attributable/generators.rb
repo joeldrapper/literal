@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Literal::Attributable::Generators
 	autoload :Base, "literal/attributable/generators/base"
 	autoload :Initializer, "literal/attributable/generators/initializer"
