@@ -6,6 +6,7 @@ test do
 	assert FalsyType === false
 	assert FalsyType === nil
 
-	refute FalsyType === 0
-	refute FalsyType === true
+	Fixtures::TruthyObjects.each do |object|
+		refute FalsyType === object
+	end
 end

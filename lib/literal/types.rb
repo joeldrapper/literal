@@ -22,6 +22,7 @@ module Literal::Types
 	autoload :FloatType, "literal/types/float_type"
 	autoload :HashType, "literal/types/hash_type"
 	autoload :StringType, "literal/types/string_type"
+	autoload :NeverType, "literal/types/never_type"
 
 	# Matches if *any* given type is matched.
 	def _Union(*types)
