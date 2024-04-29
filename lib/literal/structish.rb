@@ -18,6 +18,10 @@ class Literal::Structish
 		end
 	end
 
+	def eql?(other)
+		self == other
+	end
+
 	def [](key)
 		@attributes[key]
 	end
