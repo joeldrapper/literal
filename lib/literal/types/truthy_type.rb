@@ -11,4 +11,7 @@ Literal::Types::TruthyType = Literal::Singleton.new do
 	def ===(value)
 		!!value
 	end
+
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

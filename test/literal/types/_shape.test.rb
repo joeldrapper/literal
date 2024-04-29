@@ -19,3 +19,12 @@ test "===" do
 	refute schema === []
 	refute schema === nil
 end
+
+test "== method" do
+	assert schema == _Shape(Hash, name: String, age: Integer)
+	assert schema.eql?(schema)
+	assert schema != _Shape(Hash, name: String, age: Float)
+	assert schema != _Shape(Hash, name: Symbol, age: Integer)
+	assert schema != nil
+	assert schema != Object.new
+end

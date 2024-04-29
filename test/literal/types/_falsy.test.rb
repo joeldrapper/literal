@@ -14,3 +14,11 @@ test "===" do
 	refute _Falsy === true
 	refute _Falsy === "false"
 end
+
+test "== method" do
+	assert _Falsy == _Falsy
+	assert _Falsy.eql?(_Falsy)
+	assert _Falsy != _Truthy
+	assert _Falsy != nil
+	assert _Falsy != Object.new
+end

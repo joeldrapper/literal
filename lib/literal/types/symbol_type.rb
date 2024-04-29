@@ -11,4 +11,13 @@ class Literal::Types::SymbolType
 	def ===(value)
 		Symbol === value && @constraint === value
 	end
+
+	def ==(other)
+		self.class == other.class && @constraint == other.constraint
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :constraint
 end

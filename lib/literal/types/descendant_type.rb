@@ -10,4 +10,13 @@ class Literal::Types::DescendantType
 	def ===(value)
 		Module === value && value < @type
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :type
 end

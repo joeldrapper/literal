@@ -17,4 +17,13 @@ class Literal::Types::EnumerableType
 			Enumerable === value && (value.empty? || @type === value.first)
 		end
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :type
 end

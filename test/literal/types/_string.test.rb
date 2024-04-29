@@ -12,3 +12,11 @@ end
 # 	refute _String(1..5) === ""
 # 	refute _String(1..5) === "Hello, world!"
 # end
+
+test "== method" do
+	assert _String(1..5) == _String(1..5)
+	assert _String(1..5).eql?(_String(1..5))
+	assert _String(1..5) != _String(1..10)
+	assert _String(1..5) != nil
+	assert _String(1..5) != Object.new
+end

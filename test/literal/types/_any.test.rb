@@ -13,3 +13,11 @@ test "===" do
 
 	refute _Any === nil
 end
+
+test "== method" do
+	assert _Any == _Any
+	assert _Any.eql?(_Any)
+	assert _Any != _Array(String)
+	assert _Any != nil
+	assert _Any != Object.new
+end

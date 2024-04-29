@@ -11,4 +11,7 @@ Literal::Types::LambdaType = Literal::Singleton.new do
 	def ===(value)
 		Proc === value && value.lambda?
 	end
+
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

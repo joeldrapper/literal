@@ -11,4 +11,7 @@ Literal::Types::VoidType = Literal::Singleton.new do
 	def ===(_value)
 		true
 	end
+
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

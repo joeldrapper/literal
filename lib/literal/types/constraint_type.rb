@@ -14,4 +14,13 @@ class Literal::Types::ConstraintType
 			type === value.public_send(method)
 		end
 	end
+
+	def ==(other)
+		self.class == other.class && @constraints == other.constraints && @attributes == other.attributes
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :constraints, :attributes
 end

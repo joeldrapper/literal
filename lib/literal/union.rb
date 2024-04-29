@@ -13,6 +13,11 @@ class Literal::Union
 		@types.any? { |type| type === value }
 	end
 
+	def ==(other)
+		self.class == other.class && @types == other.types
+	end
+	alias_method :eql?, :==
+
 	def each(&)
 		@types.each(&)
 	end
@@ -46,4 +51,8 @@ class Literal::Union
 	def deconstruct_keys(_)
 		{ types: @types }
 	end
+
+	protected
+
+	attr_reader :types
 end

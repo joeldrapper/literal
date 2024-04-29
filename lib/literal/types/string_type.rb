@@ -11,4 +11,13 @@ class Literal::Types::StringType
 	def ===(value)
 		String === value && @constraint === value
 	end
+
+	def ==(other)
+		self.class == other.class && @constraint == other.constraint
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :constraint
 end

@@ -19,3 +19,11 @@ test "===" do
 	refute _Boolean === TrueClass
 	refute _Boolean === FalseClass
 end
+
+test "== method" do
+	assert _Boolean == _Boolean
+	assert _Boolean.eql?(_Boolean)
+	assert _Boolean != _Any
+	assert _Boolean != nil
+	assert _Boolean != Object.new
+end

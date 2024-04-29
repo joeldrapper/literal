@@ -11,4 +11,7 @@ Literal::Types::NeverType = Literal::Singleton.new do
 	def ===(value)
 		false
 	end
+
+	alias_method :==, :equal?
+	alias_method :eql?, :==
 end

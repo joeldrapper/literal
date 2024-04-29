@@ -17,4 +17,13 @@ class Literal::Types::RangeType
 			)
 		)
 	end
+
+	def ==(other)
+		self.class == other.class && @type == other.type
+	end
+	alias_method :eql?, :==
+
+	protected
+
+	attr_reader :type
 end
