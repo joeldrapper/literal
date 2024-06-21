@@ -8,13 +8,7 @@ class Literal::Types::SetType
 
 	def inspect = "_Set(#{@type.inspect})"
 
-	if Literal::EXPENSIVE_TYPE_CHECKS
-		def ===(value)
-			Set === value && value.all? { |item| @type === item }
-		end
-	else
-		def ===(value)
-			Set === value && (value.empty? || @type === value.first)
-		end
+	def ===(value)
+		Set === value && value.all? { |item| @type === item }
 	end
 end

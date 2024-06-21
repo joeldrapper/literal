@@ -15,3 +15,5 @@ class Literal::Visitor
 		end
 	end
 end
+
+Literal.private_constant(:Visitor)

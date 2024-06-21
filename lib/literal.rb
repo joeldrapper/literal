@@ -2,7 +2,6 @@
 
 module Literal
 	TYPE_CHECKS = ENV["LITERAL_TYPE_CHECKS"] != "false"
-	EXPENSIVE_TYPE_CHECKS = ENV["LITERAL_EXPENSIVE_TYPE_CHECKS"] != "false"
 
 	autoload :Attributable, "literal/attributable"
 	autoload :Attribute, "literal/attribute"

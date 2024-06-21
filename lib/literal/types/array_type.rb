@@ -8,13 +8,7 @@ class Literal::Types::ArrayType
 
 	def inspect = "_Array(#{@type.inspect})"
 
-	if Literal::EXPENSIVE_TYPE_CHECKS
-		def ===(value)
-			Array === value && value.all? { |item| @type === item }
-		end
-	else
-		def ===(value)
-			Array === value && (value.empty? || @type === value[0])
-		end
+	def ===(value)
+		Array === value && value.all? { |item| @type === item }
 	end
 end

@@ -9,3 +9,5 @@ gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git"
 gem "rubocop"
 gem "benchmark-ips"
 gem "solargraph"
+
+gem "ruby-lsp"

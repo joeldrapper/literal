@@ -8,13 +8,7 @@ class Literal::Types::EnumerableType
 
 	def inspect = "_Enumerable(#{@type.inspect})"
 
-	if Literal::EXPENSIVE_TYPE_CHECKS
-		def ===(value)
-			Enumerable === value && value.all? { |item| @type === item }
-		end
-	else
-		def ===(value)
-			Enumerable === value && (value.empty? || @type === value.first)
-		end
+	def ===(value)
+		Enumerable === value && value.all? { |item| @type === item }
 	end
 end
