@@ -138,6 +138,18 @@ test "_Interface" do
 	refute enumerable_interface === nil
 end
 
+test "_Intersection" do
+	type = _Intersection(
+		_Interface(:size),
+		_Interface(:each),
+	)
+
+	assert type === []
+	assert type === Set.new
+
+	refute type === "string"
+end
+
 test "_Never" do
 	Fixtures::Objects.each do |object|
 		refute _Never === object
