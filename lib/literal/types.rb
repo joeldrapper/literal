@@ -106,17 +106,13 @@ module Literal::Types
 	end
 
 	# Matches if the value responds to all the given methods.
-	def _Interface(*methods)
-		raise Literal::ArgumentError.new("_Interface type must have at least one method.") if methods.size < 1
-
-		Literal::Types::InterfaceType.new(*methods)
+	def _Interface(...)
+		Literal::Types::InterfaceType.new(...)
 	end
 
 	# Matches if *all* given types are matched.
-	def _Intersection(*types)
-		raise Literal::ArgumentError.new("_Intersection type must have at least one type.") if types.size < 1
-
-		Literal::Types::IntersectionType.new(*types)
+	def _Intersection(...)
+		Literal::Types::IntersectionType.new(...)
 	end
 
 	# Ensures the value is valid JSON data (i.e. it came from JSON.parse).
@@ -129,8 +125,8 @@ module Literal::Types
 		Literal::Types::LambdaType
 	end
 
-	def _Map(**shape)
-		Literal::Types::MapType.new(**shape)
+	def _Map(...)
+		Literal::Types::MapType.new(...)
 	end
 
 	# Never matches any value.
@@ -185,17 +181,13 @@ module Literal::Types
 	end
 
 	# Matches if the value is an `Array` and each element matches the given types in order.
-	def _Tuple(*types)
-		raise Literal::ArgumentError.new("_Tuple type must have at least one type.") if types.size < 1
-
-		Literal::Types::TupleType.new(*types)
+	def _Tuple(...)
+		Literal::Types::TupleType.new(...)
 	end
 
 	# Matches if *any* given type is matched.
-	def _Union(*types)
-		raise Literal::ArgumentError.new("_Union type must have at least one type.") if types.size < 1
-
-		Literal::Union.new(*types)
+	def _Union(...)
+		Literal::Union.new(...)
 	end
 
 	def _Void

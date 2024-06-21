@@ -3,6 +3,8 @@
 # @api private
 class Literal::Types::IntersectionType
 	def initialize(*types)
+		raise Literal::ArgumentError.new("_Intersection type must have at least one type.") if types.size < 1
+
 		@types = types
 	end
 
