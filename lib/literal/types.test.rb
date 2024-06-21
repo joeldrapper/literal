@@ -150,12 +150,138 @@ test "_Intersection" do
 	refute type === "string"
 end
 
+test "_JSONData" do
+	assert _JSONData === "string"
+	assert _JSONData === 42
+	assert _JSONData === 3.14
+	assert _JSONData === true
+	assert _JSONData === false
+	assert _JSONData === nil
+	assert _JSONData === { "key" => "value", "number" => 42 }
+	assert _JSONData === [1, "two", 3.0, true, false, nil]
+
+	assert _JSONData === { "nested_array" => [1, "two", { "key" => "value" }] }
+	assert _JSONData === { "nested_hash" => { "key1" => "value1", "key2" => [1, 2, 3] } }
+	assert _JSONData === [{ "key" => "value" }, [1, 2, 3], "string"]
+
+	refute _JSONData === Object.new
+	refute _JSONData === Set.new
+	refute _JSONData === { key: "value" }
+	refute _JSONData === [1, :symbol, "three"]
+	refute _JSONData === { "nested_array" => [1, :symbol, { "key" => "value" }] }
+	refute _JSONData === { "nested_hash" => { "key1" => "value1", "key2" => [1, :symbol, 3] } }
+	refute _JSONData === [{ "key" => :value }, [1, 2, 3], "string"]
+end
+
+test "_Lambda" do
+	assert _Lambda === -> {}
+	assert _Lambda === -> (arg) { arg }
+	assert _Lambda === lambda {}
+
+	refute _Lambda === proc {}
+end
+
+test "_Map" do
+	map = _Map(name: String, age: Integer)
+
+	assert map === { name: "Alice", age: 42 }
+	assert map === { name: "Bob", age: 18 }
+
+	refute map === { name: "Alice", age: "42" }
+	refute map === { name: "Bob", age: nil }
+	refute map === { name: "Charlie" }
+	refute map === { age: 30 }
+end
+
 test "_Never" do
 	Fixtures::Objects.each do |object|
 		refute _Never === object
 	end
 
 	refute _Never === nil
+end
+
+test "_Nilable" do
+	type = _Nilable(String)
+
+	assert type === "string"
+	assert type === nil
+
+	refute type === 42
+	refute type === :symbol
+	refute type === []
+end
+
+test "_Not" do
+	assert _Not(Integer) === "string"
+
+	refute _Not(Integer) === 18
+end
+
+test "_Procable" do
+	assert _Procable === proc {}
+	assert _Procable === -> {}
+	assert _Procable === method(:puts)
+
+	refute _Procable === "string"
+	refute _Procable === 42
+	refute _Procable === nil
+end
+
+test "_Range" do
+	assert _Range(Integer) === (1..10)
+	assert _Range(Float) === (1.0..10.0)
+	assert _Range(String) === ("a".."z")
+
+	refute _Range(Integer) === (1.0..10.0)
+end
+
+test "_Set" do
+	assert _Set(String) === Set["a", "b", "c"]
+	assert _Set(Integer) === Set[1, 2, 3]
+
+	refute _Set(String) === Set[1, "a", :symbol]
+	refute _Set(Integer) === Set["a", "b", "c"]
+	refute _Set(String) === ["a", "b", "c"]
+end
+
+test "_String" do
+	assert _String(_Interface(:to_s)) === "string"
+	assert _String(size: 6) === "string"
+
+	refute _String(_Interface(:non_existing_method)) === "string"
+	refute _String(size: 5) === "string"
+end
+
+test "_Symbol" do
+	assert _Symbol(_Interface(:to_sym)) === :symbol
+	assert _Symbol(size: 6) === :symbol
+
+	refute _Symbol(_Interface(:non_existing_method)) === :symbol
+	refute _Symbol(size: 5) === :symbol
+end
+
+test "_Truthy" do
+	truthy_objects = Fixtures::Objects - Set[false, nil]
+	falsy_objects = Set[false, nil]
+
+	truthy_objects.each do |object|
+		assert _Truthy === object
+	end
+
+	falsy_objects.each do |object|
+		refute _Truthy === object
+	end
+end
+
+test "_Tuple" do
+	assert _Tuple(String, Integer) === ["a", 1]
+	assert _Tuple(Symbol, Float) === [:symbol, 3.14]
+
+	refute _Tuple(String, Integer) === [1, "a"]
+	refute _Tuple(String, Integer) === ["a", 1, 2]
+	refute _Tuple(String, Integer) === ["a"]
+	refute _Tuple(String, Integer) === nil
 end
 
 test "_Void" do

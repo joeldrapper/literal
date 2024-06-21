@@ -1,14 +1,10 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::FloatType
-	def initialize(range)
-		@range = range
-	end
-
+class Literal::Types::FloatType < Literal::Types::ConstraintType
 	def inspect = "_Float(#{@range})"
 
 	def ===(value)
-		Float === value && @range === value
+		Float === value && super
 	end
 end

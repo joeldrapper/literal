@@ -8,7 +8,7 @@ Literal::Types::VoidType = Literal::Singleton.new do
 
 	def inspect = "_Void"
 
-	def ===(_value)
+	def ===(_)
 		true
 	end
 end

@@ -32,14 +32,14 @@ module Literal::Types
 	autoload :TupleType, "literal/types/tuple_type"
 	autoload :VoidType, "literal/types/void_type"
 
-	# Matches any value except `nil`. Use `_Nilable(_Any)` to match any value including `nil`.
+	# Matches any value except `nil`. Use `_Nilable(_Any)` or `_Void` to match any value including `nil`.
 	def _Any
 		Literal::Types::AnyType
 	end
 
 	# Matches if the value is an `Array` and all the elements match the given type.
-	def _Array(type)
-		Literal::Types::ArrayType.new(type)
+	def _Array(...)
+		Literal::Types::ArrayType.new(...)
 	end
 
 	# Matches if the value is `true` or `false`.
@@ -48,30 +48,30 @@ module Literal::Types
 	end
 
 	# Matches if the value responds to `#call`.
-	def _Callable(type = nil)
+	def _Callable
 		Literal::Types::CallableType
 	end
 
 	# Matches if the value either the given class or a subclass of it.
-	def _Class(type)
-		Literal::Types::ClassType.new(type)
+	def _Class(...)
+		Literal::Types::ClassType.new(...)
 	end
 
 	# Similar to `_Intersection`, but allows you to specify attribute constraints as keyword arguments.
 	# @example
 	# 	_Constraint(Array, size: 1..3)
-	def _Constraint(*constraints, **attributes)
-		Literal::Types::ConstraintType.new(*constraints, **attributes)
+	def _Constraint(...)
+		Literal::Types::ConstraintType.new(...)
 	end
 
 	# Matches if the value is a descendant of the given class.
-	def _Descendant(type)
-		Literal::Types::DescendantType.new(type)
+	def _Descendant(...)
+		Literal::Types::DescendantType.new(...)
 	end
 
 	#  Matches if the value is an `Enumerable` and all its elements match the given type.
-	def _Enumerable(type)
-		Literal::Types::EnumerableType.new(type)
+	def _Enumerable(...)
+		Literal::Types::EnumerableType.new(...)
 	end
 
 	# Matches *"falsy"* values (`nil` and `false`).
@@ -82,18 +82,18 @@ module Literal::Types
 	# Matches if the value is a `Float` and matches the given constraint.
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Float` instead of `_Float`.
-	def _Float(constraint)
-		Literal::Types::FloatType.new(constraint)
+	def _Float(...)
+		Literal::Types::FloatType.new(...)
 	end
 
 	# Matches if the value is *frozen*.
-	def _Frozen(type)
-		Literal::Types::FrozenType.new(type)
+	def _Frozen(...)
+		Literal::Types::FrozenType.new(...)
 	end
 
 	# Matches if the value is a `Hash` and all the keys and values match the given types.
-	def _Hash(key_type, value_type)
-		Literal::Types::HashType.new(key_type, value_type)
+	def _Hash(...)
+		Literal::Types::HashType.new(...)
 	end
 
 	# Matches if the value is an `Integer` and matches the given constraint.
@@ -101,8 +101,8 @@ module Literal::Types
 	# If you don't need a constraint, use `Integer` instead of `_Integer`.
 	# @example
 	# 	attribute :age, _Integer(18..127)
-	def _Integer(constraint)
-		Literal::Types::IntegerType.new(constraint)
+	def _Integer(...)
+		Literal::Types::IntegerType.new(...)
 	end
 
 	# Matches if the value responds to all the given methods.
@@ -130,7 +130,7 @@ module Literal::Types
 	end
 
 	def _Map(**shape)
-		Literal::Types::MapType
+		Literal::Types::MapType.new(**shape)
 	end
 
 	# Never matches any value.
@@ -139,13 +139,13 @@ module Literal::Types
 	end
 
 	# Matches if the value is either `nil` or the given type.
-	def _Nilable(type)
-		Literal::Types::NilableType.new(type)
+	def _Nilable(...)
+		Literal::Types::NilableType.new(...)
 	end
 
 	# Matches if the given type is *not* matched.
-	def _Not(type)
-		Literal::Types::NotType.new(type)
+	def _Not(...)
+		Literal::Types::NotType.new(...)
 	end
 
 	# Matches if the value is a `Proc` or responds to `#to_proc`.
@@ -154,30 +154,29 @@ module Literal::Types
 	end
 
 	# Matches if the value is a `Range` of the given type.
-	def _Range(type)
-		Literal::Types::RangeType.new(type)
+	def _Range(...)
+		Literal::Types::RangeType.new(...)
 	end
 
 	# Matches if the value is a `Set` and all the elements match the given type.
-	def _Set(type)
-		Literal::Types::SetType.new(type)
+	def _Set(...)
+		Literal::Types::SetType.new(...)
 	end
 
 	# Ensures a value matches the given shape of a Hash
-	def _Shape(*constraints, **shape)
-		Literal::Types::ShapeType.new(*constraints, **shape)
+	def _Shape(...)
+		Literal::Types::ShapeType.new(...)
 	end
 
-	# Matches if the value is a `String` and matches the given constraint.
-	# You could use a `Regexp`, for example, as a constraint.
-	# If you don't need a constraint, use `String` instead of `_String`.
-	def _String(constraint)
-		Literal::Types::StringType.new(constraint)
+	# Matches if the value is a `String` and matches the given constraints.
+	# If you don't need any constraints, use `String` instead of `_String`.
+	def _String(...)
+		Literal::Types::StringType.new(...)
 	end
 
 	# Matches if the value is a `Symbol` and matches the given constraint.
-	def _Symbol(constraint)
-		Literal::Types::SymbolType.new(constraint)
+	def _Symbol(...)
+		Literal::Types::SymbolType.new(...)
 	end
 
 	# Matches *"truthy"* values (anything except `nil` and `false`).
