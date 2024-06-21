@@ -26,21 +26,21 @@ module Literal::Types
 
 	# Matches if *any* given type is matched.
 	def _Union(*types)
-		raise Literal::ArgumentError, "_Union type must have at least one type." if types.size < 1
+		raise Literal::ArgumentError.new("_Union type must have at least one type.") if types.size < 1
 
 		Literal::Union.new(*types)
 	end
 
 	# Matches if *all* given types are matched.
 	def _Intersection(*types)
-		raise Literal::ArgumentError, "_Intersection type must have at least one type." if types.size < 1
+		raise Literal::ArgumentError.new("_Intersection type must have at least one type.") if types.size < 1
 
 		Literal::Types::IntersectionType.new(*types)
 	end
 
 	# Matches if the given predicates are truthy.
 	def _Is(*predicates)
-		raise Literal::ArgumentError, "_Is type must have at least one predicate." if predicates.size < 1
+		raise Literal::ArgumentError.new("_Is type must have at least one predicate.") if predicates.size < 1
 
 		Literal::Types::IsType.new(*predicates)
 	end
@@ -67,7 +67,7 @@ module Literal::Types
 
 	# Matches if the value responds to all the given methods.
 	def _Interface(*methods)
-		raise Literal::ArgumentError, "_Interface type must have at least one method." if methods.size < 1
+		raise Literal::ArgumentError.new("_Interface type must have at least one method.") if methods.size < 1
 
 		Literal::Types::InterfaceType.new(*methods)
 	end
@@ -94,7 +94,7 @@ module Literal::Types
 
 	# Matches if the value is an `Array` and each element matches the given types in order.
 	def _Tuple(*types)
-		raise Literal::ArgumentError, "_Tuple type must have at least one type." if types.size < 1
+		raise Literal::ArgumentError.new("_Tuple type must have at least one type.") if types.size < 1
 
 		Literal::Types::TupleType.new(*types)
 	end

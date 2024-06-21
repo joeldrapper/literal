@@ -9,14 +9,14 @@ module Literal::Attributable::Generators
 				assign_schema,
 				init_attributes_ivar,
 				handle_attributes,
-				initializer_callback
+				initializer_callback,
 			]
 		end
 
 		def init_attributes_ivar
 			Assignment.new(
 				left: Ref.new("@attributes"),
-				right: Ref.new("{}")
+				right: Ref.new("{}"),
 			)
 		end
 
@@ -24,9 +24,9 @@ module Literal::Attributable::Generators
 			Assignment.new(
 				left: Access.new(
 					collection: Ref.new("@attributes"),
-					key: Symbol.new(attribute.name)
+					key: Symbol.new(attribute.name),
 				),
-				right: Ref.new(attribute.escaped)
+				right: Ref.new(attribute.escaped),
 			)
 		end
 	end

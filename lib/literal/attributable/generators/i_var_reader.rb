@@ -6,7 +6,7 @@ module Literal::Attributable::Generators
 
 		def body
 			[
-				Ref.new("@#{@attribute.name}")
+				Ref.new("@#{@attribute.name}"),
 			]
 		end
 	end

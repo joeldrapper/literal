@@ -10,7 +10,7 @@ module Literal::Attributable::Generators
 				init_attributes_ivar,
 				handle_attributes,
 				initializer_callback,
-				freeze_object
+				freeze_object,
 			]
 		end
 
@@ -22,9 +22,9 @@ module Literal::Attributable::Generators
 			Assignment.new(
 				left: Access.new(
 					collection: Ref.new("@attributes"),
-					key: Symbol.new(attribute.name)
+					key: Symbol.new(attribute.name),
 				),
-				right: Ref.new("#{attribute.escaped}.frozen? ? #{attribute.escaped} : #{attribute.escaped}.freeze")
+				right: Ref.new("#{attribute.escaped}.frozen? ? #{attribute.escaped} : #{attribute.escaped}.freeze"),
 			)
 		end
 	end

@@ -11,23 +11,23 @@ module Literal::Attributable
 
 	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
-			raise Literal::ArgumentError, "The `default` must be a frozen value or a Proc."
+			raise Literal::ArgumentError.new("The `default` must be a frozen value or a Proc.")
 		end
 
 		unless false == reader || Visibility.include?(reader)
-			raise Literal::ArgumentError, "The `reader` must be one of #{Visibility.map(&:inspect).join(', ')}."
+			raise Literal::ArgumentError.new("The `reader` must be one of #{Visibility.map(&:inspect).join(', ')}.")
 		end
 
 		unless false == writer || Visibility.include?(writer)
-			raise Literal::ArgumentError, "The `writer` must be one of #{Visibility.map(&:inspect).join(', ')}."
+			raise Literal::ArgumentError.new("The `writer` must be one of #{Visibility.map(&:inspect).join(', ')}.")
 		end
 
 		if special && positional
-			raise Literal::ArgumentError, "The #{name} attribute cannot be #{special} and positional."
+			raise Literal::ArgumentError.new("The #{name} attribute cannot be #{special} and positional.")
 		end
 
 		if :class == name && reader
-			raise Literal::ArgumentError, "The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on."
+			raise Literal::ArgumentError.new("The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on.")
 		end
 
 		attribute = Literal::Attribute.new(
@@ -38,7 +38,7 @@ module Literal::Attributable
 			writer:,
 			positional:,
 			default:,
-			coercion:
+			coercion:,
 		)
 
 		literal_attributes[name] = attribute

@@ -7,7 +7,7 @@ module Literal::Attributable::Generators
 		def assign_value(attribute)
 			Assignment.new(
 				left: Ref.new("@#{attribute.name}"),
-				right: Ref.new(attribute.escaped)
+				right: Ref.new(attribute.escaped),
 			)
 		end
 	end

@@ -8,9 +8,9 @@ module Literal::Attributable::Generators
 			Assignment.new(
 				left: Access.new(
 					collection: Ref.new("@attributes"),
-					key: Symbol.new(@attribute.name)
+					key: Symbol.new(@attribute.name),
 				),
-				right: Ref.new("value")
+				right: Ref.new("value"),
 			)
 		end
 	end

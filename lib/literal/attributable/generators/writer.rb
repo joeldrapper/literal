@@ -11,7 +11,7 @@ module Literal::Attributable::Generators
 				visibility: @attribute.writer,
 				name: "#{@attribute.name}=",
 				params:,
-				body:
+				body:,
 			)
 		end
 
@@ -21,8 +21,8 @@ module Literal::Attributable::Generators
 			[
 				PositionalParam.new(
 					name: "value",
-					default: nil
-				)
+					default: nil,
+				),
 			]
 		end
 
@@ -33,7 +33,7 @@ module Literal::Attributable::Generators
 		def type_check
 			TypeCheck.new(
 				attribute_name: @attribute.name,
-				variable_name: "value"
+				variable_name: "value",
 			)
 		end
 	end

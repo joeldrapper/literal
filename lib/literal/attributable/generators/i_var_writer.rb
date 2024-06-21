@@ -7,7 +7,7 @@ module Literal::Attributable::Generators
 		def assignment
 			Assignment.new(
 				left: Ref.new("@#{@attribute.name}"),
-				right: Ref.new("value")
+				right: Ref.new("value"),
 			)
 		end
 	end

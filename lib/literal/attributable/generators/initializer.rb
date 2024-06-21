@@ -11,7 +11,7 @@ module Literal::Attributable::Generators
 				visibility: :public,
 				name: "initialize",
 				params:,
-				body:
+				body:,
 			)
 		end
 
@@ -31,17 +31,17 @@ module Literal::Attributable::Generators
 						if attribute.default?
 							PositionalParam.new(
 								name: attribute.name,
-								default: "Literal::Null"
+								default: "Literal::Null",
 							)
 						elsif attribute.type === nil
 							PositionalParam.new(
 								name: attribute.name,
-								default: "nil"
+								default: "nil",
 							)
 						else
 							PositionalParam.new(
 								name: attribute.name,
-								default: nil
+								default: nil,
 							)
 						end
 					else
@@ -55,7 +55,7 @@ module Literal::Attributable::Generators
 			[
 				assign_schema,
 				handle_attributes,
-				initializer_callback
+				initializer_callback,
 			]
 		end
 
@@ -74,10 +74,10 @@ module Literal::Attributable::Generators
 							coerce_attribute(attribute),
 							assign_default(attribute),
 							check_type(attribute),
-							assign_value(attribute)
-						].compact
+							assign_value(attribute),
+						].compact,
 					)
-				end
+				end,
 			)
 		end
 
@@ -96,7 +96,7 @@ module Literal::Attributable::Generators
 		def check_type(attribute)
 			TypeCheck.new(
 				attribute_name: attribute.name,
-				variable_name: attribute.escaped
+				variable_name: attribute.escaped,
 			)
 		end
 

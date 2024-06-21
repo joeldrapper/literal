@@ -49,8 +49,8 @@ class Literal::Method
 	def <(other)
 		self != other &&
 			positional_parameters_match?(other) &&
-				keyword_parameters_match?(other) &&
-					visibility_match?(other)
+			keyword_parameters_match?(other) &&
+			visibility_match?(other)
 	end
 
 	def number_of_positional_parameters

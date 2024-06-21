@@ -11,7 +11,7 @@ module Literal::Attributable::Generators
 				visibility: @attribute.reader,
 				name: @attribute.name,
 				params: nil,
-				body:
+				body:,
 			)
 		end
 	end

@@ -8,8 +8,8 @@ module Literal::Attributable::Generators
 			[
 				Access.new(
 					collection: Ref.new("@attributes"),
-					key: Symbol.new(@attribute.name)
-				)
+					key: Symbol.new(@attribute.name),
+				),
 			]
 		end
 	end

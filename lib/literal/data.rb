@@ -43,7 +43,7 @@ class Literal::Data < Literal::Structish
 		new_attributes.each do |name, value|
 			if Literal::TYPE_CHECKS
 				unless (type = @literal_attributes[name].type)
-					raise Literal::ArgumentError, "Unknown attribute `#{name.inspect}`."
+					raise Literal::ArgumentError.new("Unknown attribute `#{name.inspect}`.")
 				end
 
 				unless type === value
@@ -66,7 +66,7 @@ class Literal::Data < Literal::Structish
 
 	def _dump(level)
 		Marshal.dump(
-			[2, @attributes]
+			[2, @attributes],
 		)
 	end
 
