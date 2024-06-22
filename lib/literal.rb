@@ -11,7 +11,6 @@ module Literal
 	autoload :Data, "literal/data"
 	autoload :Enum, "literal/enum"
 	autoload :Formatter, "literal/formatter"
-	autoload :Method, "literal/method"
 	autoload :Singleton, "literal/singleton"
 	autoload :Struct, "literal/struct"
 	autoload :Structish, "literal/structish"
@@ -20,6 +19,6 @@ module Literal
 	autoload :Null, "literal/null"
 
 	# Errors
-	autoload :TypeError, "literal/errors/type_error"
 	autoload :Error, "literal/errors/error"
+	autoload :TypeError, "literal/errors/type_error"
 end
