@@ -284,15 +284,26 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === nil
 end
 
-test "_Union" do
-	type = _Union(String, Integer)
+describe "_Union" do
+	test "_Union" do
+		type = _Union(String, Integer)
 
-	assert type === "string"
-	assert type === 42
+		assert type === "string"
+		assert type === 42
 
-	refute type === :symbol
-	refute type === []
-	refute type === nil
+		refute type === :symbol
+		refute type === []
+		refute type === nil
+	end
+
+	test "flattens types" do
+		type = _Union(
+			_Union(String, Integer),
+			_Union(Symbol, Float),
+		)
+
+		expect(type.inspect) == "_Union(#<Set: {String, Integer, Symbol, Float}>)"
+	end
 end
 
 test "_Void" do

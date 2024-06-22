@@ -5,7 +5,10 @@ class Literal::Types::UnionType
 
 	def initialize(*types)
 		raise Literal::ArgumentError.new("_Union type must have at least one type.") if types.size < 1
-		@types = types.to_set.freeze
+
+		@types = Set[]
+		load_types(types)
+		@types.freeze
 	end
 
 	def inspect = "_Union(#{@types.inspect})"
@@ -20,5 +23,17 @@ class Literal::Types::UnionType
 
 	def deconstruct
 		@types.to_a
+	end
+
+	protected
+
+	attr_reader :types
+
+	private
+
+	def load_types(types)
+		types.each do |type|
+			(Literal::Types::UnionType === type) ? load_types(type.types) : @types << type
+		end
 	end
 end
