@@ -2,7 +2,7 @@
 
 class Literal::Struct < Literal::Structish
 	class << self
-		def attribute(name, type, special = nil, reader: :public, writer: :public, positional: false, default: nil)
+		def attribute(name, type, kind = nil, reader: :public, writer: :public, positional: false, default: nil)
 			super
 		end
 

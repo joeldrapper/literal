@@ -2,8 +2,8 @@
 
 class Literal::Data < Literal::Structish
 	class << self
-		def attribute(name, type, special = nil, reader: :public, positional: false, default: nil)
-			super(name, type, special, reader:, writer: false, positional:, default:)
+		def attribute(name, type, kind = nil, reader: :public, positional: false, default: nil)
+			super(name, type, kind, reader:, writer: false, positional:, default:)
 		end
 
 		def _load(data)

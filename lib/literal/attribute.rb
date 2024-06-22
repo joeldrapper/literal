@@ -3,18 +3,17 @@
 class Literal::Attribute
 	RUBY_KEYWORDS = %i[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
 
-	def initialize(name:, type:, special:, reader:, writer:, positional:, default:, coercion:)
+	def initialize(name:, type:, kind:, reader:, writer:, default:, coercion:)
 		@name = name
 		@type = type
-		@special = special
+		@kind = kind
 		@reader = reader
 		@writer = writer
-		@positional = positional
 		@default = default
 		@coercion = coercion
 	end
 
-	attr_reader :name, :type, :special, :reader, :writer, :positional, :default, :coercion
+	attr_reader :name, :type, :kind, :reader, :writer, :default, :coercion
 
 	def coerce(value, context:)
 		context.instance_exec(value, &@coercion)

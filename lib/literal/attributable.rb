@@ -7,19 +7,20 @@ module Literal::Attributable
 
 	include Literal::Types
 
-	Visibility = Set[false, :private, :protected, :public].freeze
+	VisibilityOptions = Set[false, :private, :protected, :public].freeze
+	KindOptions = Set[nil, :positional, :*, :**, :&].freeze
 
-	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil, &coercion)
+	def attribute(name, type, kind = nil, reader: false, writer: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
 			raise Literal::ArgumentError.new("The default must be a frozen object or a Proc.")
 		end
 
-		unless Visibility.include?(reader)
-			raise Literal::ArgumentError.new("The reader must be one of #{Visibility.map(&:inspect).join(', ')}.")
+		unless VisibilityOptions.include?(reader)
+			raise Literal::ArgumentError.new("The reader must be one of #{VisibilityOptions.map(&:inspect).join(', ')}.")
 		end
 
-		unless Visibility.include?(writer)
-			raise Literal::ArgumentError.new("The writer must be one of #{Visibility.map(&:inspect).join(', ')}.")
+		unless VisibilityOptions.include?(writer)
+			raise Literal::ArgumentError.new("The writer must be one of #{VisibilityOptions.map(&:inspect).join(', ')}.")
 		end
 
 		if reader && :class == name
@@ -28,13 +29,16 @@ module Literal::Attributable
 			)
 		end
 
+		unless KindOptions.include?(kind)
+			raise Literal::ArgumentError.new("The kind must be one of #{KindOptions.map(&:inspect).join(', ')}.")
+		end
+
 		attribute = Literal::Attribute.new(
 			name:,
 			type:,
-			special:,
+			kind:,
 			reader:,
 			writer:,
-			positional:,
 			default:,
 			coercion:,
 		)

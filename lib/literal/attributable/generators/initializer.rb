@@ -19,34 +19,32 @@ module Literal::Attributable::Generators
 
 		def params
 			@attributes.each_value.map do |attribute|
-				case attribute.special
+				case attribute.kind
 				when :*
 					PositionalSplat.new(attribute:)
 				when :**
 					KeywordSplat.new(attribute:)
 				when :&
 					BlockParam.new(attribute:)
-				else
-					if attribute.positional
-						if attribute.default
-							PositionalParam.new(
-								name: attribute.name,
-								default: "Literal::Null",
-							)
-						elsif attribute.type === nil
-							PositionalParam.new(
-								name: attribute.name,
-								default: "nil",
-							)
-						else
-							PositionalParam.new(
-								name: attribute.name,
-								default: nil,
-							)
-						end
+				when :positional
+					if attribute.default
+						PositionalParam.new(
+							name: attribute.name,
+							default: "Literal::Null",
+						)
+					elsif attribute.type === nil
+						PositionalParam.new(
+							name: attribute.name,
+							default: "nil",
+						)
 					else
-						KeywordParam.new(attribute:)
+						PositionalParam.new(
+							name: attribute.name,
+							default: nil,
+						)
 					end
+				else
+					KeywordParam.new(attribute:)
 				end
 			end
 		end
