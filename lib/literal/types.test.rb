@@ -285,7 +285,7 @@ test "_Tuple" do
 end
 
 describe "_Union" do
-	test "_Union" do
+	test "matching" do
 		type = _Union(String, Integer)
 
 		assert type === "string"
