@@ -28,7 +28,7 @@ module Literal::Attributable::Generators
 					BlockParam.new(attribute:)
 				else
 					if attribute.positional
-						if attribute.default?
+						if attribute.default
 							PositionalParam.new(
 								name: attribute.name,
 								default: "Literal::Null",
@@ -82,21 +82,21 @@ module Literal::Attributable::Generators
 		end
 
 		def escape_keyword(attribute)
-			KeywordEscape.new(attribute) if attribute.escape?
+			KeywordEscape.new(attribute) if attribute.ruby_keyword?
 		end
 
 		def coerce_attribute(attribute)
-			AttributeCoercion.new(attribute) if attribute.coercion?
+			AttributeCoercion.new(attribute) if attribute.coercion
 		end
 
 		def assign_default(attribute)
-			DefaultAssignment.new(attribute) if attribute.default?
+			DefaultAssignment.new(attribute) if attribute.default
 		end
 
 		def check_type(attribute)
 			TypeCheck.new(
 				attribute_name: attribute.name,
-				variable_name: attribute.escaped,
+				variable_name: attribute.escaped_name,
 			)
 		end
 

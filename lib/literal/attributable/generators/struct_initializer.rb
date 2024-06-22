@@ -26,7 +26,7 @@ module Literal::Attributable::Generators
 					collection: Ref.new("@attributes"),
 					key: Symbol.new(attribute.name),
 				),
-				right: Ref.new(attribute.escaped),
+				right: Ref.new(attribute.escaped_name),
 			)
 		end
 	end

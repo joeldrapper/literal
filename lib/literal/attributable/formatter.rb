@@ -45,10 +45,10 @@ class Literal::Attributable::Formatter < Literal::Formatter
 	end
 
 	def DefaultAssignment(node)
-		text "if Literal::Null == #{node.attribute.escaped}"
+		text "if Literal::Null == #{node.attribute.escaped_name}"
 
 		indent do
-			text "#{node.attribute.escaped} = @literal_attributes[:#{node.attribute.name}].default_value"
+			text "#{node.attribute.escaped_name} = @literal_attributes[:#{node.attribute.name}].default_value"
 		end
 
 		newline
@@ -73,11 +73,11 @@ class Literal::Attributable::Formatter < Literal::Formatter
 	end
 
 	def KeywordEscape(node)
-		text "#{node.attribute.escaped} = binding.local_variable_get(:#{node.attribute.name})"
+		text "#{node.attribute.escaped_name} = binding.local_variable_get(:#{node.attribute.name})"
 	end
 
 	def KeywordParam(node)
-		if node.attribute.default?
+		if node.attribute.default
 			text "#{node.attribute.name}: Literal::Null"
 		elsif node.attribute.type === nil
 			text "#{node.attribute.name}: nil"

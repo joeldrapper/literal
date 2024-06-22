@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Literal::Attribute
-	RUBY_KEYWORDS = %i[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "___#{k}___"] }.freeze
+	RUBY_KEYWORDS = %i[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
 
 	def initialize(name:, type:, special:, reader:, writer:, positional:, default:, coercion:)
 		@name = name
@@ -16,35 +16,15 @@ class Literal::Attribute
 
 	attr_reader :name, :type, :special, :reader, :writer, :positional, :default, :coercion
 
-	def reader?
-		!!@reader
-	end
-
-	def writer?
-		!!@writer
-	end
-
-	def default?
-		nil != @default
-	end
-
-	def positional?
-		!!@positional
-	end
-
-	def coercion?
-		!!@coercion
-	end
-
 	def coerce(value, context:)
 		context.instance_exec(value, &@coercion)
 	end
 
-	def escape?
+	def ruby_keyword?
 		!!RUBY_KEYWORDS[@name]
 	end
 
-	def escaped
+	def escaped_name
 		RUBY_KEYWORDS[@name] || @name
 	end
 

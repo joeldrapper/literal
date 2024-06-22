@@ -3,6 +3,8 @@
 module Literal::Attributable::Generators
 	autoload :Base, "literal/attributable/generators/base"
 	autoload :Initializer, "literal/attributable/generators/initializer"
+	autoload :IVarInitializer, "literal/attributable/generators/i_var_initializer"
+	autoload :IVarReader, "literal/attributable/generators/i_var_reader"
 	autoload :StructInitializer, "literal/attributable/generators/struct_initializer"
 	autoload :StructReader, "literal/attributable/generators/struct_reader"
 	autoload :Reader, "literal/attributable/generators/reader"

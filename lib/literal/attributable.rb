@@ -7,27 +7,25 @@ module Literal::Attributable
 
 	include Literal::Types
 
-	Visibility = [:private, :protected, :public].freeze
+	Visibility = Set[false, :private, :protected, :public].freeze
 
 	def attribute(name, type, special = nil, reader: false, writer: false, positional: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
-			raise Literal::ArgumentError.new("The `default` must be a frozen value or a Proc.")
+			raise Literal::ArgumentError.new("The default must be a frozen object or a Proc.")
 		end
 
-		unless false == reader || Visibility.include?(reader)
-			raise Literal::ArgumentError.new("The `reader` must be one of #{Visibility.map(&:inspect).join(', ')}.")
+		unless Visibility.include?(reader)
+			raise Literal::ArgumentError.new("The reader must be one of #{Visibility.map(&:inspect).join(', ')}.")
 		end
 
-		unless false == writer || Visibility.include?(writer)
-			raise Literal::ArgumentError.new("The `writer` must be one of #{Visibility.map(&:inspect).join(', ')}.")
+		unless Visibility.include?(writer)
+			raise Literal::ArgumentError.new("The writer must be one of #{Visibility.map(&:inspect).join(', ')}.")
 		end
 
-		if special && positional
-			raise Literal::ArgumentError.new("The #{name} attribute cannot be #{special} and positional.")
-		end
-
-		if :class == name && reader
-			raise Literal::ArgumentError.new("The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on.")
+		if reader && :class == name
+			raise Literal::ArgumentError.new(
+				"The `:class` attribute should not be defined as a reader because it breaks Ruby's `Object#class` method, which Literal itself depends on.",
+			)
 		end
 
 		attribute = Literal::Attribute.new(
@@ -42,10 +40,8 @@ module Literal::Attributable
 		)
 
 		literal_attributes[name] = attribute
-
-		include literal_extension
-
 		define_literal_methods(attribute)
+		include literal_extension
 	end
 
 	def inherited(subclass)
@@ -74,9 +70,9 @@ module Literal::Attributable
 
 			#{generate_literal_initializer}
 
-			#{generate_literal_reader(attribute) if attribute.reader?}
+			#{generate_literal_reader(attribute) if attribute.reader}
 
-			#{generate_literal_writer(attribute) if attribute.writer?}
+			#{generate_literal_writer(attribute) if attribute.writer}
 		RUBY
 	end
 

@@ -5,6 +5,7 @@ module Literal
 
 	autoload :Attributable, "literal/attributable"
 	autoload :Attribute, "literal/attribute"
+	autoload :Attributes, "literal/attributes"
 	autoload :ConcurrentArray, "literal/concurrent_array"
 	autoload :ConcurrentHash, "literal/concurrent_hash"
 	autoload :Data, "literal/data"

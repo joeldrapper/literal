@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api private
 class Literal::Visitor
 	def visit(node)
 		node.accept(self)
@@ -15,5 +16,3 @@ class Literal::Visitor
 		end
 	end
 end
-
-Literal.private_constant(:Visitor)

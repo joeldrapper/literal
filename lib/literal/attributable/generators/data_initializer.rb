@@ -24,7 +24,7 @@ module Literal::Attributable::Generators
 					collection: Ref.new("@attributes"),
 					key: Symbol.new(attribute.name),
 				),
-				right: Ref.new("#{attribute.escaped}.frozen? ? #{attribute.escaped} : #{attribute.escaped}.freeze"),
+				right: Ref.new("#{attribute.escaped_name}.frozen? ? #{attribute.escaped_name} : #{attribute.escaped_name}.freeze"),
 			)
 		end
 	end
