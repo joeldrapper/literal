@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 module Literal::Attributable::Nodes
-	@nodes = Literal::ConcurrentArray.new
-	self.class.attr_reader :nodes
-
 	def self.node(name, *attributes)
-		@nodes << name
-
 		node_class = Data.define(*attributes) do
 			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				# frozen_string_literal: true
+
 				def accept(visitor)
 					visitor.#{name}(self)
 				end
