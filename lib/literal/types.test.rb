@@ -284,6 +284,17 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === nil
 end
 
+test "_Union" do
+	type = _Union(String, Integer)
+
+	assert type === "string"
+	assert type === 42
+
+	refute type === :symbol
+	refute type === []
+	refute type === nil
+end
+
 test "_Void" do
 	Fixtures::Objects.each do |object|
 		assert _Void === object

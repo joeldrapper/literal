@@ -16,13 +16,10 @@ module Literal
 	autoload :Struct, "literal/struct"
 	autoload :Structish, "literal/structish"
 	autoload :Types, "literal/types"
-	autoload :Union, "literal/union"
 	autoload :Visitor, "literal/visitor"
 	autoload :Null, "literal/null"
 
 	# Errors
 	autoload :TypeError, "literal/errors/type_error"
 	autoload :Error, "literal/errors/error"
-
-	extend Literal::Types
 end

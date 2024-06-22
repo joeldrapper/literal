@@ -30,6 +30,7 @@ module Literal::Types
 	autoload :SymbolType, "literal/types/symbol_type"
 	autoload :TruthyType, "literal/types/truthy_type"
 	autoload :TupleType, "literal/types/tuple_type"
+	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
 
 	# Matches any value except `nil`. Use `_Nilable(_Any)` or `_Void` to match any value including `nil`.
@@ -187,7 +188,7 @@ module Literal::Types
 
 	# Matches if *any* given type is matched.
 	def _Union(...)
-		Literal::Union.new(...)
+		Literal::Types::UnionType.new(...)
 	end
 
 	def _Void
