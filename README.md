@@ -45,10 +45,10 @@ The third argument is optional. You can set this to `:*`, `:**`, `:&`, or `:posi
 
 ```ruby
 class Person
-	extend Literal::Properties
+  extend Literal::Properties
 
-	prop :name, String
-	prop :age, Integer
+  prop :name, String
+  prop :age, Integer
 end
 ```
 
@@ -56,10 +56,10 @@ You can also use keyword arguments to define _readers_ and _writers_. These can 
 
 ```ruby
 class Person
-	extend Literal::Properties
+  extend Literal::Properties
 
-	prop :name, String, reader: :public
-	prop :age, Integer, writer: :protected
+  prop :name, String, reader: :public
+  prop :age, Integer, writer: :protected
 end
 ```
 
@@ -67,7 +67,7 @@ Properties are required by deafult. To make them optional, set the type to a tha
 
 ```ruby
 class Person
-	extend Literal::Properties
+  extend Literal::Properties
 
   prop :name, String
   prop :age, _Nilable(Integer)
@@ -78,7 +78,7 @@ Alternatively, you can give the property a default value. This default value mus
 
 ```ruby
 class Person
-	extend Literal::Properties
+  extend Literal::Properties
 
   prop :name, String, default: "John Doe"
   prop :age, _Nilable(Integer)
@@ -89,7 +89,7 @@ Note, the above example will fail unless you have frozen string literals enabled
 
 ```ruby
 class Person
-	extend Literal::Properties
+  extend Literal::Properties
 
   prop :name, String, default: -> { "John Doe" }
   prop :age, _Nilable(Integer)
