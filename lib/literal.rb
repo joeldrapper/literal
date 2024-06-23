@@ -18,4 +18,10 @@ module Literal
 	autoload :Error, "literal/errors/error"
 	autoload :TypeError, "literal/errors/type_error"
 	autoload :ArgumentError, "literal/errors/argument_error"
+
+	def self.Enum(type)
+		Class.new(Literal::Enum) do
+			@type = type
+		end
+	end
 end

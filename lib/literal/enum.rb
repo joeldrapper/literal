@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
+TracePoint.trace(:end) do |tp|
+	it = tp.self
+
+	if Class === it && it < Literal::Enum
+		it.__after_defined__
+	end
+end
+
 class Literal::Enum
 	extend Literal::Types
-	include Literal::ModuleDefined
-
-	IndexDefinition = Data.define(:name, :type, :unique, :proc)
 
 	class << self
 		include Enumerable
 
-		attr_reader :type, :members
+		attr_reader :members
 
 		def values = @values.keys
 
@@ -26,7 +31,7 @@ class Literal::Enum
 
 			subclass.instance_exec do
 				@values = {}
-				@members = []
+				@members = Set[]
 				@type = type
 			end
 		end
@@ -39,13 +44,17 @@ class Literal::Enum
 			return super if frozen?
 			return super unless name.is_a?(Symbol)
 			return super unless name[0] == name[0].upcase
+			return super if args.length > 0
+			return super if kwargs.length > 0
 
-			raise ArgumentError if args.length > 0
-			raise ArgumentError if kwargs.length > 0
 			raise ArgumentError if @values.key? value
 			raise ArgumentError if constants.include?(name)
 
 			value = value.dup.freeze unless value.frozen?
+
+			unless @type === value
+				raise Literal::TypeError.expected(value, to_be_a: type)
+			end
 
 			member = new(name, value, &)
 			const_set name, member
@@ -55,7 +64,7 @@ class Literal::Enum
 			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
 		end
 
-		def after_defined
+		def __after_defined__
 			raise ArgumentError if frozen?
 
 			@values.freeze
@@ -83,10 +92,6 @@ class Literal::Enum
 	end
 
 	def initialize(name, value, &block)
-		unless type === value
-			raise Literal::TypeError.expected(value, to_be_a: type)
-		end
-
 		@name = name
 		@value = value
 		instance_exec(&block) if block
@@ -99,31 +104,9 @@ class Literal::Enum
 		"#{self.class.name}::#{@name}"
 	end
 
-	def type
-		self.class.type
-	end
-
 	alias_method :inspect, :name
-
-	def siblings
-		self.class.members
-	end
 
 	def _dump(level)
 		Marshal.dump(@value)
-	end
-
-	def call(&block)
-		if block
-			Literal::Case.new(*siblings, &block).call(self)
-		else
-			self
-		end
-	end
-
-	alias_method :handle, :call
-
-	def to_proc
-		method(:call).to_proc
 	end
 end
