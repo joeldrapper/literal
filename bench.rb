@@ -11,8 +11,6 @@ module Types
 	include Dry.Types()
 end
 
-puts RUBY_DESCRIPTION
-
 class NormalClass
 	def initialize(first_name:, last_name:, age:)
 		@first_name = first_name
@@ -53,22 +51,18 @@ end
 
 NormalData = Data.define(:first_name, :last_name, :age)
 
-class DryValue < Dry::Struct::Value
-	attribute :first_name, Types::Strict::String
-	attribute :last_name, Types::Strict::String
-	attribute :age, Types::Strict::Integer
-end
-
 class LiteralData < Literal::Data
 	prop :first_name, String
 	prop :last_name, String
 	prop :age, Integer
 end
 
+RubyVM::YJIT.enable
+
 Benchmark.ips do |x|
-	x.report "Ruby Class" do
-		NormalClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
+	# x.report "Ruby Class" do
+	# 	NormalClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	# end
 
 	x.report "Dry::Initializer" do
 		DryClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
@@ -82,9 +76,9 @@ Benchmark.ips do |x|
 end
 
 Benchmark.ips do |x|
-	x.report "Ruby Struct" do
-		NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
+	# x.report "Ruby Struct" do
+	# 	NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
+	# end
 
 	x.report "Dry::Struct" do
 		DryStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
@@ -92,18 +86,6 @@ Benchmark.ips do |x|
 
 	x.report "Literal::Struct" do
 		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
-
-	x.compare!
-end
-
-Benchmark.ips do |x|
-	x.report "Ruby Data" do
-		NormalData.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
-
-	x.report "Dry::Struct::Value" do
-		DryValue.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
 	x.report "Literal::Data" do
