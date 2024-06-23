@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Literal::Null
-	extend self
-
-	def inspect
+	def self.inspect
 		"Literal::Null"
 	end
 

@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::BooleanType
-	extend self
+	def self.inspect = "_Boolean"
 
-	def inspect = "_Boolean"
-
-	def ===(value)
+	def self.===(value)
 		true == value || false == value
 	end
 

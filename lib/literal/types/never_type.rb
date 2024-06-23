@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::NeverType
-	extend self
+	def self.inspect = "_Never"
 
-	def inspect = "_Never"
-
-	def ===(value)
+	def self.===(value)
 		false
 	end
 

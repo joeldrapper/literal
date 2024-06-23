@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::LambdaType
-	extend self
+	def self.inspect = "_Lambda"
 
-	def inspect = "_Lambda"
-
-	def ===(value)
+	def self.===(value)
 		Proc === value && value.lambda?
 	end
 

@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::CallableType
-	extend self
+	def self.inspect = "_Callable"
 
-	def inspect = "_Callable"
-
-	def ===(value)
+	def self.===(value)
 		value.respond_to?(:call)
 	end
 

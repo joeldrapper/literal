@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::FalsyType
-	extend self
+	def self.inspect = "_Falsy"
 
-	def inspect = "_Falsy"
-
-	def ===(value)
+	def self.===(value)
 		!value
 	end
 

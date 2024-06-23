@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::AnyType
-	extend self
+	def self.inspect = "_Any"
 
-	def inspect = "_Any"
-
-	def ===(value)
+	def self.===(value)
 		!(nil === value)
 	end
 

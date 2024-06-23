@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::ProcableType
-	extend self
+	def self.inspect = "_Procable"
 
-	def inspect = "_Procable"
-
-	def ===(value)
+	def self.===(value)
 		Proc === value || value.respond_to?(:to_proc)
 	end
 

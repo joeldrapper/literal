@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::TruthyType
-	extend self
+	def self.inspect = "_Truthy"
 
-	def inspect = "_Truthy"
-
-	def ===(value)
+	def self.===(value)
 		!!value
 	end
 

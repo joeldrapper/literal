@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::VoidType
-	extend self
+	def self.inspect = "_Void"
 
-	def inspect = "_Void"
-
-	def ===(_)
+	def self.===(_)
 		true
 	end
 

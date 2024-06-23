@@ -2,11 +2,9 @@
 
 # @api private
 module Literal::Types::JSONDataType
-	extend self
+	def self.inspect = "_JSONData"
 
-	def inspect = "_JSONData"
-
-	def ===(value)
+	def self.===(value)
 		case value
 		when String, Integer, Float, true, false, nil
 			true
