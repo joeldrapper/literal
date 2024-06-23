@@ -113,6 +113,17 @@ end
 
 Coercion takes place prior to type-checking, so you can safely coerce a value to a different type in the block.
 
+You can use properties that conflict with ruby keywords. Literal will handle everything for you automatically.
+
+```ruby
+class Person
+  extend Literal::Properties
+
+  prop :class, String, :positional
+  prop :end, Integer
+end
+```
+
 If you’d prefer to subclass than extend a module, you can use the `Literal::Object` class instead. `Literal::Object` literally extends `Literal::Properties`.
 
 ```ruby
