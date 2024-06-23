@@ -76,7 +76,7 @@ class Literal::Property
 			"#{writer || :public} ",
 			[
 				"def #{name}=(value)",
-				("@literal_properties[:#{name}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
+				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
 				"@#{name} = value",
 				"end",
 			].join("\n"),
