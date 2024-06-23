@@ -52,9 +52,7 @@ class Literal::Enum
 
 			value = value.dup.freeze unless value.frozen?
 
-			unless @type === value
-				raise Literal::TypeError.expected(value, to_be_a: type)
-			end
+			Literal.check(value, @type)
 
 			member = new(name, value, &)
 			const_set name, member

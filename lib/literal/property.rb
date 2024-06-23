@@ -45,9 +45,7 @@ class Literal::Property
 	end
 
 	def check(value)
-		unless @type === value
-			raise Literal::TypeError.expected(value, to_be_a: @type)
-		end
+		Literal.check(value, @type)
 	end
 
 	def ivar_ref
