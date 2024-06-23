@@ -28,6 +28,7 @@ test do
 	expect(Color.cast(1)) == Color::Red
 	expect(Color.to_set) == Set[Color::Red, Color::Green, Color::Blue]
 	expect(Color.values) == [1, 2, 3]
+	expect([3, 2, 1].map(&Color)) == [Color::Blue, Color::Green, Color::Red]
 
 	expect(Switch::Off.toggle) == Switch::On
 	expect(Switch::On.toggle) == Switch::Off
