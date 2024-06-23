@@ -24,3 +24,13 @@ But what if we want to check that it’s an Array of Integers? Literal provides 
 ```ruby
 _Array(Integer) === [1, 2, 3]
 ```
+
+These special types are defined on the `Literal::Types` module. To access them in a class, you can `extend` this module. To access them on an instance, you can `include` the module. If you want to use them globally, you can `extend` the module at the root.
+
+```ruby
+extend Literal::Types
+```
+
+This is recommended for applications, but not for libraries, as we don’t want to pollute the global namespace from library code.
+
+`Literal::Properties`, `Literal::Object`, `Literal::Struct` and `Literal::Data` already extend `Literal::Types`, so you don’t need to extend `Literal::Types` yourself if you’re only using literal types for literal properties.
