@@ -64,7 +64,7 @@ class Literal::Property
 			[
 				"def #{@name}",
 				"value = #{ivar_ref}",
-				"@literal_properties[#{symbol_ref}].check(value)",
+				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
 				"value",
 				"end",
 			].join("\n"),
@@ -76,7 +76,7 @@ class Literal::Property
 			"#{writer || :public} ",
 			[
 				"def #{name}=(value)",
-				"@literal_properties[:#{name}].check(value)",
+				("@literal_properties[:#{name}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
 				"@#{name} = value",
 				"end",
 			].join("\n"),
@@ -89,7 +89,7 @@ class Literal::Property
 			(generate_initializer_escape_keyword if (@kind == :keyword) && ruby_keyword?),
 			(generate_initializer_coerce_property if @coercion),
 			(generate_initializer_assign_default if @default),
-			(generate_initializer_check_type),
+			(generate_initializer_check_type unless Literal::TYPE_CHECKS_DISABLED),
 			(generate_initializer_assign_value),
 		].join("\n")
 	end
