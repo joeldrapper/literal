@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-Literal::Null = Literal::Singleton.new do
+module Literal::Null
+	extend self
+
 	def inspect
 		"Literal::Null"
 	end
-end
 
-Literal::Null.freeze
+	freeze
+end

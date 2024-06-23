@@ -30,11 +30,11 @@ class DryClass
 end
 
 class LiteralClass
-	extend Literal::Attributes
+	extend Literal::Properties
 
-	attribute :first_name, String
-	attribute :last_name, String
-	attribute :age, Integer
+	prop :first_name, String
+	prop :last_name, String
+	prop :age, Integer
 end
 
 NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
@@ -46,9 +46,9 @@ class DryStruct < Dry::Struct
 end
 
 class LiteralStruct < Literal::Struct
-	attribute :first_name, String
-	attribute :last_name, String
-	attribute :age, Integer
+	prop :first_name, String
+	prop :last_name, String
+	prop :age, Integer
 end
 
 NormalData = Data.define(:first_name, :last_name, :age)
@@ -60,9 +60,9 @@ class DryValue < Dry::Struct::Value
 end
 
 class LiteralData < Literal::Data
-	attribute :first_name, String
-	attribute :last_name, String
-	attribute :age, Integer
+	prop :first_name, String
+	prop :last_name, String
+	prop :age, Integer
 end
 
 Benchmark.ips do |x|
@@ -74,10 +74,14 @@ Benchmark.ips do |x|
 		DryClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-	x.report "Literal::Attributes" do
+	x.report "Literal::Properties" do
 		LiteralClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
+	x.compare!
+end
+
+Benchmark.ips do |x|
 	x.report "Ruby Struct" do
 		NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
@@ -90,6 +94,10 @@ Benchmark.ips do |x|
 		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
+	x.compare!
+end
+
+Benchmark.ips do |x|
 	x.report "Ruby Data" do
 		NormalData.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
@@ -102,5 +110,5 @@ Benchmark.ips do |x|
 		LiteralData.new(first_name: "Joel", last_name: "Drapper", age: 29)
 	end
 
-	# x.compare!
+	x.compare!
 end

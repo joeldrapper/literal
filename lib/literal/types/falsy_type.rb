@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::FalsyType = Literal::Singleton.new do
-	def initialize
-		freeze
-	end
+module Literal::Types::FalsyType
+	extend self
 
 	def inspect = "_Falsy"
 
 	def ===(value)
 		!value
 	end
+
+	freeze
 end

@@ -11,6 +11,6 @@ class Literal::Types::MapType
 	end
 
 	def ===(other)
-		Enumerable === other && @shape.all? { |k, t| t === other[k] }
+		@shape.all? { |k, t| t === other[k] }
 	end
 end

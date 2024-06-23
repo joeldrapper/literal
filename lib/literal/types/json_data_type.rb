@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::JSONDataType = Literal::Singleton.new do
-	def initialize
-		freeze
-	end
+module Literal::Types::JSONDataType
+	extend self
 
 	def inspect = "_JSONData"
 
@@ -20,4 +18,6 @@ Literal::Types::JSONDataType = Literal::Singleton.new do
 			false
 		end
 	end
+
+	freeze
 end
