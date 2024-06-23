@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::ProcableType = Literal::Singleton.new do
-	def initialize
-		freeze
-	end
+module Literal::Types::ProcableType
+	extend self
 
 	def inspect = "_Procable"
 
 	def ===(value)
 		Proc === value || value.respond_to?(:to_proc)
 	end
+
+	freeze
 end

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::CallableType = Literal::Singleton.new do
-	def initialize
-		freeze
-	end
+module Literal::Types::CallableType
+	extend self
 
 	def inspect = "_Callable"
 
 	def ===(value)
 		value.respond_to?(:call)
 	end
+
+	freeze
 end

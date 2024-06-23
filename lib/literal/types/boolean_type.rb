@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # @api private
-Literal::Types::BooleanType = Literal::Singleton.new do
-	def initialize
-		freeze
-	end
+module Literal::Types::BooleanType
+	extend self
 
 	def inspect = "_Boolean"
 
 	def ===(value)
 		true == value || false == value
 	end
+
+	freeze
 end

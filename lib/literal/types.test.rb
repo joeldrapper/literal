@@ -49,7 +49,7 @@ describe "_Constraint" do
 		refute age_constraint === 17.5
 	end
 
-	test "attribute constraints" do
+	test "property constraints" do
 		age_constraint = _Constraint(Array, size: 2..3)
 
 		assert age_constraint === [1, 2]

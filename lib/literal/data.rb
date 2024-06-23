@@ -1,78 +1,25 @@
 # frozen_string_literal: true
 
-class Literal::Data < Literal::Structish
+class Literal::Data < Literal::DataStructure
 	class << self
-		def attribute(name, type, kind = nil, reader: :public, positional: false, default: nil)
-			super(name, type, kind, reader:, writer: false, positional:, default:)
+		def prop(name, type, kind = :keyword, reader: :public, default: nil)
+			super(name, type, kind, reader:, writer: false, default:)
 		end
 
-		def _load(data)
-			data = Marshal.load(data)
+		def literal_properties
+			return @literal_properties if defined?(@literal_properties)
 
-			allocate.tap do |instance|
-				instance.instance_exec do
-					@attributes = data[1]
-					@literal_attributes = self.class.literal_attributes
-					freeze
-				end
+			if superclass.is_a?(Literal::Data)
+				@literal_properties = superclass.literal_properties.dup
+			else
+				@literal_properties = Literal::Properties::DataSchema.new
 			end
 		end
 
 		private
 
-		def define_literal_methods(attribute)
-			literal_extension.module_eval <<~RUBY, __FILE__, __LINE__ + 1
-				# frozen_string_literal: true
-
-				#{generate_literal_initializer}
-
-				#{generate_literal_reader(attribute) if attribute.reader?}
-			RUBY
+		def __literal_property_class__
+			Literal::DataProperty
 		end
-
-		def generate_literal_initializer
-			Generators::DataInitializer.new(literal_attributes).call
-		end
-
-		def generate_literal_reader(attribute)
-			Generators::StructReader.new(attribute).call
-		end
-	end
-
-	def with(**new_attributes)
-		new_attributes.each do |name, value|
-			if Literal::TYPE_CHECKS
-				unless (type = @literal_attributes[name].type)
-					raise Literal::ArgumentError.new("Unknown attribute `#{name.inspect}`.")
-				end
-
-				unless type === value
-					raise Literal::TypeError.expected(value, to_be_a: attribute.type)
-				end
-
-				unless value.frozen?
-					new_attributes[name] = value.dup.tap(&:freeze)
-				end
-			end
-
-			new_attributes[name] = value.frozen? ? value : value.dup
-		end
-
-		copy = dup
-		copy.instance_variable_set(:@attributes, @attributes.merge(new_attributes))
-		copy.freeze
-		copy
-	end
-
-	def _dump(level)
-		Marshal.dump(
-			[2, @attributes],
-		)
-	end
-
-	def marshal_load(data)
-		@attributes = data[1]
-		@literal_attributes = self.class.literal_attributes
-		freeze
 	end
 end

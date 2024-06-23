@@ -11,3 +11,7 @@ gem "benchmark-ips"
 gem "solargraph"
 
 gem "ruby-lsp"
+
+gem "dry-initializer"
+gem "dry-types"
+gem "dry-struct"
