@@ -12,6 +12,11 @@ class Random
 	prop :begin, Integer, :positional, reader: :public
 end
 
+class WithDefaultBlock
+	extend Literal::Properties
+	prop :block, Proc, :&, reader: :public, default: -> { proc { "Hello" } }
+end
+
 test do
 	person = Person.new("John", age: 30)
 
@@ -27,4 +32,9 @@ test "initializer keyword check" do
 	random = Random.new(1)
 
 	expect(random.begin) == 1
+end
+
+test "default block" do
+	object = WithDefaultBlock.new
+	expect(object.block.call) == "Hello"
 end

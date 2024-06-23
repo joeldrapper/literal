@@ -106,7 +106,7 @@ class Literal::Property
 
 	def generate_initializer_assign_default
 		[
-			"if Literal::Null == #{local_var_ref}",
+			"if #{(@kind == :&) ? 'nil' : 'Literal::Null'} == #{local_var_ref}",
 			"#{local_var_ref} = @literal_properties[#{symbol_ref}].default_value",
 			"end",
 		].join("\n")
