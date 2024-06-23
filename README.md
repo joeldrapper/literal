@@ -126,7 +126,7 @@ end
 
 `Literal::Struct` is like `Literal::Object`, but it also provides a few extras.
 
-Structs implement `==` so you can compare one struct to another. They also implement `hash`. Structs also have public readers and writers by default.
+Structs implement `==` so you can compare one struct to another. They also implement `hash`. Structs also have public _readers_ and _writers_ by default.
 
 ```ruby
 class Person < Literal::Struct
@@ -137,7 +137,7 @@ end
 
 ## Data
 
-`Literal::Data` is like `Literal::Struct`, but you can’t define writers, and objects are frozen after initialization. Additionally any non-frozen properties are duplicated and frozen.
+`Literal::Data` is like `Literal::Struct`, but you can’t define _writers_. Additionally, objects are _frozen_ after initialization. Additionally any non-frozen properties are duplicated and frozen.
 
 ```ruby
 class Person < Literal::Data
