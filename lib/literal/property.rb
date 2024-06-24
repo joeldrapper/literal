@@ -86,17 +86,29 @@ class Literal::Property
 		":#{@name}"
 	end
 
-	def generate_reader_method
-		[
-			"#{@reader || :public} ",
-			[
-				"def #{@name}",
-				"value = #{ivar_ref}",
-				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
-				"value",
-				"end",
-			].join("\n"),
-		].join
+	if Literal::TYPE_CHECKS_DISABLED
+		def generate_reader_method(buffer = +"")
+			buffer <<
+				(reader ? reader.name : "public") <<
+				" def " <<
+				name.name <<
+				"\nvalue = " <<
+				ivar_ref <<
+				"\nvalue\nend"
+		end
+	else # type checks are enabled
+		def generate_reader_method(buffer = +"")
+			buffer <<
+				(reader ? reader.name : "public") <<
+				" def " <<
+				name.name <<
+				"\nvalue = " <<
+				ivar_ref <<
+				"\n@literal_properties[" <<
+				symbol_ref <<
+				"].check(value)\n" <<
+				"value\nend"
+		end
 	end
 
 	def generate_writer_method
