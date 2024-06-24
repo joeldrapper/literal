@@ -80,3 +80,21 @@ test "introspection" do
 	prop_name = props.first
 	assert(prop_name.optional?) { "Expected name to be optional" }
 end
+
+test "after initialize callback" do
+	callback_called = false
+
+	example = Class.new do
+		extend Literal::Properties
+
+		prop :name, String
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+	end
+
+	example.new(name: "John")
+
+	assert callback_called
+end

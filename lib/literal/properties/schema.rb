@@ -94,6 +94,7 @@ class Literal::Properties::Schema
 		[
 			"@literal_properties = self.class.literal_properties",
 			generate_initializer_handle_properties(@sorted_properties),
+			"after_initialize if respond_to?(:after_initialize)",
 		].join("\n")
 	end
 
