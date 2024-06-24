@@ -39,55 +39,62 @@ class Literal::Properties::Schema
 		@sorted_properties.size
 	end
 
-	def generate_initializer
-		[
-			"def initialize(#{generate_initializer_params})",
-			generate_initializer_body,
-			"end",
-		].join("\n")
+	def generate_initializer(buffer = +"")
+		buffer << "def initialize(#{generate_initializer_params})"
+		generate_initializer_body(buffer)
+		buffer << "end\n"
 	end
 
-	def generate_to_h
-		[
-			"def to_h",
-			"{",
-			@sorted_properties.each.map do |property|
-				"#{property.name}: @#{property.name},"
-			end,
-			"}",
-			"end",
-		].join("\n")
+	def generate_to_h(buffer = +"")
+		buffer << "def to_h\n" << "{\n"
+
+		i, n = 0, @sorted_properties.size
+		while i < n
+			property = @sorted_properties[i]
+			buffer << property.name << ": @" << property.name << ",\n"
+			i += 1
+		end
+
+		buffer << "}\n" << "end\n"
 	end
 
 	private
 
-	def generate_initializer_params
-		@sorted_properties.each.map do |property|
+	def generate_initializer_params(buffer = +"")
+		i, n = 0, @sorted_properties.size
+		while i < n
+			property = @sorted_properties[i]
+
 			case property.kind
 			when :*
-				"*#{property.escaped_name}"
+				buffer << "*" << property.escaped_name
 			when :**
-				"**#{property.escaped_name}"
+				buffer << "**" << property.escaped_name
 			when :&
-				"&#{property.escaped_name}"
+				buffer << "&" << property.escaped_name
 			when :positional
 				if property.default
-					"#{property.escaped_name} = Literal::Null"
+					buffer << property.escaped_name << " = Literal::Null"
 				elsif property.type === nil # optional
-					"#{property.escaped_name} = nil"
+					buffer << property.escaped_name << " = nil"
 				else # required
-					property.escaped_name
+					buffer << property.escaped_name
 				end
 			else # keyword
 				if property.default
-					"#{property.name}: Literal::Null"
+					buffer << property.name << ": Literal::Null"
 				elsif property.type === nil
-					"#{property.name}: nil" # optional
+					buffer << property.name << " nil" # optional
 				else # required
-					"#{property.name}:"
+					buffer << property.name << ":"
 				end
 			end
-		end.join(", ")
+
+			i += 1
+			buffer << ", " if i < n
+		end
+
+		buffer
 	end
 
 	def generate_initializer_body(buffer = +"")

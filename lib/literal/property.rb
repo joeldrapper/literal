@@ -84,7 +84,7 @@ class Literal::Property
 				name <<
 				"\nvalue = @" <<
 				name <<
-				"\nvalue\nend"
+				"\nvalue\nend\n"
 		end
 	else # type checks are enabled
 		def generate_reader_method(buffer = +"")
@@ -97,7 +97,7 @@ class Literal::Property
 				"\n@literal_properties[:" <<
 				name <<
 				"].check(value)\n" <<
-				"value\nend"
+				"value\nend\n"
 		end
 	end
 
@@ -108,7 +108,7 @@ class Literal::Property
 				" def " <<
 				name <<
 				"=(value)\n" <<
-				"@#{name} = value\nend"
+				"@#{name} = value\nend\n"
 		end
 	else # type checks are enabled
 		def generate_writer_method(buffer = +"")
@@ -120,7 +120,7 @@ class Literal::Property
 				"@literal_properties[:" <<
 				name <<
 				"].check(value)\n" <<
-				"@#{name} = value\nend"
+				"@#{name} = value\nend\n"
 		end
 	end
 
