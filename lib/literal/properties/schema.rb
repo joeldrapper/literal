@@ -39,7 +39,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer(buffer = +"")
-		buffer << "def initialize(#{generate_initializer_params})"
+		buffer << "def initialize(#{generate_initializer_params})\n"
 		generate_initializer_body(buffer)
 		buffer << "end\n"
 	end
