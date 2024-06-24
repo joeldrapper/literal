@@ -17,6 +17,11 @@ class WithDefaultBlock
 	prop :block, Proc, :&, reader: :public, default: -> { proc { "Hello" } }
 end
 
+class WithNilableType
+	extend Literal::Properties
+	prop :name, Literal::Types::NilableType.new(String), :positional
+end
+
 test do
 	person = Person.new("John", age: 30)
 
@@ -70,4 +75,8 @@ test "introspection" do
 	prop_block = props.first
 	assert(prop_block.block?) { "Expected block to be kind :&" }
 	assert(prop_block.optional?) { "Expected block to be optional" }
+
+	props = WithNilableType.literal_properties
+	prop_name = props.first
+	assert(prop_name.optional?) { "Expected name to be optional" }
 end
