@@ -17,7 +17,7 @@ class Literal::Properties::Schema
 	def <<(value)
 		@mutex.synchronize do
 			@properties_index[value.name] = value
-			@sorted_properties << value
+			@sorted_properties = @properties_index.values
 			@sorted_properties.sort!
 		end
 
