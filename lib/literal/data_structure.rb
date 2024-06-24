@@ -31,6 +31,10 @@ class Literal::DataStructure
 		instance_variable_set("@#{key}", value)
 	end
 
+	def deconstruct
+		to_h.values
+	end
+
 	def deconstruct_keys(keys)
 		h = to_h
 		keys ? h.slice(*keys) : h

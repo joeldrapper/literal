@@ -21,6 +21,34 @@ class Literal::Property
 
 	attr_reader :name, :type, :kind, :reader, :writer, :default, :coercion
 
+	def optional?
+		@default || @type === nil
+	end
+
+	def required?
+		!optional?
+	end
+
+	def keyword?
+		@kind == :keyword
+	end
+
+	def positional?
+		@kind == :positional
+	end
+
+	def splat?
+		@kind == :*
+	end
+
+	def double_splat?
+		@kind == :**
+	end
+
+	def block?
+		@kind == :&
+	end
+
 	def <=>(other)
 		ORDER[@kind] <=> ORDER[other.kind]
 	end
