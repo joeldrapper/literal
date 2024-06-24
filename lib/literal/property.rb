@@ -2,7 +2,7 @@
 
 class Literal::Property
 	ORDER = { :positional => 0, :* => 1, :keyword => 2, :** => 3, :& => 4 }.freeze
-	RUBY_KEYWORDS = %i[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
+	RUBY_KEYWORDS = %w[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
 
 	VISIBILITY_OPTIONS = Set[false, :private, :protected, :public].freeze
 	KIND_OPTIONS = Set[:positional, :*, :keyword, :**, :&].freeze
@@ -10,7 +10,7 @@ class Literal::Property
 	include Comparable
 
 	def initialize(name:, type:, kind:, reader:, writer:, default:, coercion:)
-		@name = name
+		@name = name.to_s
 		@type = type
 		@kind = kind
 		@reader = reader
@@ -76,24 +76,14 @@ class Literal::Property
 		Literal.check(value, @type)
 	end
 
-	def ivar_ref
-		"@#{@name}"
-	end
-
-	alias_method :local_var_ref, :escaped_name
-
-	def symbol_ref
-		":#{@name}"
-	end
-
 	if Literal::TYPE_CHECKS_DISABLED
 		def generate_reader_method(buffer = +"")
 			buffer <<
 				(reader ? reader.name : "public") <<
 				" def " <<
-				name.name <<
-				"\nvalue = " <<
-				ivar_ref <<
+				name <<
+				"\nvalue = @" <<
+				name <<
 				"\nvalue\nend"
 		end
 	else # type checks are enabled
@@ -101,62 +91,109 @@ class Literal::Property
 			buffer <<
 				(reader ? reader.name : "public") <<
 				" def " <<
-				name.name <<
-				"\nvalue = " <<
-				ivar_ref <<
-				"\n@literal_properties[" <<
-				symbol_ref <<
+				name <<
+				"\nvalue = @" <<
+				name <<
+				"\n@literal_properties[:" <<
+				name <<
 				"].check(value)\n" <<
 				"value\nend"
 		end
 	end
 
-	def generate_writer_method
-		[
-			"#{writer || :public} ",
-			[
-				"def #{name}=(value)",
-				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
-				"@#{name} = value",
-				"end",
-			].join("\n"),
-		].join
+	if Literal::TYPE_CHECKS_DISABLED
+		def generate_writer_method(buffer = +"")
+			buffer <<
+				(writer ? writer.name : "public") <<
+				" def " <<
+				name <<
+				"=(value)\n" <<
+				"@#{name} = value\nend"
+		end
+	else # type checks are enabled
+		def generate_writer_method(buffer = +"")
+			buffer <<
+				(writer ? writer.name : "public") <<
+				" def " <<
+				name <<
+				"=(value)\n" <<
+				"@literal_properties[:" <<
+				name <<
+				"].check(value)\n" <<
+				"@#{name} = value\nend"
+		end
 	end
 
-	def generate_initializer_handle_property
-		[
-			"# #{name}",
-			(generate_initializer_escape_keyword if (@kind == :keyword) && ruby_keyword?),
-			(generate_initializer_coerce_property if @coercion),
-			(generate_initializer_assign_default if @default),
-			(generate_initializer_check_type unless Literal::TYPE_CHECKS_DISABLED),
-			(generate_initializer_assign_value),
-		].join("\n")
+	def generate_initializer_handle_property(buffer = +"")
+		buffer << "# " << name << "\n"
+
+		if @kind == :keyword && ruby_keyword?
+			generate_initializer_escape_keyword(buffer)
+		end
+
+		if @coercion
+			generate_initializer_coerce_property(buffer)
+		end
+
+		if @default
+			generate_initializer_assign_default(buffer)
+		end
+
+		unless Literal::TYPE_CHECKS_DISABLED
+			generate_initializer_check_type(buffer)
+		end
+
+		generate_initializer_assign_value(buffer)
 	end
 
 	private
 
-	def generate_initializer_escape_keyword
-		"#{escaped_name} = binding.local_variable_get(#{symbol_ref})"
+	def generate_initializer_escape_keyword(buffer = +"")
+		buffer <<
+			escaped_name <<
+			" = binding.local_variable_get(:" <<
+			name <<
+			")\n"
 	end
 
-	def generate_initializer_coerce_property
-		"#{escaped_name} = @literal_properties[#{symbol_ref}].coerce(#{local_var_ref}, context: self)"
+	def generate_initializer_coerce_property(buffer = +"")
+		buffer <<
+			escaped_name <<
+			" = @literal_properties[:" <<
+			name <<
+			"].coerce(" <<
+			escaped_name <<
+			", context: self)\n"
 	end
 
-	def generate_initializer_assign_default
-		[
-			"if #{(@kind == :&) ? 'nil' : 'Literal::Null'} == #{local_var_ref}",
-			"#{local_var_ref} = @literal_properties[#{symbol_ref}].default_value",
-			"end",
-		].join("\n")
+	def generate_initializer_assign_default(buffer = +"")
+		buffer <<
+			"if " <<
+			((@kind == :&) ? "nil" : "Literal::Null") <<
+			" == " <<
+			escaped_name <<
+			"\n" <<
+			escaped_name <<
+			" = @literal_properties[:" <<
+			name <<
+			"].default_value\nend\n"
 	end
 
-	def generate_initializer_check_type
-		"@literal_properties[:#{name}].check(#{escaped_name})"
+	def generate_initializer_check_type(buffer = +"")
+		buffer <<
+			"@literal_properties[:" <<
+			name <<
+			"].check(" <<
+			escaped_name <<
+			")\n"
 	end
 
-	def generate_initializer_assign_value
-		"#{ivar_ref} = #{local_var_ref}"
+	def generate_initializer_assign_value(buffer = +"")
+		buffer <<
+			"@" <<
+			name <<
+			" = " <<
+			escaped_name <<
+			"\n"
 	end
 end

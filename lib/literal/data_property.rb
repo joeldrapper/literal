@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
 class Literal::DataProperty < Literal::Property
-	def generate_initializer_assign_value
-		"#{ivar_ref} = #{local_var_ref}.frozen? ? #{local_var_ref} : #{local_var_ref}.dup.freeze"
+	def generate_initializer_assign_value(buffer = +"")
+		buffer <<
+			"@" <<
+			name <<
+			" = " <<
+			escaped_name <<
+			".frozen? ? " <<
+			escaped_name <<
+			" : " <<
+			escaped_name <<
+			".dup.freeze\n"
 	end
 end

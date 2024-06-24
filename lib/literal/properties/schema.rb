@@ -11,7 +11,7 @@ class Literal::Properties::Schema
 	end
 
 	def [](key)
-		@properties_index[key]
+		@properties_index[key.to_s]
 	end
 
 	def <<(value)
@@ -90,15 +90,19 @@ class Literal::Properties::Schema
 		end.join(", ")
 	end
 
-	def generate_initializer_body
-		[
-			"@literal_properties = self.class.literal_properties",
-			generate_initializer_handle_properties(@sorted_properties),
-			"after_initialize if respond_to?(:after_initialize)",
-		].join("\n")
+	def generate_initializer_body(buffer = +"")
+		buffer << "@literal_properties = self.class.literal_properties\n"
+		generate_initializer_handle_properties(@sorted_properties, buffer)
+		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end
 
-	def generate_initializer_handle_properties(properties)
-		properties.each.map(&:generate_initializer_handle_property).join("\n")
+	def generate_initializer_handle_properties(properties, buffer = +"")
+		i, n = 0, properties.size
+		while i < n
+			properties[i].generate_initializer_handle_property(buffer)
+			i += 1
+		end
+
+		buffer
 	end
 end
