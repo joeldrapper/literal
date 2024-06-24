@@ -11,7 +11,7 @@ module Literal::Types::JSONDataType
 		when Hash
 			value.all? { |k, v| String === k && self === v }
 		when Array
-			value.all? { |v| self === v }
+			value.all?(self)
 		else
 			false
 		end
