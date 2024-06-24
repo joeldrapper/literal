@@ -65,3 +65,13 @@ test "as_pack/from_pack" do
 	expect(b) == a
 	expect(b).to_be(:frozen?)
 end
+
+test "can be deconstructed" do
+	person = Person.new(name: "Joel")
+	expect(person.deconstruct) == ["Joel"]
+end
+
+test "can be deconstructed with keys" do
+	person = Person.new(name: "Joel")
+	expect(person.deconstruct_keys([:name])) == { name: "Joel" }
+end

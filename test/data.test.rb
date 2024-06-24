@@ -34,3 +34,13 @@ test "to_h" do
 	person = Person.new(name: "John")
 	expect(person.to_h) == { name: "John" }
 end
+
+test "can be deconstructed" do
+	person = Person.new(name: "John")
+	expect(person.deconstruct) == ["John"]
+end
+
+test "can be deconstructed with keys" do
+	person = Person.new(name: "John")
+	expect(person.deconstruct_keys([:name])) == { name: "John" }
+end
