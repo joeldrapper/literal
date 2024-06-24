@@ -2,6 +2,8 @@
 
 # @api private
 class Literal::Properties::Schema
+	include Enumerable
+
 	def initialize(properties_index: {}, sorted_properties: [])
 		@properties_index = properties_index
 		@sorted_properties = sorted_properties
@@ -31,6 +33,10 @@ class Literal::Properties::Schema
 
 	def each(&)
 		@sorted_properties.each(&)
+	end
+
+	def size
+		@sorted_properties.size
 	end
 
 	def generate_initializer
