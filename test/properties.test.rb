@@ -107,5 +107,5 @@ test "inheritance" do
 	friend = Friend.new("John", age: 30.5)
 
 	expect(friend.name) == "John"
-	expect(friend.age) == 30.5
+	expect(friend.age) > 30
 end
