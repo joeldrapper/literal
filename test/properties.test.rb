@@ -38,3 +38,21 @@ test "default block" do
 	object = WithDefaultBlock.new
 	expect(object.block.call) == "Hello"
 end
+
+test "after initialize callback" do
+	callback_called = false
+
+	example = Class.new do
+		extend Literal::Properties
+
+		prop :name, String
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+	end
+
+	example.new(name: "John")
+
+	assert callback_called
+end
