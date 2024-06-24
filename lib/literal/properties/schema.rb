@@ -17,8 +17,7 @@ class Literal::Properties::Schema
 	def <<(value)
 		@mutex.synchronize do
 			@properties_index[value.name] = value
-			@sorted_properties = @properties_index.values
-			@sorted_properties.sort!
+			@sorted_properties = @properties_index.values.sort!
 		end
 
 		self
@@ -48,9 +47,10 @@ class Literal::Properties::Schema
 	def generate_to_h(buffer = +"")
 		buffer << "def to_h\n" << "{\n"
 
-		i, n = 0, @sorted_properties.size
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
 		while i < n
-			property = @sorted_properties[i]
+			property = sorted_properties[i]
 			buffer << property.name << ": @" << property.name << ",\n"
 			i += 1
 		end
@@ -61,9 +61,10 @@ class Literal::Properties::Schema
 	private
 
 	def generate_initializer_params(buffer = +"")
-		i, n = 0, @sorted_properties.size
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
 		while i < n
-			property = @sorted_properties[i]
+			property = sorted_properties[i]
 
 			case property.kind
 			when :*
@@ -98,7 +99,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "@literal_properties = self.class.literal_properties\n"
+		buffer << "@literal_properties = properties = self.class.literal_properties\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
 		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end

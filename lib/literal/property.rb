@@ -10,7 +10,7 @@ class Literal::Property
 	include Comparable
 
 	def initialize(name:, type:, kind:, reader:, writer:, default:, coercion:)
-		@name = name.to_s
+		@name = name.name
 		@type = type
 		@kind = kind
 		@reader = reader
@@ -79,23 +79,23 @@ class Literal::Property
 	if Literal::TYPE_CHECKS_DISABLED
 		def generate_reader_method(buffer = +"")
 			buffer <<
-				(reader ? reader.name : "public") <<
+				(@reader ? @reader.name : "public") <<
 				" def " <<
-				name <<
+				@name <<
 				"\nvalue = @" <<
-				name <<
+				@name <<
 				"\nvalue\nend\n"
 		end
 	else # type checks are enabled
 		def generate_reader_method(buffer = +"")
 			buffer <<
-				(reader ? reader.name : "public") <<
+				(@reader ? @reader.name : "public") <<
 				" def " <<
-				name <<
+				@name <<
 				"\nvalue = @" <<
-				name <<
+				@name <<
 				"\n@literal_properties[:" <<
-				name <<
+				@name <<
 				"].check(value)\n" <<
 				"value\nend\n"
 		end
@@ -104,28 +104,29 @@ class Literal::Property
 	if Literal::TYPE_CHECKS_DISABLED
 		def generate_writer_method(buffer = +"")
 			buffer <<
-				(writer ? writer.name : "public") <<
+				(@writer ? @writer.name : "public") <<
 				" def " <<
-				name <<
+				@name <<
 				"=(value)\n" <<
-				"@#{name} = value\nend\n"
+				"@#{@name} = value\nend\n"
 		end
 	else # type checks are enabled
 		def generate_writer_method(buffer = +"")
 			buffer <<
-				(writer ? writer.name : "public") <<
+				(@writer ? @writer.name : "public") <<
 				" def " <<
-				name <<
+				@name <<
 				"=(value)\n" <<
 				"@literal_properties[:" <<
-				name <<
+				@name <<
 				"].check(value)\n" <<
-				"@#{name} = value\nend\n"
+				"@#{@name} = value\nend\n"
 		end
 	end
 
 	def generate_initializer_handle_property(buffer = +"")
-		buffer << "# " << name << "\n"
+		buffer << "# " << @name << "\n"
+		buffer << "property = properties[:" << @name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
 			generate_initializer_escape_keyword(buffer)
@@ -152,16 +153,14 @@ class Literal::Property
 		buffer <<
 			escaped_name <<
 			" = binding.local_variable_get(:" <<
-			name <<
+			@name <<
 			")\n"
 	end
 
 	def generate_initializer_coerce_property(buffer = +"")
 		buffer <<
 			escaped_name <<
-			" = @literal_properties[:" <<
-			name <<
-			"].coerce(" <<
+			"property.coerce(" <<
 			escaped_name <<
 			", context: self)\n"
 	end
@@ -174,16 +173,12 @@ class Literal::Property
 			escaped_name <<
 			"\n" <<
 			escaped_name <<
-			" = @literal_properties[:" <<
-			name <<
-			"].default_value\nend\n"
+			" = property.default_value\nend\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"@literal_properties[:" <<
-			name <<
-			"].check(" <<
+			"property.check(" <<
 			escaped_name <<
 			")\n"
 	end
@@ -191,7 +186,7 @@ class Literal::Property
 	def generate_initializer_assign_value(buffer = +"")
 		buffer <<
 			"@" <<
-			name <<
+			@name <<
 			" = " <<
 			escaped_name <<
 			"\n"
