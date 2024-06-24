@@ -11,7 +11,7 @@ class Literal::Properties::Schema
 	end
 
 	def [](key)
-		@properties_index[key.to_s]
+		@properties_index[key]
 	end
 
 	def <<(value)
