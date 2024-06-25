@@ -3,23 +3,30 @@
 extend Literal::Types
 
 class Color < Literal::Enum(Integer)
-	Red(1)
-	Green(2)
-	Blue(3)
+	prop :hex, String
+
+	index :hex, String, unique: true
+
+	Red = new(1, hex: "#FF0000")
+	Green = new(2, hex: "#00FF00")
+	Blue = new(3, hex: "#0000FF")
 end
 
 class Switch < Literal::Enum(_Boolean)
-	On(true) do
+	On = new(true) do
 		def toggle = Off
 	end
 
-	Off(false) do
+	Off = new(false) do
 		def toggle = On
 	end
 end
 
 test do
+	expect(Color.where(hex: "#FF0000")) == [Color::Red]
+	expect(Color.find_by(hex: "#FF0000")) == Color::Red
 	expect(Color::Red.value) == 1
+	expect(Color::Red.hex) == "#FF0000"
 	expect(Color::Red.red?) == true
 	expect(Color::Red.green?) == false
 	expect(Color).to_be(:frozen?)

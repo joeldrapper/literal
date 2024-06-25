@@ -21,7 +21,7 @@ module Literal
 
 	def self.Enum(type)
 		Class.new(Literal::Enum) do
-			@type = type
+			prop :value, type, :positional
 		end
 	end
 
