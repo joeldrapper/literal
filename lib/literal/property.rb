@@ -62,7 +62,7 @@ class Literal::Property
 	end
 
 	def escaped_name
-		RUBY_KEYWORDS[@name] || @name
+		RUBY_KEYWORDS[@name] || @name.name
 	end
 
 	def default_value
@@ -76,75 +76,119 @@ class Literal::Property
 		Literal.check(value, @type)
 	end
 
-	def ivar_ref
-		"@#{@name}"
+	if Literal::TYPE_CHECKS_DISABLED
+		def generate_reader_method(buffer = +"")
+			buffer <<
+				(@reader ? @reader.name : "public") <<
+				" def " <<
+				@name.name <<
+				"\nvalue = @" <<
+				@name.name <<
+				"\nvalue\nend\n"
+		end
+	else # type checks are enabled
+		def generate_reader_method(buffer = +"")
+			buffer <<
+				(@reader ? @reader.name : "public") <<
+				" def " <<
+				@name.name <<
+				"\nvalue = @" <<
+				@name.name <<
+				"\nself.class.literal_properties[:" <<
+				@name.name <<
+				"].check(value)\n" <<
+				"value\nend\n"
+		end
 	end
 
-	alias_method :local_var_ref, :escaped_name
-
-	def symbol_ref
-		":#{@name}"
+	if Literal::TYPE_CHECKS_DISABLED
+		def generate_writer_method(buffer = +"")
+			buffer <<
+				(@writer ? @writer.name : "public") <<
+				" def " <<
+				@name.name <<
+				"=(value)\n" <<
+				"@#{@name.name} = value\nend\n"
+		end
+	else # type checks are enabled
+		def generate_writer_method(buffer = +"")
+			buffer <<
+				(@writer ? @writer.name : "public") <<
+				" def " <<
+				@name.name <<
+				"=(value)\n" <<
+				"self.class.literal_properties[:" <<
+				@name.name <<
+				"].check(value)\n" <<
+				"@#{@name.name} = value\nend\n"
+		end
 	end
 
-	def generate_reader_method
-		[
-			"#{@reader || :public} ",
-			[
-				"def #{@name}",
-				"value = #{ivar_ref}",
-				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
-				"value",
-				"end",
-			].join("\n"),
-		].join
-	end
+	def generate_initializer_handle_property(buffer = +"")
+		buffer << "# " << @name.name << "\n" <<
+			"property = properties[:" << @name.name << "]\n"
 
-	def generate_writer_method
-		[
-			"#{writer || :public} ",
-			[
-				"def #{name}=(value)",
-				("@literal_properties[#{symbol_ref}].check(value)" unless Literal::TYPE_CHECKS_DISABLED),
-				"@#{name} = value",
-				"end",
-			].join("\n"),
-		].join
-	end
+		if @kind == :keyword && ruby_keyword?
+			generate_initializer_escape_keyword(buffer)
+		end
 
-	def generate_initializer_handle_property
-		[
-			"# #{name}",
-			(generate_initializer_escape_keyword if (@kind == :keyword) && ruby_keyword?),
-			(generate_initializer_coerce_property if @coercion),
-			(generate_initializer_assign_default if @default),
-			(generate_initializer_check_type unless Literal::TYPE_CHECKS_DISABLED),
-			(generate_initializer_assign_value),
-		].join("\n")
+		if @coercion
+			generate_initializer_coerce_property(buffer)
+		end
+
+		if @default
+			generate_initializer_assign_default(buffer)
+		end
+
+		unless Literal::TYPE_CHECKS_DISABLED
+			generate_initializer_check_type(buffer)
+		end
+
+		generate_initializer_assign_value(buffer)
 	end
 
 	private
 
-	def generate_initializer_escape_keyword
-		"#{escaped_name} = binding.local_variable_get(#{symbol_ref})"
+	def generate_initializer_escape_keyword(buffer = +"")
+		buffer <<
+			escaped_name <<
+			" = binding.local_variable_get(:" <<
+			@name.name <<
+			")\n"
 	end
 
-	def generate_initializer_coerce_property
-		"#{escaped_name} = @literal_properties[#{symbol_ref}].coerce(#{local_var_ref}, context: self)"
+	def generate_initializer_coerce_property(buffer = +"")
+		buffer <<
+			escaped_name <<
+			"= property.coerce(" <<
+			escaped_name <<
+			", context: self)\n"
 	end
 
-	def generate_initializer_assign_default
-		[
-			"if #{(@kind == :&) ? 'nil' : 'Literal::Null'} == #{local_var_ref}",
-			"#{local_var_ref} = @literal_properties[#{symbol_ref}].default_value",
-			"end",
-		].join("\n")
+	def generate_initializer_assign_default(buffer = +"")
+		buffer <<
+			"if " <<
+			((@kind == :&) ? "nil" : "Literal::Null") <<
+			" == " <<
+			escaped_name <<
+			"\n" <<
+			escaped_name <<
+			" = property.default_value\nend\n"
 	end
 
-	def generate_initializer_check_type
-		"@literal_properties[:#{name}].check(#{escaped_name})"
+	def generate_initializer_check_type(buffer = +"")
+		buffer <<
+			"unless property.type === " << escaped_name << "\n" <<
+			"raise Literal::TypeError.expected(" << escaped_name << ", to_be_a: property.type)\n" <<
+			"end\n"
 	end
 
-	def generate_initializer_assign_value
-		"#{ivar_ref} = #{local_var_ref}"
+	def generate_initializer_assign_value(buffer = +"")
+		buffer <<
+			"@" <<
+			@name.name <<
+			" = " <<
+			escaped_name <<
+			"\n"
 	end
 end

@@ -10,6 +10,8 @@ class Literal::Properties::Schema
 		@mutex = Mutex.new
 	end
 
+	attr_reader :properties_index
+
 	def [](key)
 		@properties_index[key]
 	end
@@ -17,8 +19,7 @@ class Literal::Properties::Schema
 	def <<(value)
 		@mutex.synchronize do
 			@properties_index[value.name] = value
-			@sorted_properties = @properties_index.values
-			@sorted_properties.sort!
+			@sorted_properties = @properties_index.values.sort!
 		end
 
 		self
@@ -39,66 +40,79 @@ class Literal::Properties::Schema
 		@sorted_properties.size
 	end
 
-	def generate_initializer
-		[
-			"def initialize(#{generate_initializer_params})",
-			generate_initializer_body,
-			"end",
-		].join("\n")
+	def generate_initializer(buffer = +"")
+		buffer << "def initialize(#{generate_initializer_params})\n"
+		generate_initializer_body(buffer)
+		buffer << "end\n"
 	end
 
-	def generate_to_h
-		[
-			"def to_h",
-			"{",
-			@sorted_properties.each.map do |property|
-				"#{property.name}: @#{property.name},"
-			end,
-			"}",
-			"end",
-		].join("\n")
+	def generate_to_h(buffer = +"")
+		buffer << "def to_h\n" << "{\n"
+
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+			buffer << property.name.name << ": @" << property.name.name << ",\n"
+			i += 1
+		end
+
+		buffer << "}\n" << "end\n"
 	end
 
 	private
 
-	def generate_initializer_params
-		@sorted_properties.each.map do |property|
+	def generate_initializer_params(buffer = +"")
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+
 			case property.kind
 			when :*
-				"*#{property.escaped_name}"
+				buffer << "*" << property.escaped_name
 			when :**
-				"**#{property.escaped_name}"
+				buffer << "**" << property.escaped_name
 			when :&
-				"&#{property.escaped_name}"
+				buffer << "&" << property.escaped_name
 			when :positional
 				if property.default
-					"#{property.escaped_name} = Literal::Null"
+					buffer << property.escaped_name << " = Literal::Null"
 				elsif property.type === nil # optional
-					"#{property.escaped_name} = nil"
+					buffer << property.escaped_name << " = nil"
 				else # required
-					property.escaped_name
+					buffer << property.escaped_name
 				end
 			else # keyword
 				if property.default
-					"#{property.name}: Literal::Null"
+					buffer << property.name.name << ": Literal::Null"
 				elsif property.type === nil
-					"#{property.name}: nil" # optional
+					buffer << property.name.name << " nil" # optional
 				else # required
-					"#{property.name}:"
+					buffer << property.name.name << ":"
 				end
 			end
-		end.join(", ")
+
+			i += 1
+			buffer << ", " if i < n
+		end
+
+		buffer
 	end
 
-	def generate_initializer_body
-		[
-			"@literal_properties = self.class.literal_properties",
-			generate_initializer_handle_properties(@sorted_properties),
-			"after_initialize if respond_to?(:after_initialize)",
-		].join("\n")
+	def generate_initializer_body(buffer = +"")
+		buffer << "properties = self.class.literal_properties.properties_index\n"
+		generate_initializer_handle_properties(@sorted_properties, buffer)
+		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end
 
-	def generate_initializer_handle_properties(properties)
-		properties.each.map(&:generate_initializer_handle_property).join("\n")
+	def generate_initializer_handle_properties(properties, buffer = +"")
+		i, n = 0, properties.size
+		while i < n
+			properties[i].generate_initializer_handle_property(buffer)
+			i += 1
+		end
+
+		buffer
 	end
 end

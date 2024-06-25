@@ -74,13 +74,12 @@ module Literal::Properties
 		end
 	end
 
-	def __generate_literal_methods__(new_property)
-		[
-			"# frozen_string_literal: true",
-			literal_properties.generate_initializer,
-			literal_properties.generate_to_h,
-			(new_property.generate_writer_method if new_property.writer),
-			(new_property.generate_reader_method if new_property.reader),
-		].join("\n")
+	def __generate_literal_methods__(new_property, buffer = +"")
+		buffer << "# frozen_string_literal: true\n"
+		literal_properties.generate_initializer(buffer)
+		literal_properties.generate_to_h(buffer)
+		new_property.generate_writer_method(buffer) if new_property.writer
+		new_property.generate_reader_method(buffer) if new_property.reader
+		buffer
 	end
 end
