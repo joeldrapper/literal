@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class Literal::Enum < Literal::Struct
+class Literal::Enum
+	extend Literal::Properties
+
 	class Index
 		def initialize(unique:)
 			@unique = unique
@@ -18,6 +20,10 @@ class Literal::Enum < Literal::Struct
 		attr_reader :members
 
 		def values = @values.keys
+
+		def prop(name, type, kind = :keyword, reader: :public, default: nil)
+			super(name, type, kind, reader:, writer: false, default:)
+		end
 
 		def inherited(subclass)
 			subclass.instance_exec do
@@ -73,9 +79,11 @@ class Literal::Enum < Literal::Struct
 			object = const_get(name)
 
 			if self === object
+				object.instance_variable_set(:@name, name)
 				@values[object.value] = object
 				@members << object
 				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
+				object.freeze
 			end
 		end
 
@@ -87,7 +95,6 @@ class Literal::Enum < Literal::Struct
 				new_object.instance_exec(&block)
 			end
 
-			new_object.freeze
 			new_object
 		end
 

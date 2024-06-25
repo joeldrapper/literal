@@ -27,6 +27,7 @@ class Switch < Literal::Enum(_Boolean)
 end
 
 test do
+	expect(Color::Red.name) =~ /Color::Red\z/
 	expect(Color.where(hex: "#FF0000")) == [Color::Red]
 	expect(Color.find_by(hex: "#FF0000")) == Color::Red
 	expect { Color.find_by(lower_hex: "#ff0000")}.to_raise(ArgumentError)
