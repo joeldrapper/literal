@@ -3,17 +3,6 @@
 class Literal::Enum
 	extend Literal::Properties
 
-	class Index
-		def initialize(unique:)
-			@unique = unique
-			@values = {}
-		end
-
-		def [](key)
-			@values[key]
-		end
-	end
-
 	class << self
 		include Enumerable
 
@@ -135,6 +124,10 @@ class Literal::Enum
 		end
 
 		alias_method :cast, :[]
+
+		def fetch(...)
+			@values.fetch(...)
+		end
 
 		def to_proc
 			method(:cast).to_proc
