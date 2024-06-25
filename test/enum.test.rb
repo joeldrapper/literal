@@ -5,7 +5,11 @@ extend Literal::Types
 class Color < Literal::Enum(Integer)
 	prop :hex, String
 
-	index :hex, String, unique: true
+	index :hex, String
+
+	index :lower_hex, String, unique: false do |color|
+		color.hex.downcase
+	end
 
 	Red = new(1, hex: "#FF0000")
 	Green = new(2, hex: "#00FF00")
@@ -25,6 +29,8 @@ end
 test do
 	expect(Color.where(hex: "#FF0000")) == [Color::Red]
 	expect(Color.find_by(hex: "#FF0000")) == Color::Red
+	expect { Color.find_by(lower_hex: "#ff0000")}.to_raise(ArgumentError)
+	expect(Color.where(lower_hex: "#ff0000")) == [Color::Red]
 	expect(Color::Red.value) == 1
 	expect(Color::Red.hex) == "#FF0000"
 	expect(Color::Red.red?) == true
