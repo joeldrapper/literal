@@ -40,7 +40,7 @@ class Literal::Enum
 
 		def where(**kwargs)
 			unless kwargs.length == 1
-				raise ArgumentError, "You can only specify one index when using `where`."
+				raise ArgumentError.new("You can only specify one index when using `where`.")
 			end
 
 			key, value = kwargs.first
@@ -54,13 +54,13 @@ class Literal::Enum
 
 		def find_by(**kwargs)
 			unless kwargs.length == 1
-				raise ArgumentError, "You can only specify one index when using `where`."
+				raise ArgumentError.new("You can only specify one index when using `where`.")
 			end
 
 			key, value = kwargs.first
 
 			unless @indexes.fetch(key)[1]
-				raise ArgumentError, "You can only use `find_by` on unique indexes."
+				raise ArgumentError.new("You can only use `find_by` on unique indexes.")
 			end
 
 			unless (type = @indexes.fetch(key)[0]) === value
@@ -89,7 +89,7 @@ class Literal::Enum
 
 		def new(*, **, &block)
 			raise ArgumentError if frozen?
-		  new_object = super(*, **, &nil)
+			new_object = super(*, **, &nil)
 
 			if block
 				new_object.instance_exec(&block)
@@ -101,7 +101,6 @@ class Literal::Enum
 		def __after_defined__
 			raise ArgumentError if frozen?
 
-
 			@indexes.each do |name, (type, unique, block)|
 				index = @members.group_by(&block).freeze
 
@@ -111,13 +110,12 @@ class Literal::Enum
 					end
 
 					if unique && values.size > 1
-						raise ArgumentError, "The index #{name} is not unique."
+						raise ArgumentError.new("The index #{name} is not unique.")
 					end
 				end
 
 				@index[name] = index
 			end
-
 
 			@values.freeze
 			@members.freeze

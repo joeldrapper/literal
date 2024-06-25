@@ -30,7 +30,7 @@ test do
 	expect(Color::Red.name) =~ /Color::Red\z/
 	expect(Color.where(hex: "#FF0000")) == [Color::Red]
 	expect(Color.find_by(hex: "#FF0000")) == Color::Red
-	expect { Color.find_by(lower_hex: "#ff0000")}.to_raise(ArgumentError)
+	expect { Color.find_by(lower_hex: "#ff0000") }.to_raise(ArgumentError)
 	expect(Color.where(lower_hex: "#ff0000")) == [Color::Red]
 	expect(Color::Red.value) == 1
 	expect(Color::Red.hex) == "#FF0000"
