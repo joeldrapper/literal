@@ -1,15 +1,7 @@
 # frozen_string_literal: true
 
-TracePoint.trace(:end) do |tp|
-	it = tp.self
-
-	if Class === it && it < Literal::Enum
-		it.__after_defined__
-	end
-end
-
 class Literal::Enum
-	extend Literal::Types
+	extend Literal::Properties
 
 	class << self
 		include Enumerable
@@ -18,52 +10,101 @@ class Literal::Enum
 
 		def values = @values.keys
 
-		def respond_to_missing?(name, include_private = false)
-			return super if frozen?
-			return super unless Symbol === name
-			return super unless ("A".."Z").include? name[0]
-
-			true
+		def prop(name, type, kind = :keyword, reader: :public, default: nil)
+			super(name, type, kind, reader:, writer: false, default:)
 		end
 
 		def inherited(subclass)
-			type = @type
-
 			subclass.instance_exec do
 				@values = {}
 				@members = Set[]
-				@type = type
+				@indexes = {}
+				@index = {}
 			end
+		end
+
+		def index(name, type, unique: true, &block)
+			@indexes[name] = [type, unique, block || name.to_proc]
+		end
+
+		def where(**kwargs)
+			unless kwargs.length == 1
+				raise ArgumentError.new("You can only specify one index when using `where`.")
+			end
+
+			key, value = kwargs.first
+
+			unless (type = @indexes.fetch(key)[0]) === value
+				raise Literal::TypeError.expected(value, to_be_a: type)
+			end
+
+			@index.fetch(key)[value]
+		end
+
+		def find_by(**kwargs)
+			unless kwargs.length == 1
+				raise ArgumentError.new("You can only specify one index when using `where`.")
+			end
+
+			key, value = kwargs.first
+
+			unless @indexes.fetch(key)[1]
+				raise ArgumentError.new("You can only use `find_by` on unique indexes.")
+			end
+
+			unless (type = @indexes.fetch(key)[0]) === value
+				raise Literal::TypeError.expected(value, to_be_a: type)
+			end
+
+			@index.fetch(key)[value]&.first
 		end
 
 		def _load(data)
 			self[Marshal.load(data)]
 		end
 
-		def method_missing(name, value, *args, **kwargs, &)
-			return super if frozen?
-			return super unless name.is_a?(Symbol)
-			return super unless name[0] == name[0].upcase
-			return super if args.length > 0
-			return super if kwargs.length > 0
+		def const_added(name)
+			raise ArgumentError if frozen?
+			object = const_get(name)
 
-			raise ArgumentError if @values.key? value
-			raise ArgumentError if constants.include?(name)
+			if self === object
+				object.instance_variable_set(:@name, name)
+				@values[object.value] = object
+				@members << object
+				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
+				object.freeze
+			end
+		end
 
-			value = value.dup.freeze unless value.frozen?
+		def new(*, **, &block)
+			raise ArgumentError if frozen?
+			new_object = super(*, **, &nil)
 
-			Literal.check(value, @type)
+			if block
+				new_object.instance_exec(&block)
+			end
 
-			member = new(name, value, &)
-			const_set name, member
-			@values[value] = member
-			@members << member
-
-			define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == member }
+			new_object
 		end
 
 		def __after_defined__
 			raise ArgumentError if frozen?
+
+			@indexes.each do |name, (type, unique, block)|
+				index = @members.group_by(&block).freeze
+
+				index.each do |key, values|
+					unless type === key
+						raise Literal::TypeError.expected(key, to_be_a: type)
+					end
+
+					if unique && values.size > 1
+						raise ArgumentError.new("The index #{name} is not unique.")
+					end
+				end
+
+				@index[name] = index
+			end
 
 			@values.freeze
 			@members.freeze
@@ -83,6 +124,10 @@ class Literal::Enum
 		end
 
 		alias_method :cast, :[]
+
+		def fetch(...)
+			@values.fetch(...)
+		end
 
 		def to_proc
 			method(:cast).to_proc
@@ -104,7 +149,24 @@ class Literal::Enum
 
 	alias_method :inspect, :name
 
+	def deconstruct
+		[value]
+	end
+
+	def deconstruct_keys(keys)
+		h = to_h
+		keys ? h.slice(*keys) : h
+	end
+
 	def _dump(level)
 		Marshal.dump(@value)
+	end
+end
+
+TracePoint.trace(:end) do |tp|
+	it = tp.self
+
+	if Class === it && it < Literal::Enum
+		it.__after_defined__
 	end
 end
