@@ -4,7 +4,7 @@ class Literal::DataProperty < Literal::Property
 	def generate_initializer_assign_value(buffer = +"")
 		buffer <<
 			"@" <<
-			name <<
+			@name.name <<
 			" = " <<
 			escaped_name <<
 			".frozen? ? " <<

@@ -18,7 +18,7 @@ class Literal::Properties::Schema
 
 	def <<(value)
 		@mutex.synchronize do
-			@properties_index[value.name.to_sym] = value
+			@properties_index[value.name] = value
 			@sorted_properties = @properties_index.values.sort!
 		end
 
@@ -53,7 +53,7 @@ class Literal::Properties::Schema
 		i, n = 0, sorted_properties.size
 		while i < n
 			property = sorted_properties[i]
-			buffer << property.name << ": @" << property.name << ",\n"
+			buffer << property.name.name << ": @" << property.name.name << ",\n"
 			i += 1
 		end
 
@@ -85,11 +85,11 @@ class Literal::Properties::Schema
 				end
 			else # keyword
 				if property.default
-					buffer << property.name << ": Literal::Null"
+					buffer << property.name.name << ": Literal::Null"
 				elsif property.type === nil
-					buffer << property.name << " nil" # optional
+					buffer << property.name.name << " nil" # optional
 				else # required
-					buffer << property.name << ":"
+					buffer << property.name.name << ":"
 				end
 			end
 
@@ -101,7 +101,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "@literal_properties = properties = self.class.literal_properties.properties_index\n"
+		buffer << "properties = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
 		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end

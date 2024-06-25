@@ -2,7 +2,7 @@
 
 class Literal::Property
 	ORDER = { :positional => 0, :* => 1, :keyword => 2, :** => 3, :& => 4 }.freeze
-	RUBY_KEYWORDS = %w[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
+	RUBY_KEYWORDS = %i[alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield].to_h { |k| [k, "__#{k}__"] }.freeze
 
 	VISIBILITY_OPTIONS = Set[false, :private, :protected, :public].freeze
 	KIND_OPTIONS = Set[:positional, :*, :keyword, :**, :&].freeze
@@ -10,7 +10,7 @@ class Literal::Property
 	include Comparable
 
 	def initialize(name:, type:, kind:, reader:, writer:, default:, coercion:)
-		@name = name.name
+		@name = name
 		@type = type
 		@kind = kind
 		@reader = reader
@@ -62,7 +62,7 @@ class Literal::Property
 	end
 
 	def escaped_name
-		RUBY_KEYWORDS[@name] || @name
+		RUBY_KEYWORDS[@name] || @name.name
 	end
 
 	def default_value
@@ -81,9 +81,9 @@ class Literal::Property
 			buffer <<
 				(@reader ? @reader.name : "public") <<
 				" def " <<
-				@name <<
+				@name.name <<
 				"\nvalue = @" <<
-				@name <<
+				@name.name <<
 				"\nvalue\nend\n"
 		end
 	else # type checks are enabled
@@ -91,11 +91,11 @@ class Literal::Property
 			buffer <<
 				(@reader ? @reader.name : "public") <<
 				" def " <<
-				@name <<
+				@name.name <<
 				"\nvalue = @" <<
-				@name <<
-				"\n@literal_properties[:" <<
-				@name <<
+				@name.name <<
+				"\nself.class.literal_properties[:" <<
+				@name.name <<
 				"].check(value)\n" <<
 				"value\nend\n"
 		end
@@ -106,27 +106,27 @@ class Literal::Property
 			buffer <<
 				(@writer ? @writer.name : "public") <<
 				" def " <<
-				@name <<
+				@name.name <<
 				"=(value)\n" <<
-				"@#{@name} = value\nend\n"
+				"@#{@name.name} = value\nend\n"
 		end
 	else # type checks are enabled
 		def generate_writer_method(buffer = +"")
 			buffer <<
 				(@writer ? @writer.name : "public") <<
 				" def " <<
-				@name <<
+				@name.name <<
 				"=(value)\n" <<
-				"@literal_properties[:" <<
-				@name <<
+				"self.class.literal_properties[:" <<
+				@name.name <<
 				"].check(value)\n" <<
-				"@#{@name} = value\nend\n"
+				"@#{@name.name} = value\nend\n"
 		end
 	end
 
 	def generate_initializer_handle_property(buffer = +"")
-		buffer << "# " << @name << "\n" <<
-			"property = properties[:" << @name << "]\n"
+		buffer << "# " << @name.name << "\n" <<
+			"property = properties[:" << @name.name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
 			generate_initializer_escape_keyword(buffer)
@@ -153,7 +153,7 @@ class Literal::Property
 		buffer <<
 			escaped_name <<
 			" = binding.local_variable_get(:" <<
-			@name <<
+			@name.name <<
 			")\n"
 	end
 
@@ -179,14 +179,14 @@ class Literal::Property
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
 			"unless property.type === " << escaped_name << "\n" <<
-			"raise Literal::TypeError.expected(" << escaped_name << ", to_be_a: " << "properties[:" << @name << "].type)\n" <<
+			"raise Literal::TypeError.expected(" << escaped_name << ", to_be_a: property.type)\n" <<
 			"end\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")
 		buffer <<
 			"@" <<
-			@name <<
+			@name.name <<
 			" = " <<
 			escaped_name <<
 			"\n"
