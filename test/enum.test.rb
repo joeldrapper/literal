@@ -47,3 +47,13 @@ test do
 	expect(Switch::Off.toggle) == Switch::On
 	expect(Switch::On.toggle) == Switch::Off
 end
+
+test "pattern matching" do
+	Color::Red => Color
+	Color::Red => Color[1]
+	Color::Red => Color[hex: "#FF0000"]
+
+	Color::Red => Color
+	Color::Red => Color[1]
+	Color::Red => Color::Red[hex: "#FF0000"]
+end

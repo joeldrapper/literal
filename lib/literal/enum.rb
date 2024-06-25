@@ -156,6 +156,15 @@ class Literal::Enum
 
 	alias_method :inspect, :name
 
+	def deconstruct
+		[value]
+	end
+
+	def deconstruct_keys(keys)
+		h = to_h
+		keys ? h.slice(*keys) : h
+	end
+
 	def _dump(level)
 		Marshal.dump(@value)
 	end
