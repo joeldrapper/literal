@@ -76,7 +76,7 @@ class Literal::Properties::Schema
 			when :&
 				buffer << "&" << property.escaped_name
 			when :positional
-				if property.default
+				if property.default?
 					buffer << property.escaped_name << " = Literal::Null"
 				elsif property.type === nil # optional
 					buffer << property.escaped_name << " = nil"
@@ -84,10 +84,10 @@ class Literal::Properties::Schema
 					buffer << property.escaped_name
 				end
 			else # keyword
-				if property.default
+				if property.default?
 					buffer << property.name.name << ": Literal::Null"
 				elsif property.type === nil
-					buffer << property.name.name << " nil" # optional
+					buffer << property.name.name << ": nil" # optional
 				else # required
 					buffer << property.name.name << ":"
 				end

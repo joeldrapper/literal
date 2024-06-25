@@ -22,7 +22,7 @@ class Literal::Property
 	attr_reader :name, :type, :kind, :reader, :writer, :default, :coercion
 
 	def optional?
-		@default || @type === nil
+		default? || @type === nil
 	end
 
 	def required?
@@ -47,6 +47,10 @@ class Literal::Property
 
 	def block?
 		@kind == :&
+	end
+
+	def default?
+	  nil != @default
 	end
 
 	def <=>(other)
@@ -136,7 +140,7 @@ class Literal::Property
 			generate_initializer_coerce_property(buffer)
 		end
 
-		if @default
+		if default?
 			generate_initializer_assign_default(buffer)
 		end
 
