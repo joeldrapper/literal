@@ -10,13 +10,15 @@ class Literal::Properties::Schema
 		@mutex = Mutex.new
 	end
 
+	attr_reader :properties_index
+
 	def [](key)
 		@properties_index[key]
 	end
 
 	def <<(value)
 		@mutex.synchronize do
-			@properties_index[value.name] = value
+			@properties_index[value.name.to_sym] = value
 			@sorted_properties = @properties_index.values.sort!
 		end
 
@@ -99,7 +101,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "@literal_properties = properties = self.class.literal_properties\n"
+		buffer << "@literal_properties = properties = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
 		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end

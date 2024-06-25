@@ -94,9 +94,9 @@ class Literal::Property
 				@name <<
 				"\nvalue = @" <<
 				@name <<
-				"\n@literal_properties['" <<
+				"\n@literal_properties[:" <<
 				@name <<
-				"'].check(value)\n" <<
+				"].check(value)\n" <<
 				"value\nend\n"
 		end
 	end
@@ -117,15 +117,16 @@ class Literal::Property
 				" def " <<
 				@name <<
 				"=(value)\n" <<
-				"@literal_properties['" <<
+				"@literal_properties[:" <<
 				@name <<
-				"'].check(value)\n" <<
+				"].check(value)\n" <<
 				"@#{@name} = value\nend\n"
 		end
 	end
 
 	def generate_initializer_handle_property(buffer = +"")
-		buffer << "# " << @name << "\n"
+		buffer << "# " << @name << "\n" <<
+			"property = properties[:" << @name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
 			generate_initializer_escape_keyword(buffer)
@@ -159,7 +160,7 @@ class Literal::Property
 	def generate_initializer_coerce_property(buffer = +"")
 		buffer <<
 			escaped_name <<
-			"= properties['" << @name << "']" << ".coerce(" <<
+			"= property.coerce(" <<
 			escaped_name <<
 			", context: self)\n"
 	end
@@ -172,14 +173,14 @@ class Literal::Property
 			escaped_name <<
 			"\n" <<
 			escaped_name <<
-			" = properties['" << @name << "'].default_value\nend\n"
+			" = property.default_value\nend\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"properties['" << @name << "'].check(" <<
-			escaped_name <<
-			")\n"
+			"unless property.type === " << escaped_name << "\n" <<
+			"raise Literal::TypeError.expected(" << escaped_name << ", to_be_a: " << "properties[:" << @name << "].type)\n" <<
+			"end\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")
