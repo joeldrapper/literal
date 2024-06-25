@@ -7,20 +7,26 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 	end
 
 	def cast(value)
-		value
+		case value
+		when @enum
+			value
+		else
+			deserialize(value)
+		end
 	end
 
 	def serialize(value)
-		if @enum === value
+		case value
+		when @enum
 			value.value
-		elsif value.nil?
-			value
 		else
-			raise ArgumentError
+			raise Literal::TypeError.expected(
+				value, to_be_a: @enum
+			)
 		end
 	end
 
 	def deserialize(value)
-		@enum[value]
+		@enum[value] || raise ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}")
 	end
 end

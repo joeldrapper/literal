@@ -3,6 +3,13 @@
 module ActiveRecord
 	class RelationType
 		def initialize(model_class)
+			unless Class === model_class && model_class < ActiveRecord::Base
+				raise Literal::TypeError.expected(
+					model_class,
+					to_be_a: ActiveRecord::Base,
+				)
+			end
+
 			@model_class = model_class
 		end
 

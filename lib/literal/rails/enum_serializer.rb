@@ -6,15 +6,15 @@ class Literal::Rails::EnumSerializer < ActiveJob::Serializers::ObjectSerializer
 	end
 
 	def serialize(object)
-		super(
-			"class" => object.class.name,
-			"value" => object.value,
-		)
+		super([
+			0,
+			object.class.name,
+			object.value,
+		])
 	end
 
 	def deserialize(payload)
-		payload["class"].constantize[
-			payload["value"]
-		]
+		_version, class_name, value = payload
+		class_name.constantize[value]
 	end
 end
