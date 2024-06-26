@@ -80,29 +80,14 @@ class Literal::Property
 		Literal.check(value, @type)
 	end
 
-	if Literal::TYPE_CHECKS_DISABLED
-		def generate_reader_method(buffer = +"")
-			buffer <<
-				(@reader ? @reader.name : "public") <<
-				" def " <<
-				@name.name <<
-				"\nvalue = @" <<
-				@name.name <<
-				"\nvalue\nend\n"
-		end
-	else # type checks are enabled
-		def generate_reader_method(buffer = +"")
-			buffer <<
-				(@reader ? @reader.name : "public") <<
-				" def " <<
-				@name.name <<
-				"\nvalue = @" <<
-				@name.name <<
-				"\nself.class.literal_properties[:" <<
-				@name.name <<
-				"].check(value)\n" <<
-				"value\nend\n"
-		end
+	def generate_reader_method(buffer = +"")
+		buffer <<
+			(@reader ? @reader.name : "public") <<
+			" def " <<
+			@name.name <<
+			"\nvalue = @" <<
+			@name.name <<
+			"\nvalue\nend\n"
 	end
 
 	if Literal::TYPE_CHECKS_DISABLED
