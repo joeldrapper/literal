@@ -25,3 +25,5 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Run Rubocop
         run: bundle exec rubocop
+      - name: Quickdraw tests
+        run: bundle exec qt

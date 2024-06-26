@@ -25,6 +25,14 @@ class Literal::Types::UnionType
 		@types.to_a
 	end
 
+	def [](key)
+		if @types.include?(key)
+			key
+		else
+			raise ArgumentError.new("#{key} not in #{inspect}")
+		end
+	end
+
 	protected
 
 	attr_reader :types

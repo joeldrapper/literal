@@ -50,7 +50,7 @@ class Literal::Property
 	end
 
 	def default?
-	  nil != @default
+			nil != @default
 	end
 
 	def <=>(other)
@@ -121,12 +121,12 @@ class Literal::Property
 			generate_initializer_escape_keyword(buffer)
 		end
 
-		if @coercion
-			generate_initializer_coerce_property(buffer)
-		end
-
 		if default?
 			generate_initializer_assign_default(buffer)
+		end
+
+		if @coercion
+			generate_initializer_coerce_property(buffer)
 		end
 
 		unless Literal::TYPE_CHECKS_DISABLED
