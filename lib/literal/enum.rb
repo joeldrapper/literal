@@ -150,7 +150,7 @@ class Literal::Enum
 	alias_method :inspect, :name
 
 	def deconstruct
-		[value]
+		[@value]
 	end
 
 	def deconstruct_keys(keys)
@@ -160,6 +160,11 @@ class Literal::Enum
 
 	def _dump(level)
 		Marshal.dump(@value)
+	end
+
+	def ===(other)
+		return true if equal? other
+		@value == other
 	end
 end
 

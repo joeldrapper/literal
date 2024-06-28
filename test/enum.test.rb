@@ -26,6 +26,11 @@ class Switch < Literal::Enum(_Boolean)
 	end
 end
 
+class Choice < Literal::Enum(_Boolean)
+	Yes = new(true)
+	No = new(false)
+end
+
 test do
 	expect(Color::Red.name) =~ /Color::Red\z/
 	expect(Color.where(hex: "#FF0000")) == [Color::Red]
@@ -46,6 +51,17 @@ test do
 
 	expect(Switch::Off.toggle) == Switch::On
 	expect(Switch::On.toggle) == Switch::Off
+
+	assert Switch === Switch::On
+	assert Switch === Switch::Off
+	assert Switch.include? Switch::Off
+	assert Switch::On === true
+	assert Switch::On === Switch::On
+	assert Switch::Off === false
+
+	assert Switch::On.value == Choice::Yes.value
+	refute Switch::On === Choice::Yes
+	refute Switch === Choice::Yes
 end
 
 test "pattern matching" do
@@ -56,4 +72,28 @@ test "pattern matching" do
 	Color::Red => Color
 	Color::Red => Color[1]
 	Color::Red => Color::Red[hex: "#FF0000"]
+end
+
+test "case statement" do
+	v = case 1
+	in Choice::Yes
+		:yes
+	in Color::Red
+		:red
+	in Color::Green
+		:green
+	else
+		:other
+	end
+	expect(v) == :red
+
+	v = case 1
+	when Color::Red
+		:red
+	when Color::Green
+		:green
+	else
+		:other
+	end
+	expect(v) == :red
 end
