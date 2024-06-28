@@ -46,6 +46,8 @@ test do
 	expect(Color[1]) == Color::Red
 	expect(Color.cast(1)) == Color::Red
 	expect(Color.to_set) == Set[Color::Red, Color::Green, Color::Blue]
+	expect(Color.to_h) == {1 => Color::Red, 2 => Color::Green, 3 => Color::Blue}
+	expect(Color.to_a) == [Color::Red, Color::Green, Color::Blue]
 	expect(Color.values) == [1, 2, 3]
 	expect([3, 2, 1].map(&Color)) == [Color::Blue, Color::Green, Color::Red]
 

@@ -132,6 +132,10 @@ class Literal::Enum
 		def to_proc
 			method(:cast).to_proc
 		end
+
+		def to_h(*args)
+			@values.dup
+		end
 	end
 
 	def initialize(name, value, &block)
