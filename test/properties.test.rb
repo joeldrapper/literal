@@ -1,5 +1,83 @@
 # frozen_string_literal: true
 
+# frozen_string_literal: true
+
+Example = Literal::Object
+
+test "positional params are required by default" do
+	example = Class.new(Example) do
+		prop :example, String, :positional
+	end
+
+	expect { example.new }.to_raise(ArgumentError)
+	expect { example.new("Hello") }.not_to_raise
+end
+
+test "keyword params are required by default" do
+	example = Class.new(Example) do
+		prop :example, String
+	end
+
+	expect { example.new }.to_raise(ArgumentError)
+	expect { example.new(example: "Hello") }.not_to_raise
+end
+
+test "nilable positional params are optional" do
+	example = Class.new(Example) do
+		prop :example, _Nilable(String), :positional
+	end
+
+	expect { example.new }.not_to_raise
+	expect { example.new("Hello") }.not_to_raise
+end
+
+test "nilable keyword params are optional" do
+	example = Class.new(Example) do
+		prop :example, _Nilable(String)
+	end
+
+	expect { example.new }.not_to_raise
+	expect { example.new(example: "Hello") }.not_to_raise
+end
+
+test "positional splats are optional" do
+	example = Class.new(Example) do
+		prop :example, _Array(String), :*
+	end
+
+	expect { example.new }.not_to_raise
+	expect { example.new("Hello") }.not_to_raise
+	expect { example.new("Hello", "World") }.not_to_raise
+end
+
+test "keyword splats are optional" do
+	example = Class.new(Example) do
+		prop :example, _Hash(Symbol, String), :**
+	end
+
+	expect { example.new }.not_to_raise
+	expect { example.new(example: "Hello") }.not_to_raise
+	expect { example.new(example: "Hello", world: "World") }.not_to_raise
+end
+
+test "block params are required by default" do
+	example = Class.new(Example) do
+		prop :example, Proc, :&
+	end
+
+	expect { example.new }.to_raise(Literal::TypeError)
+	expect { example.new { "Hello" } }.not_to_raise
+end
+
+test "nilable block params are optional" do
+	example = Class.new(Example) do
+		prop :example, _Nilable(Proc), :&
+	end
+
+	expect { example.new }.not_to_raise
+	expect { example.new { "Hello" } }.not_to_raise
+end
+
 class Person
 	extend Literal::Properties
 
