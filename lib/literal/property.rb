@@ -9,17 +9,18 @@ class Literal::Property
 
 	include Comparable
 
-	def initialize(name:, type:, kind:, reader:, writer:, default:, coercion:)
+	def initialize(name:, type:, kind:, reader:, writer:, predicate:, default:, coercion:)
 		@name = name
 		@type = type
 		@kind = kind
 		@reader = reader
 		@writer = writer
+		@predicate = predicate
 		@default = default
 		@coercion = coercion
 	end
 
-	attr_reader :name, :type, :kind, :reader, :writer, :default, :coercion
+	attr_reader :name, :type, :kind, :reader, :writer, :predicate, :default, :coercion
 
 	def optional?
 		default? || @type === nil
@@ -111,6 +112,18 @@ class Literal::Property
 				"].check(value)\n" <<
 				"@#{@name.name} = value\nend\n"
 		end
+	end
+
+	def generate_predicate_method(buffer = +"")
+		buffer <<
+			(@predicate ? @predicate.name : "public") <<
+			" def " <<
+			@name.name <<
+			"?\n" <<
+			"!!@" <<
+			@name.name <<
+			"\n" <<
+			"end\n"
 	end
 
 	def generate_initializer_handle_property(buffer = +"")

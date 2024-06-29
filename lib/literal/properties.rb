@@ -6,7 +6,7 @@ module Literal::Properties
 
 	include Literal::Types
 
-	def prop(name, type, kind = :keyword, reader: false, writer: false, default: nil, &coercion)
+	def prop(name, type, kind = :keyword, reader: false, writer: false, predicate: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
 			raise Literal::ArgumentError.new("The default must be a frozen object or a Proc.")
 		end
@@ -17,6 +17,10 @@ module Literal::Properties
 
 		unless Literal::Property::VISIBILITY_OPTIONS.include?(writer)
 			raise Literal::ArgumentError.new("The writer must be one of #{Literal::Property::VISIBILITY_OPTIONS.map(&:inspect).join(', ')}.")
+		end
+
+		unless Literal::Property::VISIBILITY_OPTIONS.include?(predicate)
+				raise Literal::ArgumentError.new("The predicate must be one of #{Literal::Property::VISIBILITY_OPTIONS.map(&:inspect).join(', ')}.")
 		end
 
 		if reader && :class == name
@@ -35,6 +39,7 @@ module Literal::Properties
 			kind:,
 			reader:,
 			writer:,
+			predicate:,
 			default:,
 			coercion:,
 		)
@@ -80,6 +85,7 @@ module Literal::Properties
 		literal_properties.generate_to_h(buffer)
 		new_property.generate_writer_method(buffer) if new_property.writer
 		new_property.generate_reader_method(buffer) if new_property.reader
+		new_property.generate_predicate_method(buffer) if new_property.predicate
 		buffer
 	end
 end

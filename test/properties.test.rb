@@ -109,3 +109,17 @@ test "inheritance" do
 	expect(friend.name) == "John"
 	expect(friend.age) > 30
 end
+
+class WithPredicate
+	extend Literal::Properties
+
+	prop :enabled, _Boolean, predicate: :public
+end
+
+test "predicates" do
+	enabled = WithPredicate.new(enabled: true)
+	disabled = WithPredicate.new(enabled: false)
+
+	expect(enabled.enabled?) == true
+	expect(disabled.enabled?) == false
+end
