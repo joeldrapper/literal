@@ -39,26 +39,24 @@ test "_Class" do
 	refute _Class(Enumerable) === Enumerable
 end
 
-describe "_Constraint" do
-	test "object constraints" do
-		age_constraint = _Constraint(Integer, 18..)
+test "_Constraint with object constraints" do
+	age_constraint = _Constraint(Integer, 18..)
 
-		assert age_constraint === 18
+	assert age_constraint === 18
 
-		refute age_constraint === 17
-		refute age_constraint === 17.5
-	end
+	refute age_constraint === 17
+	refute age_constraint === 17.5
+end
 
-	test "property constraints" do
-		age_constraint = _Constraint(Array, size: 2..3)
+test "_Constraint with property constraints" do
+	age_constraint = _Constraint(Array, size: 2..3)
 
-		assert age_constraint === [1, 2]
-		assert age_constraint === [1, 2, 3]
+	assert age_constraint === [1, 2]
+	assert age_constraint === [1, 2, 3]
 
-		refute age_constraint === [1]
-		refute age_constraint === [1, 2, 3, 4]
-		refute age_constraint === Set[1, 2]
-	end
+	refute age_constraint === [1]
+	refute age_constraint === [1, 2, 3, 4]
+	refute age_constraint === Set[1, 2]
 end
 
 test "_Descendant" do
@@ -284,26 +282,24 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === nil
 end
 
-describe "_Union" do
-	test "matching" do
-		type = _Union(String, Integer)
+test "_Union matching" do
+	type = _Union(String, Integer)
 
-		assert type === "string"
-		assert type === 42
+	assert type === "string"
+	assert type === 42
 
-		refute type === :symbol
-		refute type === []
-		refute type === nil
-	end
+	refute type === :symbol
+	refute type === []
+	refute type === nil
+end
 
-	test "flattens types" do
-		type = _Union(
-			_Union(String, Integer),
-			_Union(Symbol, Float),
-		)
+test "_Union flattens types" do
+	type = _Union(
+		_Union(String, Integer),
+		_Union(Symbol, Float),
+	)
 
-		expect(type.inspect) == "_Union(#<Set: {String, Integer, Symbol, Float}>)"
-	end
+	expect(type.inspect) == "_Union(#<Set: {String, Integer, Symbol, Float}>)"
 end
 
 test "_Void" do
