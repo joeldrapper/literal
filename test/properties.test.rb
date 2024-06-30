@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# frozen_string_literal: true
-
 Example = Literal::Object
 
 test "positional params are required by default" do
