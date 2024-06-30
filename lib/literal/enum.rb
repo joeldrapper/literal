@@ -76,9 +76,9 @@ class Literal::Enum
 			end
 		end
 
-		def new(*, **, &block)
+		def new(*args, **kwargs, &block)
 			raise ArgumentError if frozen?
-			new_object = super(*, **, &nil)
+			new_object = super(*args, **kwargs, &nil)
 
 			if block
 				new_object.instance_exec(&block)
