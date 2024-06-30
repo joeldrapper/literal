@@ -154,7 +154,7 @@ class Literal::Enum
 	alias_method :inspect, :name
 
 	def deconstruct
-		[value]
+		[@value]
 	end
 
 	def deconstruct_keys(keys)
