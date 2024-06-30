@@ -27,6 +27,6 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 	end
 
 	def deserialize(value)
-		@enum[value] || raise ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}")
+		@enum[value] || raise(ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}"))
 	end
 end
