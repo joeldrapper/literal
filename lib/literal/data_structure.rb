@@ -27,7 +27,7 @@ class Literal::DataStructure
 	end
 
 	def []=(key, value)
-		@literal_properties[key].check(value)
+		@literal_properties[key].check(value) { ["#[#{key}]="] }
 		instance_variable_set("@#{key}", value)
 	end
 

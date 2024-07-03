@@ -51,7 +51,24 @@ class Literal::Property
 	end
 
 	def default?
-			nil != @default
+		nil != @default
+	end
+
+	def param
+		case @kind
+		when :*
+			"*#{@escaped_name}"
+		when :**
+			"**#{@escaped_name}"
+		when :&
+			"&#{@escaped_name}"
+		when :positional
+			@escaped_name
+		when :keyword
+			"#{@name.name}:"
+		else
+			raise "You should never see this error."
+		end
 	end
 
 	def <=>(other)
@@ -77,8 +94,8 @@ class Literal::Property
 		end
 	end
 
-	def check(value)
-		Literal.check(value, @type)
+	def check(value, &)
+		Literal.check(value, @type, &)
 	end
 
 	def generate_reader_method(buffer = +"")
@@ -109,7 +126,7 @@ class Literal::Property
 				"=(value)\n" <<
 				"self.class.literal_properties[:" <<
 				@name.name <<
-				"].check(value)\n" <<
+				"].check(value) { ['##{@name}='] }\n" <<
 				"@#{@name.name} = value\nend\n"
 		end
 	end
@@ -180,9 +197,7 @@ class Literal::Property
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"unless property.type === " << escaped_name << "\n" <<
-			"raise Literal::TypeError.expected(" << escaped_name << ", to_be_a: property.type)\n" <<
-			"end\n"
+			"property.check(#{escaped_name}) { [self.class.name, '#initialize', '(#{param})'] }\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")

@@ -25,11 +25,15 @@ module Literal
 		end
 	end
 
-	def self.check(value, type)
-		if TYPE_CHECKS_DISABLED || type === value
+	def self.check(actual, expected, &context)
+		if expected === actual
 			true
 		else
-			raise Literal::TypeError.expected(value, to_be_a: type)
+			raise Literal::TypeError.new(
+				expected:,
+				actual:,
+				context:,
+			)
 		end
 	end
 end
