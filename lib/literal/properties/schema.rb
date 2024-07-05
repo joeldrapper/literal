@@ -83,7 +83,7 @@ class Literal::Properties::Schema
 				else # required
 					buffer << property.escaped_name
 				end
-			else # keyword
+			when :keyword
 				if property.default?
 					buffer << property.name.name << ": Literal::Null"
 				elsif property.type === nil
@@ -91,6 +91,8 @@ class Literal::Properties::Schema
 				else # required
 					buffer << property.name.name << ":"
 				end
+			else
+				raise "You should never see this error."
 			end
 
 			i += 1

@@ -2,7 +2,7 @@
 
 # @api private
 class Literal::Types::StringType < Literal::Types::ConstraintType
-	def inspect = "_String(#{@constraint.inspect})"
+	def inspect = "_String(#{inspect_constraints})"
 
 	def ===(value)
 		String === value && super

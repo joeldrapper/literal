@@ -2,7 +2,7 @@
 
 # @api private
 class Literal::Types::IntegerType < Literal::Types::ConstraintType
-	def inspect = "_Integer(#{@range})"
+	def inspect = "_Integer(#{inspect_constraints})"
 
 	def ===(value)
 		Integer === value && super
