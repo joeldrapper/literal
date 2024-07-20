@@ -13,6 +13,7 @@ module Literal
 	autoload :Property, "literal/property"
 	autoload :Struct, "literal/struct"
 	autoload :Types, "literal/types"
+	autoload :Flags, "literal/flags"
 
 	# Errors
 	autoload :Error, "literal/errors/error"
