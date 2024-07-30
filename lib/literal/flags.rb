@@ -3,13 +3,27 @@
 class Literal::Flags
 	include Enumerable
 
-	def initialize(value = 0)
+	def initialize(value = 0, **new_flags)
+		if new_flags.length > 0
+			flags = self.class.flags
+
+			value = new_flags.reduce(value) do |flag, (key, value)|
+				value ? flag | (2 ** flags.fetch(key)) : flag
+			end
+		end
+
 		@value = value
 	end
 
 	attr_reader :value
 
 	class << self
+		def [](**flags, &)
+			Class.new(self, &).tap do |flags_class|
+				flags_class.define(**flags)
+			end
+		end
+
 		def define(**flags)
 			raise ArgumentError if frozen?
 			unique_values = flags.values
@@ -69,13 +83,15 @@ class Literal::Flags
 			(bit_length / 8.0).ceil
 		end
 
-		def [](**new_flags)
-			flags = @flags
-
+		def from_bit_string(bit_string)
 			new(
-				new_flags.reduce(0) do |flag, (key, value)|
-					value ? flag | (2 ** flags.fetch(key)) : flag
-				end,
+				bit_string.to_i(2),
+			)
+		end
+
+		def unpack(value, ...)
+			new(
+				value.unpack1(...),
 			)
 		end
 	end
@@ -139,6 +155,15 @@ class Literal::Flags
 
 	def to_i
 		@value
+	end
+
+	def to_bit_string(bits = nil)
+		bits ||= self.class.bytesize * 8
+		@value.to_s(2).rjust(bits, "0")
+	end
+
+	def pack(...)
+		[@value].pack(...)
 	end
 
 	def to_a

@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
-class Example < Literal::Flags
-	define(
-		enabled: 0,
-		started: 1,
-		ended: 2,
-	)
+Example = Literal::Flags[
+	enabled: 0,
+	started: 1,
+	ended: 2
+]
+
+test "to bit string" do
+	flags = Example.new(started: true)
+
+	expect(flags.to_bit_string) == "00000010"
+end
+
+test "from bit string" do
+	flags = Example.from_bit_string("00000010")
+
+	refute flags.enabled?
+	assert flags.started?
+	refute flags.ended?
 end
 
 test "getters and setters" do
@@ -50,7 +62,7 @@ test "to_h" do
 end
 
 test "[]" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 
 	assert flags.enabled?
 	refute flags.started?
@@ -58,7 +70,7 @@ test "[]" do
 end
 
 test "to_a (via Enumerable)" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 
 	expect(flags.map.to_a) == [
 		[:enabled, true],
@@ -68,7 +80,7 @@ test "to_a (via Enumerable)" do
 end
 
 test "merge!" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 	flags.merge!({ started: true })
 
 	assert flags.enabled?
@@ -77,12 +89,12 @@ test "merge!" do
 end
 
 test "deconstruct" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 	expect(flags.deconstruct) == [true, false, false]
 end
 
 test "deconstruct_keys with no filter" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 
 	expect(flags.deconstruct_keys) == {
 		enabled: true,
@@ -92,7 +104,7 @@ test "deconstruct_keys with no filter" do
 end
 
 test "deconstruct_keys with filter" do
-	flags = Example[enabled: true]
+	flags = Example.new(enabled: true)
 
 	expect(flags.deconstruct_keys([:enabled, :ended])) == {
 		enabled: true,
