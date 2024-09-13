@@ -14,9 +14,9 @@ class Literal::TypeError < TypeError
 		prop :children, _Array(Context), default: -> { [] }
 		prop :parent, _Nilable(Context)
 
-		def descend(level = 0, &)
+		def descend(level = 0, &blk)
 			yield self, level
-			@children.each { |child| child.descend(level + 1, &) }
+			@children.each { |child| child.descend(level + 1, &blk) }
 			nil
 		end
 

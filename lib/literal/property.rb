@@ -107,11 +107,11 @@ class Literal::Property
 	def generate_reader_method(buffer = +"")
 		buffer <<
 			(@reader ? @reader.name : "public") <<
-			" def " <<
+			"\ndef " <<
 			@name.name <<
-			"\nvalue = @" <<
+			"\n  value = @" <<
 			@name.name <<
-			"\nvalue\nend\n"
+			"\n  value\nend\n"
 	end
 
 	if Literal::TYPE_CHECKS_DISABLED
@@ -121,7 +121,7 @@ class Literal::Property
 				" def " <<
 				@name.name <<
 				"=(value)\n" <<
-				"@#{@name.name} = value\nend\n"
+				"  @#{@name.name} = value\nend\n"
 		end
 	else # type checks are enabled
 		def generate_writer_method(buffer = +"")
@@ -130,11 +130,11 @@ class Literal::Property
 				" def " <<
 				@name.name <<
 				"=(value)\n" <<
-				"self.class.literal_properties[:" <<
+				"  self.class.literal_properties[:" <<
 				@name.name <<
 				"].check(value) { |c| c.receiver = self; c.method = '#" << @name.name << "=(value)' }\n" <<
-				"@" << @name.name << " = value\n" <<
-				"rescue Literal::TypeError => e\ne.set_backtrace(caller(1))\nraise\n" <<
+				"  @" << @name.name << " = value\n" <<
+				"rescue Literal::TypeError => e\n  e.set_backtrace(caller(1))\n  raise\n" <<
 				"\nend\n"
 		end
 	end
@@ -145,7 +145,7 @@ class Literal::Property
 			" def " <<
 			@name.name <<
 			"?\n" <<
-			"!!@" <<
+			"  !!@" <<
 			@name.name <<
 			"\n" <<
 			"end\n"
@@ -194,13 +194,13 @@ class Literal::Property
 
 	def generate_initializer_assign_default(buffer = +"")
 		buffer <<
-			"if " <<
+			"  if " <<
 			((@kind == :&) ? "nil" : "Literal::Null") <<
 			" == " <<
 			escaped_name <<
-			"\n" <<
+			"\n    " <<
 			escaped_name <<
-			" = property.default_value\nend\n"
+			" = property.default_value\n  end\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")
