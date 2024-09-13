@@ -5,29 +5,76 @@ class Literal::TypeError < TypeError
 
 	include Literal::Error
 
-	def initialize(actual:, expected:, context:)
-		context = context.call
+	class Context < Literal::Struct
+		prop :receiver, _Nilable(Object)
+		prop :method, _Nilable(String)
+		prop :label, _Nilable(String)
+		prop :expected, _Nilable(_Any)
+		prop :actual, _Nilable(_Any)
+		prop :children, _Array(Context), default: -> { [] }
+		prop :parent, _Nilable(Context)
 
-		@actual = actual
-		@expected = expected
-		@context = context
-
-		message = +"Type mismatch\n\n"
-
-		context.compact.each_with_index do |line, index|
-			message << (INDENT * index) << line << "\n"
+		def descend(level = 0, &)
+			yield self, level
+			@children.each { |child| child.descend(level + 1, &) }
+			nil
 		end
 
-		indent = (INDENT * context.size)
+		def nest(label, expected:, actual:, receiver: nil, method: nil)
+			self.expected = expected
+			self.actual = actual
+			self.label = label
+			self.receiver = receiver
+			self.method = method
+			c = self.class.new
+			raise "Cannot nest, already has a parent" if parent
+			self.parent = c
+			c.children << self
+			c
+		end
 
-		message << indent << "Expected: #{expected.inspect}\n"
-		message << indent << "Actual (#{actual.class.name}): #{actual.inspect}\n"
+		def root = parent&.root || self
 
-		super(message.freeze)
+		def self.from_block(expected:, actual:, &)
+			leaf = new
+			leaf.expected = expected
+			leaf.actual = actual
+			yield leaf
+			raise leaf.inspect unless leaf.children.empty?
+			leaf.root
+		end
 	end
 
-	def self.expected(value, to_be_a:)
-		new(expected: to_be_a, actual: value)
+	def initialize(expected:, actual:, &)
+		@context = Context.from_block(expected:, actual:, &)
+
+		super()
+	end
+
+	def message
+		message = +"Type mismatch\n\n"
+
+		@context.descend do |c, level|
+			idt = INDENT * level
+			if c.receiver || c.method
+				message << idt
+				message << c.receiver.class.inspect if c.receiver
+				message << c.method if c.method
+				message << " (from #{backtrace[1]})" if level.zero?
+				message << "\n"
+			end
+			if c.label
+				idt << INDENT
+				message << idt << c.label
+				# message << " #{c.expected.inspect}" if c.expected && !c.children.empty?
+				message << "\n"
+			end
+			if c.expected && c.children.empty?
+				message << idt << "  Expected: #{c.expected.inspect}\n"
+				message << idt << "  Actual (#{c.actual.class}): #{c.actual.inspect}\n"
+			end
+		end
+		message
 	end
 
 	def deconstruct_keys(keys)
@@ -35,11 +82,6 @@ class Literal::TypeError < TypeError
 	end
 
 	def to_h
-		{
-			message:,
-			expected: @expected,
-			actual: @actual,
-			context: @context,
-		}
+		@context.to_h
 	end
 end

@@ -25,15 +25,15 @@ module Literal
 		end
 	end
 
-	def self.check(actual, expected, &context)
-		if expected === actual
+	def self.check(actual, expected, &)
+		raise ArgumentError.new("Cannot check type without a block") unless block_given?
+
+		if expected.respond_to?(:check)
+			expected.check(actual, &)
+		elsif expected === actual
 			true
 		else
-			raise Literal::TypeError.new(
-				expected:,
-				actual:,
-				context:,
-			)
+			raise Literal::TypeError.new(expected:, actual:, &)
 		end
 	end
 end

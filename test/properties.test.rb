@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+set_temporary_name(
+	"Quickdraw::Context(in #{__FILE__})",
+)
+
 Example = Literal::Object
 
 test "positional params are required by default" do
@@ -106,7 +110,16 @@ test do
 end
 
 test "initializer type check" do
-	expect { Person.new(1, age: "Joel") }.to_raise(Literal::TypeError)
+	expect { Person.new(1, age: "Joel") }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+   Type mismatch
+
+   Quickdraw::Context(in #{__FILE__})::Person#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+     name
+       Expected: String
+       Actual (Integer): 1
+ERROR
+	}
 end
 
 test "initializer keyword check" do
@@ -198,4 +211,70 @@ test "predicates" do
 
 	expect(enabled.enabled?) == true
 	expect(disabled.enabled?) == false
+end
+
+test "writer type error" do
+	example = Class.new(Example) do
+		prop :example, _Nilable(String), writer: :public
+		prop :a, _Nilable(_Array(String)), writer: :public
+	end
+	instance = example.new
+
+	expect { instance.example = 0 }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+			Type mismatch
+
+			#{example}#example=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+			  Expected: _Nilable(String)
+			  Actual (Integer): 0
+ERROR
+	}
+
+	expect { instance.a = [1] }.to_raise(Literal::TypeError) { |error|
+	expect(error.message) == <<~ERROR
+		Type mismatch
+
+		#{example}#a=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+		  Expected: _Nilable(_Array(String))
+		  Actual (Array): [1]
+	ERROR
+	}
+end
+
+class Family
+	extend Literal::Properties
+
+	prop :members, _Array(_Map(person: Person, role: Symbol)), :positional, reader: :public
+end
+
+test "nested properties" do
+	expect do
+		Family.new(
+			[
+				{
+					person: Person.new("Json", age: 1),
+					role: 1,
+				},
+				{
+					person: Person.new("John", age: 30),
+					role: "Father",
+				},
+			],
+		)
+	end.to_raise(Literal::TypeError) do |error|
+		expect(error.message) == <<~ERROR
+			Type mismatch
+
+			Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 16}:in `block (3 levels) in load_tests')
+			  members
+			    [0]
+			      [:role]
+			        Expected: Symbol
+			        Actual (Integer): 1
+		ERROR
+		# [1]
+		#   [:role]
+		#     Expected: Symbol
+		#     Actual (String): "Father"
+	end
 end

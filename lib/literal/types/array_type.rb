@@ -9,6 +9,15 @@ class Literal::Types::ArrayType
 	def inspect = "_Array(#{@type.inspect})"
 
 	def ===(value)
-		Array === value && value.all? { |item| @type === item }
+		Array === value && value.all?(@type)
+	end
+
+	def check(value, &blk)
+		Literal.check(value, Array, &blk)
+		value.each_with_index do |item, index|
+			Literal.check(item, @type) do |c|
+				blk.call c.nest(+"[" << index.inspect << "]", expected: @type, actual: item)
+			end
+		end
 	end
 end

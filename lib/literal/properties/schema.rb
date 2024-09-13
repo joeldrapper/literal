@@ -43,6 +43,7 @@ class Literal::Properties::Schema
 	def generate_initializer(buffer = +"")
 		buffer << "def initialize(#{generate_initializer_params})\n"
 		generate_initializer_body(buffer)
+		buffer << "rescue Literal::TypeError => error\n  error.set_backtrace(caller(2))\n  raise\n"
 		buffer << "end\n"
 	end
 
@@ -53,7 +54,7 @@ class Literal::Properties::Schema
 		i, n = 0, sorted_properties.size
 		while i < n
 			property = sorted_properties[i]
-			buffer << property.name.name << ": @" << property.name.name << ",\n"
+			buffer << "  " << property.name.name << ": @" << property.name.name << ",\n"
 			i += 1
 		end
 
@@ -103,9 +104,9 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "properties = self.class.literal_properties.properties_index\n"
+		buffer << "  properties = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
-		buffer << "after_initialize if respond_to?(:after_initialize)\n"
+		buffer << "  after_initialize if respond_to?(:after_initialize)\n"
 	end
 
 	def generate_initializer_handle_properties(properties, buffer = +"")
