@@ -25,7 +25,7 @@ module Literal
 		end
 	end
 
-	def self.check(actual, expected, &)
+	def self.check(actual:, expected:, &)
 		raise ArgumentError.new("Cannot check type without a block") unless block_given?
 
 		if expected.respond_to?(:check)

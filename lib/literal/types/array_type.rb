@@ -13,9 +13,9 @@ class Literal::Types::ArrayType
 	end
 
 	def check(value, &blk)
-		Literal.check(value, Array, &blk)
+		Literal.check(actual: value, expected: Array, &blk)
 		value.each_with_index do |item, index|
-			Literal.check(item, @type) do |c|
+			Literal.check(actual: item, expected: @type) do |c|
 				blk.call c.nest(+"[" << index.inspect << "]", expected: @type, actual: item)
 			end
 		end

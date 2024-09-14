@@ -94,14 +94,10 @@ class Literal::Property
 		end
 	end
 
-	def check(value, &blk)
+	def check(value, &)
 		raise ArguementError.new("Cannot check type without a block") unless block_given?
 
-		Literal.check(value, @type) do |c|
-			c.expected = @type
-			c.actual = value
-			blk.call c
-		end
+		Literal.check(actual: value, expected: @type, &)
 	end
 
 	def generate_reader_method(buffer = +"")
@@ -132,7 +128,7 @@ class Literal::Property
 				"=(value)\n" <<
 				"  self.class.literal_properties[:" <<
 				@name.name <<
-				"].check(value) { |c| c.receiver = self; c.method = '#" << @name.name << "=(value)' }\n" <<
+				"].check(value) { |c| c.fill_receiver(receiver: self, method: \"#" << @name.name << "=(value)\") }\n" <<
 				"  @" << @name.name << " = value\n" <<
 				"rescue Literal::TypeError => e\n  e.set_backtrace(caller(1))\n  raise\n" <<
 				"\nend\n"
@@ -205,7 +201,7 @@ class Literal::Property
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"  property.check(" << escaped_name << ") { |c| c.receiver = self; c.method = '#initialize'; c.label = " << param.dump << " }\n"
+			"  property.check(" << escaped_name << ") { |c| c.fill_receiver(receiver: self, method: \"#initialize\", label: " << param.dump << ") }\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")

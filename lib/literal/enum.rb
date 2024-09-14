@@ -36,7 +36,7 @@ class Literal::Enum
 
 			types = @indexes.fetch(key)
 			type = types.first
-			Literal.check(value, type) { |c| raise NotImplementedError }
+			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
 
 			@index.fetch(key)[value]
 		end

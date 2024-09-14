@@ -6,7 +6,7 @@ class Literal::TypeError < TypeError
 	include Literal::Error
 
 	class Context
-		attr_accessor :receiver, :method, :label, :expected, :actual, :children, :parent
+		attr_reader :receiver, :method, :label, :expected, :actual, :children, :parent
 
 		def initialize(
 			receiver: nil, # _Nilable(Object)
@@ -31,6 +31,12 @@ class Literal::TypeError < TypeError
 			nil
 		end
 
+		def fill_receiver(receiver:, method:, label: nil)
+			@receiver = receiver
+			@method = method
+			@label = label
+		end
+
 		def nest(label, expected:, actual:, receiver: nil, method: nil)
 			raise ArgumentError.new("Cannot nest, already has a parent") if parent
 
@@ -40,9 +46,8 @@ class Literal::TypeError < TypeError
 			@receiver = receiver
 			@method = method
 			c = self.class.new
-			self.parent = c
 			c.children << self
-			c
+			@parent = c
 		end
 
 		def root = parent&.root || self

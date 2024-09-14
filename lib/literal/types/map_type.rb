@@ -15,10 +15,10 @@ class Literal::Types::MapType
 	end
 
 	def check(value, &blk)
-		Literal.check(value, Hash, &blk)
+		Literal.check(actual: value, expected: Hash, &blk)
 		value.each do |key, item|
 			type = @shape[key]
-			Literal.check(item, type) do |c|
+			Literal.check(actual: item, expected: type) do |c|
 				blk.call c.nest(+"[" << key.inspect << "]", expected: type, actual: item)
 			end
 		end

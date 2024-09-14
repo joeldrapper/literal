@@ -213,18 +213,21 @@ test "predicates" do
 	expect(disabled.enabled?) == false
 end
 
+class WithWriters < Example
+	extend Literal::Properties
+
+	prop :example, _Nilable(String), writer: :public
+	prop :a, _Nilable(_Array(String)), writer: :public
+end
+
 test "writer type error" do
-	example = Class.new(Example) do
-		prop :example, _Nilable(String), writer: :public
-		prop :a, _Nilable(_Array(String)), writer: :public
-	end
-	instance = example.new
+	instance = WithWriters.new
 
 	expect { instance.example = 0 }.to_raise(Literal::TypeError) { |error|
 		expect(error.message) == <<~ERROR
 			Type mismatch
 
-			#{example}#example=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+			#{WithWriters}#example=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
 			  Expected: _Nilable(String)
 			  Actual (Integer): 0
 ERROR
@@ -234,7 +237,7 @@ ERROR
 	expect(error.message) == <<~ERROR
 		Type mismatch
 
-		#{example}#a=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+		#{WithWriters}#a=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
 		  Expected: _Nilable(_Array(String))
 		  Actual (Array): [1]
 	ERROR
@@ -277,4 +280,36 @@ test "nested properties" do
 		#     Expected: Symbol
 		#     Actual (String): "Father"
 	end
+end
+
+test "generated code" do
+	require "yaml"
+	iseqs = Hash.new { |h, k| h[k] = Hash.new { |h2, k2| h2[k2] = {} } }
+	buffer = +""
+
+	self.class.constants.sort.each do |const|
+		klass = self.class.const_get(const)
+		next unless Literal::Properties === klass
+
+		klass.__send__(:__literal_extension__).then { |mod| mod.private_instance_methods(false) + mod.instance_methods(false) }.each do |method|
+			file = File.expand_path("../lib/literal/properties.rb", __dir__)
+			iseqs[const][method] = RubyVM::InstructionSequence.of(klass.instance_method(method)).disasm.gsub(/#{Regexp.escape(file)}(:\d+)/, "__FILE__:__LINE__")
+		end
+
+		literal_properties = klass.literal_properties
+
+		buffer << "class " << const.name << "\n"
+		buffer << "# frozen_string_literal: true\n"
+		literal_properties.generate_initializer(buffer)
+		literal_properties.generate_to_h(buffer)
+		literal_properties.each do |new_property|
+			new_property.generate_writer_method(buffer) if new_property.writer
+			new_property.generate_reader_method(buffer) if new_property.reader
+			new_property.generate_predicate_method(buffer) if new_property.predicate
+		end
+		buffer << "end\n\n"
+	end
+
+	File.write(__FILE__ + ".generated.rb", buffer)
+	File.write(__FILE__ + ".generated_iseq.yaml", YAML.dump(iseqs))
 end
