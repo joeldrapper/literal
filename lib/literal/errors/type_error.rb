@@ -5,14 +5,25 @@ class Literal::TypeError < TypeError
 
 	include Literal::Error
 
-	class Context < Literal::Struct
-		prop :receiver, _Nilable(Object)
-		prop :method, _Nilable(String)
-		prop :label, _Nilable(String)
-		prop :expected, _Nilable(_Any)
-		prop :actual, _Nilable(_Any)
-		prop :children, _Array(Context), default: -> { [] }
-		prop :parent, _Nilable(Context)
+	class Context
+		attr_accessor :receiver, :method, :label, :expected, :actual, :children, :parent
+
+		def initialize(
+			receiver: nil, # _Nilable(Object)
+			method: nil, # _Nilable(String)
+			label: nil, # _Nilable(String)
+			expected: nil, # _Nilable(_Any)
+			actual: nil, # _Nilable(_Any)
+			parent: nil # _Nilable(Context)
+		)
+			@receiver = receiver
+			@method = method
+			@label = label
+			@expected = expected
+			@actual = actual
+			@children = []
+			@parent = parent
+		end
 
 		def descend(level = 0, &blk)
 			yield self, level
@@ -21,13 +32,14 @@ class Literal::TypeError < TypeError
 		end
 
 		def nest(label, expected:, actual:, receiver: nil, method: nil)
-			self.expected = expected
-			self.actual = actual
-			self.label = label
-			self.receiver = receiver
-			self.method = method
+			raise ArgumentError.new("Cannot nest, already has a parent") if parent
+
+			@expected = expected
+			@actual = actual
+			@label = label
+			@receiver = receiver
+			@method = method
 			c = self.class.new
-			raise "Cannot nest, already has a parent" if parent
 			self.parent = c
 			c.children << self
 			c
@@ -35,12 +47,10 @@ class Literal::TypeError < TypeError
 
 		def root = parent&.root || self
 
-		def self.from_block(expected:, actual:, &)
-			leaf = new
-			leaf.expected = expected
-			leaf.actual = actual
+		def self.from_block(expected:, actual:)
+			leaf = new(expected:, actual:)
 			yield leaf
-			raise leaf.inspect unless leaf.children.empty?
+			raise "Expected leaf to have no children, instead is #{leaf.inspect}" unless leaf.children.empty?
 			leaf.root
 		end
 	end
