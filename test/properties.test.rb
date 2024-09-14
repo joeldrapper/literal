@@ -248,9 +248,10 @@ class Family
 	extend Literal::Properties
 
 	prop :members, _Array(_Map(person: Person, role: Symbol)), :positional, reader: :public
+	prop :last_reunion_year, _Nilable(Integer)
 end
 
-test "nested properties" do
+test "nested properties raise in initializer" do
 	expect do
 		Family.new(
 			[
@@ -274,12 +275,54 @@ test "nested properties" do
 			      [:role]
 			        Expected: Symbol
 			        Actual (Integer): 1
+			    [1]
+			      [:role]
+			        Expected: Symbol
+			        Actual (String): "Father"
 		ERROR
-		# [1]
-		#   [:role]
-		#     Expected: Symbol
-		#     Actual (String): "Father"
 	end
+
+	expect { Family.new([1]) }.to_raise(Literal::TypeError) { |error|
+			expect(error.message) == <<~ERROR
+    Type mismatch
+
+    Quickdraw::Context(in test/properties.test.rb)::Family#initialize (from test/properties.test.rb:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+      members
+        [0]
+          Expected: _Map({:person=>Quickdraw::Context(in test/properties.test.rb)::Person, :role=>Symbol})
+          Actual (Integer): 1
+ERROR
+	}
+
+	expect { Family.new([], last_reunion_year: :two_thousand) }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+   Type mismatch
+
+   Quickdraw::Context(in test/properties.test.rb)::Family#initialize (from test/properties.test.rb:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+     last_reunion_year:
+       Expected: _Nilable(Integer)
+       Actual (Symbol): :two_thousand
+ERROR
+	}
+end
+
+test "nested properties succeed in initializer" do
+	expect do
+		Family.new(
+			[
+				{
+					person: Person.new("Json", age: 1),
+					role: :son,
+				},
+				{
+					person: Person.new("John", age: 30),
+					role: :brother,
+				},
+			],
+		)
+	end.not_to_raise
+	expect { Family.new([]) }.not_to_raise
+	expect { Family.new([], last_reunion_year: 0) }.not_to_raise
 end
 
 test "generated code" do

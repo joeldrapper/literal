@@ -12,11 +12,14 @@ class Literal::Types::ArrayType
 		Array === value && value.all?(@type)
 	end
 
-	def check(value, &blk)
-		Literal.check(actual: value, expected: Array, &blk)
-		value.each_with_index do |item, index|
-			Literal.check(actual: item, expected: @type) do |c|
-				blk.call c.nest(+"[" << index.inspect << "]", expected: @type, actual: item)
+	def record_literal_type_errors(context)
+		unless Array === context.actual
+			return
+		end
+
+		context.actual.each_with_index do |item, index|
+			unless @type === item
+				context.add_child(label: "[#{index}]", expected: @type, actual: item)
 			end
 		end
 	end

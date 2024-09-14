@@ -6,7 +6,7 @@ class Literal::TypeError < TypeError
 	include Literal::Error
 
 	class Context
-		attr_reader :receiver, :method, :label, :expected, :actual, :children, :parent
+		attr_reader :receiver, :method, :label, :expected, :actual, :children
 
 		def initialize(
 			receiver: nil, # _Nilable(Object)
@@ -22,7 +22,6 @@ class Literal::TypeError < TypeError
 			@expected = expected
 			@actual = actual
 			@children = []
-			@parent = parent
 		end
 
 		def descend(level = 0, &blk)
@@ -37,31 +36,15 @@ class Literal::TypeError < TypeError
 			@label = label
 		end
 
-		def nest(label, expected:, actual:, receiver: nil, method: nil)
-			raise ArgumentError.new("Cannot nest, already has a parent") if parent
-
-			@expected = expected
-			@actual = actual
-			@label = label
-			@receiver = receiver
-			@method = method
-			c = self.class.new
-			c.children << self
-			@parent = c
-		end
-
-		def root = parent&.root || self
-
-		def self.from_block(expected:, actual:)
-			leaf = new(expected:, actual:)
-			yield leaf
-			raise "Expected leaf to have no children, instead is #{leaf.inspect}" unless leaf.children.empty?
-			leaf.root
+		def add_child(expected: nil, **kwargs)
+			child = self.class.new(expected:, **kwargs)
+			expected.record_literal_type_errors(child) if expected.respond_to?(:record_literal_type_errors)
+			@children << child
 		end
 	end
 
-	def initialize(expected:, actual:, &)
-		@context = Context.from_block(expected:, actual:, &)
+	def initialize(context:)
+		@context = context
 
 		super()
 	end
@@ -80,9 +63,7 @@ class Literal::TypeError < TypeError
 			end
 			if c.label
 				idt << INDENT
-				message << idt << c.label
-				# message << " #{c.expected.inspect}" if c.expected && !c.children.empty?
-				message << "\n"
+				message << idt << c.label << "\n"
 			end
 			if c.expected && c.children.empty?
 				message << idt << "  Expected: #{c.expected.inspect}\n"
