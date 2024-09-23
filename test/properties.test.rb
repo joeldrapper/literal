@@ -286,10 +286,10 @@ test "nested properties raise in initializer" do
 			expect(error.message) == <<~ERROR
     Type mismatch
 
-    Quickdraw::Context(in test/properties.test.rb)::Family#initialize (from test/properties.test.rb:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+    Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
       members
         [0]
-          Expected: _Map({:person=>Quickdraw::Context(in test/properties.test.rb)::Person, :role=>Symbol})
+          Expected: _Map({:person=>Quickdraw::Context(in #{__FILE__})::Person, :role=>Symbol})
           Actual (Integer): 1
 ERROR
 	}
@@ -298,7 +298,7 @@ ERROR
 		expect(error.message) == <<~ERROR
    Type mismatch
 
-   Quickdraw::Context(in test/properties.test.rb)::Family#initialize (from test/properties.test.rb:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+   Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
      last_reunion_year:
        Expected: _Nilable(Integer)
        Actual (Symbol): :two_thousand
@@ -323,36 +323,4 @@ test "nested properties succeed in initializer" do
 	end.not_to_raise
 	expect { Family.new([]) }.not_to_raise
 	expect { Family.new([], last_reunion_year: 0) }.not_to_raise
-end
-
-test "generated code" do
-	require "yaml"
-	iseqs = Hash.new { |h, k| h[k] = Hash.new { |h2, k2| h2[k2] = {} } }
-	buffer = +""
-
-	self.class.constants.sort.each do |const|
-		klass = self.class.const_get(const)
-		next unless Literal::Properties === klass
-
-		klass.__send__(:__literal_extension__).then { |mod| mod.private_instance_methods(false) + mod.instance_methods(false) }.each do |method|
-			file = File.expand_path("../lib/literal/properties.rb", __dir__)
-			iseqs[const][method] = RubyVM::InstructionSequence.of(klass.instance_method(method)).disasm.gsub(/#{Regexp.escape(file)}(:\d+)/, "__FILE__:__LINE__")
-		end
-
-		literal_properties = klass.literal_properties
-
-		buffer << "class " << const.name << "\n"
-		buffer << "# frozen_string_literal: true\n"
-		literal_properties.generate_initializer(buffer)
-		literal_properties.generate_to_h(buffer)
-		literal_properties.each do |new_property|
-			new_property.generate_writer_method(buffer) if new_property.writer
-			new_property.generate_reader_method(buffer) if new_property.reader
-			new_property.generate_predicate_method(buffer) if new_property.predicate
-		end
-		buffer << "end\n\n"
-	end
-
-	File.write(__FILE__ + ".generated.rb", buffer)
-	File.write(__FILE__ + ".generated_iseq.yaml", YAML.dump(iseqs))
 end
