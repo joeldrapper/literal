@@ -37,3 +37,5 @@ module Literal
 		end
 	end
 end
+
+require_relative "literal/rails" if defined?(Rails)
