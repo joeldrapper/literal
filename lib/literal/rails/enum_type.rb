@@ -17,6 +17,8 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 
 	def serialize(value)
 		case value
+		when nil
+			nil
 		when @enum
 			value.value
 		else
@@ -27,8 +29,13 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 	end
 
 	def deserialize(value)
-		@enum[value] || raise(
-			ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}"),
-		)
+		case value
+		when nil
+			nil
+		else
+			@enum[value] || raise(
+				ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}"),
+			)
+		end
 	end
 end
