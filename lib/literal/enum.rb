@@ -111,8 +111,8 @@ class Literal::Enum
 			freeze
 		end
 
-		def each(&)
-			@members.each(&)
+		def each
+			@members.each { |member| yield(member, member.value) }
 		end
 
 		def each_value(&)
