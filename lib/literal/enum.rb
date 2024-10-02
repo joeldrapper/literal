@@ -112,7 +112,7 @@ class Literal::Enum
 		end
 
 		def each
-			@members.each { |member| yield(member, member.value) }
+			@members.each { |member| yield(member) }
 		end
 
 		def each_value(&)
