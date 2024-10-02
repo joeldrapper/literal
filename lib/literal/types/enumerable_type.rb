@@ -9,6 +9,6 @@ class Literal::Types::EnumerableType
 	def inspect = "_Enumerable(#{@type.inspect})"
 
 	def ===(value)
-		Enumerable === value && value.all? { |item| @type === item }
+		Enumerable === value && value.all?(@type)
 	end
 end
