@@ -19,7 +19,9 @@ class Literal::Properties::Schema
 	def <<(value)
 		@mutex.synchronize do
 			@properties_index[value.name] = value
-			@sorted_properties = @properties_index.values.sort!
+			# ruby's sort is unstable, this trick makes it stable
+			n = 0
+			@sorted_properties = @properties_index.values.sort_by! { |it| n += 1; [it, n] }
 		end
 
 		self
