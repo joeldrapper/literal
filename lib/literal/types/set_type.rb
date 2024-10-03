@@ -9,6 +9,6 @@ class Literal::Types::SetType
 	def inspect = "_Set(#{@type.inspect})"
 
 	def ===(value)
-		Set === value && value.all? { |item| @type === item }
+		Set === value && value.all?(@type)
 	end
 end

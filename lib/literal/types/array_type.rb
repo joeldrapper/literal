@@ -9,6 +9,6 @@ class Literal::Types::ArrayType
 	def inspect = "_Array(#{@type.inspect})"
 
 	def ===(value)
-		Array === value && value.all? { |item| @type === item }
+		Array === value && value.all?(@type)
 	end
 end
