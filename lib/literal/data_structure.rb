@@ -23,12 +23,13 @@ class Literal::DataStructure
 	end
 
 	def [](key)
-		instance_variable_get("@#{key}")
+		instance_variable_get(:"@#{key}")
 	end
 
 	def []=(key, value)
-		@literal_properties[key].check(value) { ["#[#{key}]="] }
-		instance_variable_set("@#{key}", value)
+		# TODO: Sync error array w/ generated setter
+		@literal_properties[key].check(value) { |c| raise NotImplementedError }
+		instance_variable_set(:"@#{key}", value)
 	end
 
 	def deconstruct

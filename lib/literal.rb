@@ -25,15 +25,14 @@ module Literal
 		end
 	end
 
-	def self.check(actual, expected, &context)
+	def self.check(actual:, expected:)
 		if expected === actual
 			true
 		else
-			raise Literal::TypeError.new(
-				expected:,
-				actual:,
-				context:,
-			)
+			context = Literal::TypeError::Context.new(expected:, actual:)
+			expected.record_literal_type_errors(context) if expected.respond_to?(:record_literal_type_errors)
+			yield context if block_given?
+			raise Literal::TypeError.new(context:)
 		end
 	end
 end

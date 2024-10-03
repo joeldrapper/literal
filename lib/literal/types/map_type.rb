@@ -11,6 +11,18 @@ class Literal::Types::MapType
 	end
 
 	def ===(other)
-		@shape.all? { |k, t| t === other[k] }
+		Hash === other && @shape.all? { |k, t| t === other[k] }
+	end
+
+	def record_literal_type_errors(context)
+		unless Hash === context.actual
+			return
+		end
+
+		context.actual.each do |key, item|
+			unless @shape[key] === item
+				context.add_child(label: "[#{key.inspect}]", expected: @shape[key], actual: item)
+			end
+		end
 	end
 end

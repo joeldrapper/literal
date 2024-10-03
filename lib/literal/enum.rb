@@ -34,9 +34,9 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			unless (type = @indexes.fetch(key)[0]) === value
-				raise Literal::TypeError.expected(value, to_be_a: type)
-			end
+			types = @indexes.fetch(key)
+			type = types.first
+			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
 
 			@index.fetch(key)[value]
 		end
