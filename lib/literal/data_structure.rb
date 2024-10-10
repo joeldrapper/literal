@@ -18,6 +18,8 @@ class Literal::DataStructure
 		end
 	end
 
+	alias eql? ==
+
 	def hash
 		[self.class, to_h].hash
 	end

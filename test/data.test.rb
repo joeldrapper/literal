@@ -44,3 +44,12 @@ test "can be deconstructed with keys" do
 	person = Person.new(name: "John")
 	expect(person.deconstruct_keys([:name])) == { name: "John" }
 end
+
+test "can be used as a hash key" do
+	person = Person.new(name: "John")
+	person2 = Person.new(name: "Bob")
+	hash = { person => "John", person2 => "Bob" }
+	expect(hash[person]) == "John"
+	expect(hash[person2]) == "Bob"
+	expect(hash[Person.new(name: "John")]) == "John"
+end
