@@ -49,9 +49,13 @@ class Literal::Properties::Schema
 			"rescue Literal::TypeError => error\n" \
 			"  error.set_backtrace(caller(2))\n" \
 			"  raise\n" \
-			"else\n" \
-			"  after_initialize if respond_to?(:after_initialize)\n" \
-			"end\n"
+			"else\n"
+		generate_after_initializer(buffer)
+		buffer << "end\n"
+	end
+
+	def generate_after_initializer(buffer = +"")
+		buffer << "  after_initialize if respond_to?(:after_initialize)\n"
 	end
 
 	def generate_to_h(buffer = +"")
@@ -66,6 +70,37 @@ class Literal::Properties::Schema
 		end
 
 		buffer << "  }\n" << "end\n"
+	end
+
+	def generate_hash(buffer = +"")
+		buffer << "def hash\n  [self.class,\n"
+
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+			buffer << "  @" << property.name.name << ",\n"
+			i += 1
+		end
+
+		buffer << "  ].hash\n" << "end\n"
+	end
+
+	def generate_eq(guard, buffer = +"")
+		buffer << "def ==(other)\n"
+		buffer << "  return false unless #{guard} === other\n"
+
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+			buffer << "  @" << property.name.name << " == other.#{property.escaped_name}"
+			buffer << " &&\n  " if i < n - 1
+			i += 1
+		end
+		buffer << "  true" if n.zero?
+		buffer << "\nend\n"
+		buffer << "alias eql? ==\n"
 	end
 
 	private

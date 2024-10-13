@@ -66,16 +66,17 @@ module Literal::Properties
 	end
 
 	def __define_literal_methods__(new_property)
-		__literal_extension__.module_eval(
-			__generate_literal_methods__(new_property),
-		)
+		code =	__generate_literal_methods__(new_property)
+		__literal_extension__.module_eval(code)
 	end
 
 	def __literal_extension__
 		if defined?(@__literal_extension__)
 			@__literal_extension__
 		else
-			@__literal_extension__ = Module.new
+			@__literal_extension__ = Module.new do
+				set_temporary_name "Literal::Properties(Extension)"
+			end
 		end
 	end
 
