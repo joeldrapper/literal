@@ -10,20 +10,6 @@ class Literal::DataStructure
 		object
 	end
 
-	def ==(other)
-		if Literal::DataStructure === other
-			to_h == other.to_h
-		else
-			false
-		end
-	end
-
-	alias eql? ==
-
-	def hash
-		[self.class, to_h].hash
-	end
-
 	def [](key)
 		instance_variable_get(:"@#{key}")
 	end
@@ -59,5 +45,12 @@ class Literal::DataStructure
 
 	def marshal_dump
 		[1, to_h, frozen?]
+	end
+
+	def self.__generate_literal_methods__(new_property, buffer = +"")
+		super
+		literal_properties.generate_hash(buffer)
+		literal_properties.generate_eq("Literal::DataStructure", buffer)
+		buffer
 	end
 end
