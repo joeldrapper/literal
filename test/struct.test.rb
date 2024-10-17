@@ -4,6 +4,10 @@ class Person < Literal::Struct
 	prop :name, String
 end
 
+class Student < Person
+	prop :final_grade, Integer
+end
+
 test do
 	person = Person.new(name: "Joel")
 	expect(person.name) == "Joel"
@@ -30,6 +34,13 @@ end
 test do
 	a = Person.new(name: "Joel")
 	b = Person.new(name: "Jill")
+
+	expect(a) != b
+end
+
+test do
+	a = Person.new(name: "Joel")
+	b = Student.new(name: "Joel", final_grade: 90)
 
 	expect(a) != b
 end
