@@ -86,9 +86,9 @@ class Literal::Properties::Schema
 		buffer << "  ].hash\n" << "end\n"
 	end
 
-	def generate_eq(guard, buffer = +"")
+	def generate_eq(buffer = +"")
 		buffer << "def ==(other)\n"
-		buffer << "  return false unless #{guard} === other\n"
+		buffer << "  return false unless other.is_a?(self.class) && other.class.literal_properties.size == self.class.literal_properties.size\n"
 
 		sorted_properties = @sorted_properties
 		i, n = 0, sorted_properties.size
