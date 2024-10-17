@@ -50,7 +50,7 @@ class Literal::DataStructure
 	def self.__generate_literal_methods__(new_property, buffer = +"")
 		super
 		literal_properties.generate_hash(buffer)
-		literal_properties.generate_eq("Literal::DataStructure", buffer)
+		literal_properties.generate_eq(buffer)
 		buffer
 	end
 end
