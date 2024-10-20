@@ -70,9 +70,8 @@ module Literal::Properties
 	end
 
 	def __define_literal_methods__(new_property)
-		__literal_extension__.module_eval(
-			__generate_literal_methods__(new_property),
-		)
+		code =	__generate_literal_methods__(new_property)
+		__literal_extension__.module_eval(code)
 	end
 
 	def __literal_extension__
@@ -83,6 +82,8 @@ module Literal::Properties
 				def to_h
 						{}
 				end
+
+				set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)
 			end
 		end
 	end
