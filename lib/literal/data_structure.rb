@@ -20,10 +20,6 @@ class Literal::DataStructure
 		instance_variable_set(:"@#{key}", value)
 	end
 
-	def to_h
-		{}
-	end
-
 	def deconstruct
 		to_h.values
 	end
