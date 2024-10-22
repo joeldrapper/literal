@@ -42,8 +42,8 @@ test do
 	expect(Color.cast(1)) == Color::Red
 	expect(Color.to_set) == Set[Color::Red, Color::Green, Color::Blue]
 	expect(Color.to_h) == { 1 => Color::Red, 2 => Color::Green, 3 => Color::Blue }
-	expect(Color.to_a) == [Color::Red, Color::Green, Color::Blue]
-	expect(Color.values) == [1, 2, 3]
+	expect(Color.to_a) == [Color::Red, Color::Green, Color::Blue] if RUBY_VERSION >= "3.2"
+	expect(Color.values) == [1, 2, 3] if RUBY_VERSION >= "3.2"
 	expect([3, 2, 1].map(&Color)) == [Color::Blue, Color::Green, Color::Red]
 
 	expect(Switch::Off.toggle) == Switch::On

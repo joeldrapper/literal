@@ -90,6 +90,10 @@ class Literal::Enum
 		def __after_defined__
 			raise ArgumentError if frozen?
 
+			if RUBY_VERSION < "3.2"
+				constants(false).each { |name| const_added(name) }
+			end
+
 			@indexes.each do |name, (type, unique, block)|
 				index = @members.group_by(&block).freeze
 

@@ -120,7 +120,7 @@ test "initializer type check" do
 		expect(error.message) == <<~ERROR
    Type mismatch
 
-   Quickdraw::Context(in #{__FILE__})::Person#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+   #{Person}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
      name
        Expected: String
        Actual (Integer): 1
@@ -292,7 +292,7 @@ test "nested properties raise in initializer" do
 		expect(error.message) == <<~ERROR
 			Type mismatch
 
-			Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 16}:in `block (3 levels) in load_tests')
+			#{Family}#initialize (from #{__FILE__}:#{__LINE__ - 16}:in `block (3 levels) in load_tests')
 			  members
 			    [0]
 			      [:role]
@@ -309,10 +309,10 @@ test "nested properties raise in initializer" do
 			expect(error.message) == <<~ERROR
     Type mismatch
 
-    Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+    #{Family}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
       members
         [0]
-          Expected: _Map({:person=>Quickdraw::Context(in #{__FILE__})::Person, :role=>Symbol})
+          Expected: _Map({:person=>#{Person}, :role=>Symbol})
           Actual (Integer): 1
 ERROR
 	}
@@ -321,7 +321,7 @@ ERROR
 		expect(error.message) == <<~ERROR
    Type mismatch
 
-   Quickdraw::Context(in #{__FILE__})::Family#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+   #{Family}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
      last_reunion_year:
        Expected: _Nilable(Integer)
        Actual (Symbol): :two_thousand
