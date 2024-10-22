@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/joeldrapper/quickdraw.git
-  revision: 35a086ad6ff7579cf3cf47497a283c36b2e285a8
+  revision: 3a3f2d1e5ae18a2188d5c5906c9fbd80a592c773
   specs:
     quickdraw (0.1.0)
 
