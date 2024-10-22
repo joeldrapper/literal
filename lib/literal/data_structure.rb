@@ -51,6 +51,15 @@ class Literal::DataStructure
 		[1, to_h, frozen?]
 	end
 
+	def hash
+		self.class.hash
+	end
+
+	def ==(other)
+		other.is_a?(self.class) && other.class.literal_properties.empty?
+	end
+	alias eql? ==
+
 	def self.__generate_literal_methods__(new_property, buffer = +"")
 		super
 		literal_properties.generate_hash(buffer)

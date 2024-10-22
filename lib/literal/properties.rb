@@ -80,6 +80,10 @@ module Literal::Properties
 			@__literal_extension__
 		else
 			@__literal_extension__ = Module.new do
+				def initialize
+					after_initialize if respond_to?(:after_initialize)
+				end
+
 				def to_h
 						{}
 				end

@@ -2,6 +2,7 @@
 
 require "literal"
 require "securerandom"
+require "set"
 
 module Fixtures
 	Objects = Set[
