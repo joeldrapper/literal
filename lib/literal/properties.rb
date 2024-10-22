@@ -6,6 +6,11 @@ module Literal::Properties
 
 	include Literal::Types
 
+	def self.extended(base)
+		super
+		base.include(base.__send__(:__literal_extension__))
+	end
+
 	def prop(name, type, kind = :keyword, reader: false, writer: false, predicate: false, default: nil, &coercion)
 		if default && !(Proc === default || default.frozen?)
 			raise Literal::ArgumentError.new("The default must be a frozen object or a Proc.")
@@ -75,6 +80,10 @@ module Literal::Properties
 			@__literal_extension__
 		else
 			@__literal_extension__ = Module.new do
+				def to_h
+						{}
+				end
+
 				set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)
 			end
 		end
