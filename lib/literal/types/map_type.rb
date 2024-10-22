@@ -11,7 +11,9 @@ class Literal::Types::MapType
 	end
 
 	def ===(other)
-		Hash === other && @shape.all? { |k, t| t === other[k] }
+		Hash === other && @shape.each do |k, v|
+			return false unless v === other[k]
+		end
 	end
 
 	def record_literal_type_errors(context)
