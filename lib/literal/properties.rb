@@ -75,7 +75,7 @@ module Literal::Properties
 			@__literal_extension__
 		else
 			@__literal_extension__ = Module.new do
-				set_temporary_name "Literal::Properties(Extension)"
+				set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)
 			end
 		end
 	end

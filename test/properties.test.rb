@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-set_temporary_name(
-	"Quickdraw::Context(in #{__FILE__})",
-)
+set_temporary_name("Quickdraw::Context(in #{__FILE__})") if respond_to?(:set_temporary_name)
 
 Example = Literal::Object
 
