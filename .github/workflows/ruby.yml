@@ -22,7 +22,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
+          bundler-args: --without development
       - name: Run Rubocop
         run: bundle exec rubocop
       - name: Quickdraw tests
