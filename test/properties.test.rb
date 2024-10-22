@@ -100,6 +100,14 @@ class WithNilableType
 	prop :name, Literal::Types::NilableType.new(String), :positional
 end
 
+class Empty
+	extend Literal::Properties
+end
+
+test "empty initializer" do
+	expect { Empty.new }.not_to_raise
+end
+
 test do
 	person = Person.new("John", age: 30)
 
@@ -138,6 +146,9 @@ test "properties are enumerable" do
 	props = Person.literal_properties
 	expect(props.size) == 2
 	expect(props.map(&:name)) == [:name, :age]
+
+	props = Empty.literal_properties
+	expect(props.size) == 0
 end
 
 test "introspection" do
@@ -182,6 +193,20 @@ test "after initialize callback" do
 	end
 
 	example.new(name: "John")
+
+	assert callback_called
+
+	callback_called = false
+
+	empty = Class.new do
+		extend Literal::Properties
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+	end
+
+	empty.new
 
 	assert callback_called
 end
@@ -321,4 +346,12 @@ test "nested properties succeed in initializer" do
 	end.not_to_raise
 	expect { Family.new([]) }.not_to_raise
 	expect { Family.new([], last_reunion_year: 0) }.not_to_raise
+end
+
+test "#to_h" do
+		person = Person.new("John", age: 30)
+		expect(person.to_h) == { name: "John", age: 30 }
+
+		empty = Empty.new
+		expect(empty.to_h) == {}
 end
