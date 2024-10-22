@@ -15,9 +15,10 @@ class Literal::Types::UnionType
 	def inspect = "_Union(#{@types.inspect})"
 
 	def ===(value)
-		i, len = 0, @types.size
+		types = @types
+		i, len = 0, types.size
 		while i < len
-			return true if @types[i] === value
+			return true if types[i] === value
 			i += 1
 		end
 	end

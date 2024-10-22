@@ -12,11 +12,12 @@ class Literal::Types::TupleType
 
 	def ===(value)
 		return false unless Array === value
-		return false unless value.size == @types.size
+		types = @types
+		return false unless value.size == types.size
 
-		i, len = 0, @types.size
+		i, len = 0, types.size
 		while i < len
-			return false unless @types[i] === value[i]
+			return false unless types[i] === value[i]
 			i += 1
 		end
 

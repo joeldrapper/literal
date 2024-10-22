@@ -10,9 +10,11 @@ class Literal::Types::ConstraintType
 	def inspect = "_Constraint(#{inspect_constraints})"
 
 	def ===(value)
-		i, len = 0, @object_constraints.size
+		object_constraints = @object_constraints
+
+		i, len = 0, object_constraints.size
 		while i < len
-			return false unless @object_constraints[i] === value
+			return false unless object_constraints[i] === value
 			i += 1
 		end
 
