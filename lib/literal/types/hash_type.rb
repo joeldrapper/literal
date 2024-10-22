@@ -10,8 +10,12 @@ class Literal::Types::HashType
 	def inspect = "_Hash(#{@key_type.inspect}, #{@value_type.inspect})"
 
 	def ===(value)
-		Hash === value && value.each do |k, v|
+		return false unless Hash === value
+
+		value.each do |k, v|
 			return false unless @key_type === k && @value_type === v
 		end
+
+		true
 	end
 end

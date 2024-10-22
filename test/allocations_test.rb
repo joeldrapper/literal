@@ -54,6 +54,37 @@ assert_allocations(_Hash(String, Integer), { "a" => 1, "b" => 2 }) => 0
 
 assert_allocations(_Integer(18..), 18) => 0
 
+assert_allocations(_Interface(:to_s), "Hello") => 0
+
+assert_allocations(_Intersection(Enumerable, Array), []) => 0
+
 assert_allocations(_JSONData, { "a" => 1, "b" => [true, false, 0, 1.23, nil, { "a" => 1 }] }) => 0
 
+assert_allocations(_Lambda, proc {}) => 0
+
 assert_allocations(_Map(name: String, age: Integer), { name: "Joel", age: 30 }) => 0
+
+assert_allocations(_Never, false) => 0
+
+assert_allocations(_Nilable(String), nil) => 0
+
+assert_allocations(_Not(Integer), 18) => 0
+
+assert_allocations(_Procable, proc {}) => 0
+
+assert_allocations(_Range(Integer), 0..10) => 0
+
+assert_allocations(_Set(String), Set["a", "b", "c"]) => 0
+
+assert_allocations(_String(length: 5..10), "Hello") => 0
+
+assert_allocations(_Symbol(size: 5..10), :symbol) => 0
+
+assert_allocations(_Truthy, true) => 0
+assert_allocations(_Truthy, false) => 0
+
+assert_allocations(_Tuple(String, Integer), ["a", 1]) => 0
+
+assert_allocations(_Union(String, Integer), 42) => 0
+
+assert_allocations(_Void, nil) => 0

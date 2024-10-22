@@ -299,7 +299,7 @@ test "_Union flattens types" do
 		_Union(Symbol, Float),
 	)
 
-	expect(type.inspect) == "_Union(#<Set: {String, Integer, Symbol, Float}>)"
+	expect(type.inspect) == "_Union([String, Integer, Symbol, Float])"
 end
 
 test "_Void" do
