@@ -52,6 +52,8 @@ assert_allocations(_Frozen(String), "hello") => 0
 
 assert_allocations(_Hash(String, Integer), { "a" => 1, "b" => 2 }) => 0
 
+assert_allocations(_Integer(18..), 18) => 0
+
 assert_allocations(_JSONData, { "a" => 1, "b" => [true, false, 0, 1.23, nil, { "a" => 1 }] }) => 0
 
 assert_allocations(_Map(name: String, age: Integer), { name: "Joel", age: 30 }) => 0
