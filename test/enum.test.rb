@@ -14,6 +14,8 @@ class Color < Literal::Enum(Integer)
 	Red = new(1, hex: "#FF0000")
 	Green = new(2, hex: "#00FF00")
 	Blue = new(3, hex: "#0000FF")
+
+	__after_defined__ if RUBY_ENGINE == "truffleruby"
 end
 
 class Switch < Literal::Enum(_Boolean)
@@ -24,6 +26,8 @@ class Switch < Literal::Enum(_Boolean)
 	Off = new(false) do
 		def toggle = On
 	end
+
+	__after_defined__ if RUBY_ENGINE == "truffleruby"
 end
 
 test do

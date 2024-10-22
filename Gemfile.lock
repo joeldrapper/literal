@@ -114,6 +114,7 @@ PLATFORMS
   arm64-darwin
   java
   ruby
+  universal-java-19
   x86-linux
   x86_64-darwin
   x86_64-linux
