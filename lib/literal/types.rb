@@ -45,7 +45,7 @@ module Literal::Types
 	end
 
 	def _Any?
-		_Unit
+		VoidType
 	end
 
 	# Matches if the value is an `Array` and all the elements match the given type.
