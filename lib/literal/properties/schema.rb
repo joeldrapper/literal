@@ -42,6 +42,10 @@ class Literal::Properties::Schema
 		@sorted_properties.size
 	end
 
+	def empty?
+		@sorted_properties.empty?
+	end
+
 	def generate_initializer(buffer = +"")
 		buffer << "def initialize(#{generate_initializer_params})\n"
 		generate_initializer_body(buffer)

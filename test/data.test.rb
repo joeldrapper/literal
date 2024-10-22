@@ -67,7 +67,7 @@ test "empty" do
 	expect(empty.hash) == other.hash
 
 	other_empty = Class.new(Literal::Data).new
-	expect(empty) == other_empty
-	expect(empty).to_eql?(other_empty)
+	expect(empty) != other_empty
+	expect(empty).not_to_eql?(other_empty)
 	expect(empty.hash) != other_empty.hash
 end
