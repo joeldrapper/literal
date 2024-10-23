@@ -34,4 +34,4 @@ jobs:
       - name: Run Rubocop
         run: bundle exec rubocop
       - name: Quickdraw tests
-        run: bundle exec qt "./test/**/*.test.rb"
+        run: bundle exec qt -t 1 "./test/**/*.test.rb"

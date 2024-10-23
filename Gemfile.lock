@@ -1,8 +1,9 @@
 GIT
   remote: https://github.com/joeldrapper/quickdraw.git
-  revision: 3a3f2d1e5ae18a2188d5c5906c9fbd80a592c773
+  revision: 722c89c37dc9e8a4ebdc4616fa07f2a0740b7427
   specs:
     quickdraw (0.1.0)
+      concurrent-ruby
 
 PATH
   remote: .
@@ -16,6 +17,7 @@ GEM
     backport (1.2.0)
     benchmark (0.3.0)
     benchmark-ips (2.13.0)
+    concurrent-ruby (1.3.4)
     diff-lcs (1.5.1)
     docile (1.4.1)
     e2mmap (0.1.0)
