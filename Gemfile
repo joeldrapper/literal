@@ -6,7 +6,12 @@ gemspec
 
 gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git"
 gem "benchmark-ips"
-gem "solargraph"
-gem "rubocop"
-gem "ruby-lsp"
-gem "simplecov"
+
+if RUBY_ENGINE == "ruby"
+	group :development do
+		gem "solargraph"
+		gem "rubocop"
+		gem "ruby-lsp"
+		gem "simplecov"
+	end
+end
