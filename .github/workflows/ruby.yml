@@ -33,7 +33,7 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           bundler-args: --without development
       - name: Quickdraw tests
-        run: bundle exec qt -t 1
+        run: bundle exec qt -t 1 "./test/**/*.test.rb"
   rubocop:
     runs-on: ubuntu-latest
     strategy:
