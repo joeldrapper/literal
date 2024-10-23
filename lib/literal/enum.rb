@@ -171,12 +171,10 @@ class Literal::Enum
 	end
 end
 
-if RUBY_ENGINE != "ruby"
-	TracePoint.trace(:end) do |tp|
-		it = tp.self
+TracePoint.trace(:end) do |tp|
+	it = tp.self
 
-		if Class === it && it < Literal::Enum
-			it.__after_defined__
-		end
+	if Class === it && it < Literal::Enum
+		it.__after_defined__
 	end
 end
