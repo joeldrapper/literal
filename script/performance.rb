@@ -113,9 +113,9 @@ class Performance < Thor
 	end
 
 	def list_group(group)
-		say "Group: #{group[:name]}"
+		say "> #{group[:name]}"
 		group[:reports].each do |report|
-			say "  Report: #{report[:name]}"
+			say "  - #{report[:name]}"
 			report[:tests].each do |test|
 				say "    Test: #{test[:name]}"
 			end
@@ -166,7 +166,6 @@ class Performance < Thor
 		execute_report(group, report_name) do |report, runtime|
 			execute_tests(report, test_name) do |test, iterations|
 				data = StackProf.run(mode: :cpu, interval: 100) do
-					# run iterations times
 					i = 0
 					while i < iterations
 						test[:block].call
