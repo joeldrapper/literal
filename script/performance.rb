@@ -127,7 +127,7 @@ class Performance < Thor
 
 		execute_report(group, report_name) do |report, runtime|
 			Benchmark.ips(time: 3, warmup: 1) do |bm|
-				execute_tests(report, test_name) do |test, _|
+				execute_tests(report, test_name, output: false) do |test, _|
 					test_label = "[#{runtime}] #{test[:baseline] ? "-" : "*"} #{test[:name]}"
 					bm.item(test_label, &test[:block])
 				end
@@ -223,21 +223,24 @@ class Performance < Thor
 		end
 	end
 
-	def execute_tests(report, test_name, &)
+	def execute_tests(report, test_name, output: true, &)
 		iterations = options[:iterations] || 1
 		sorted_tests = report[:tests].sort { _1[:baseline] ? -1 : 1 }
 		sorted_tests.each do |test|
 			if test_name
 				next unless test[:name] == test_name
 			end
-			say "# ***"
-			say "# #{test[:baseline] ? "Baseline" : "Test"}: #{test[:name]}", :green
-			say "# ***"
-			say
+			if output
+				say "# ***"
+				say "# #{test[:baseline] ? "Baseline" : "Test"}: #{test[:name]}", :green
+				say "# ***"
+				say
+			end
 			test[:block].call # run once to lazy load etc
 			yield test, iterations
-			say
-			say
+			if output
+				say
+			end
 		end
 	end
 
@@ -271,6 +274,8 @@ end
 
 # TODO: require all benchmarks/ files with glob
 # Tests
+require_relative "benchmarks/data"
+require_relative "benchmarks/enum"
 require_relative "benchmarks/struct"
 require_relative "benchmarks/properties"
 

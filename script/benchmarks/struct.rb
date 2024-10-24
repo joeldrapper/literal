@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Performance.group "Struct" do
 	first_name = "Joel"
 	last_name = "Drapper"

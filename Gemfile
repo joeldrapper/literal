@@ -26,5 +26,7 @@ if RUBY_ENGINE == "ruby"
 		gem "dry-initializer"
 		gem "dry-types"
 		gem "dry-struct"
+		gem "ruby-enum"
+		gem "typesafe_enum"
 	end
 end

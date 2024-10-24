@@ -3,6 +3,8 @@
 require "dry-initializer"
 require "dry-types"
 require "dry-struct"
+require "ruby-enum"
+require "typesafe_enum"
 
 module Types
   include Dry.Types()
@@ -13,7 +15,9 @@ class NormalClass
     @first_name = first_name
     @last_name = last_name
     @age = age
-  end
+	end
+
+	attr_reader :first_name, :last_name, :age
 end
 
 class DryClass
@@ -30,6 +34,14 @@ class LiteralClass
   prop :first_name, String
   prop :last_name, String
   prop :age, Integer
+end
+
+class LiteralClassWithReaders
+	extend Literal::Properties
+
+	prop :first_name, String, reader: :public
+	prop :last_name, String, reader: :public
+	prop :age, Integer, reader: :public
 end
 
 NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
@@ -52,4 +64,30 @@ class LiteralData < Literal::Data
   prop :first_name, String
   prop :last_name, String
   prop :age, Integer
+end
+
+class LiteralColor < Literal::Enum(Integer)
+	prop :hex, String
+	index :hex, String
+	index :lower_hex, String, unique: false do |color|
+		color.hex.downcase
+	end
+
+	Red = new(1, hex: "#FF0000")
+	Green = new(2, hex: "#00FF00")
+	Blue = new(3, hex: "#0000FF")
+end
+
+class RubyEnumColor
+	include Ruby::Enum
+
+	define :RED, "#FF0000"
+	define :GREEN, "#00FF00"
+	define :BLUE, "#0000FF"
+end
+
+class TypesafeEnumColor < TypesafeEnum::Base
+	new :RED, "#FF0000"
+	new :GREEN, "#00FF00"
+	new :BLUE, "#0000FF"
 end
