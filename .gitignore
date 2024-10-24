@@ -8,6 +8,7 @@
 /spec/reports/
 /tmp/
 .DS_Store
+.tool-versions
 .rubocop-*
 *.gem
 Gemfile.lock

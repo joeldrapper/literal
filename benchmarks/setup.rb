@@ -1,11 +1,12 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "literal"
-require "benchmark/ips"
+require "active_model"
 require "dry-initializer"
 require "dry-types"
 require "dry-struct"
+require "ruby-enum"
+require "typesafe_enum"
+require "literal"
 
 module Types
 	include Dry.Types()
@@ -17,6 +18,8 @@ class NormalClass
 		@last_name = last_name
 		@age = age
 	end
+
+	attr_reader :first_name, :last_name, :age
 end
 
 class DryClass
@@ -33,6 +36,23 @@ class LiteralClass
 	prop :first_name, String
 	prop :last_name, String
 	prop :age, Integer
+end
+
+class LiteralClassWithReaders
+	extend Literal::Properties
+
+	prop :first_name, String, reader: :public
+	prop :last_name, String, reader: :public
+	prop :age, Integer, reader: :public
+end
+
+class ActiveModelAttributesClass
+	include ActiveModel::API
+	include ActiveModel::Attributes
+
+	attribute :first_name, :string
+	attribute :last_name, :string
+	attribute :age, :integer
 end
 
 NormalStruct = Struct.new(:first_name, :last_name, :age, keyword_init: true)
@@ -57,40 +77,28 @@ class LiteralData < Literal::Data
 	prop :age, Integer
 end
 
-RubyVM::YJIT.enable
-
-Benchmark.ips do |x|
-	# x.report "Ruby Class" do
-	# 	NormalClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	# end
-
-	x.report "Dry::Initializer" do
-		DryClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
+class LiteralColor < Literal::Enum(Integer)
+	prop :hex, String
+	index :hex, String
+	index :lower_hex, String, unique: false do |color|
+		color.hex.downcase
 	end
 
-	x.report "Literal::Properties" do
-		LiteralClass.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
-
-	x.compare!
+	Red = new(1, hex: "#FF0000")
+	Green = new(2, hex: "#00FF00")
+	Blue = new(3, hex: "#0000FF")
 end
 
-Benchmark.ips do |x|
-	# x.report "Ruby Struct" do
-	# 	NormalStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	# end
+class RubyEnumColor
+	include Ruby::Enum
 
-	x.report "Dry::Struct" do
-		DryStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
+	define :RED, "#FF0000"
+	define :GREEN, "#00FF00"
+	define :BLUE, "#0000FF"
+end
 
-	x.report "Literal::Struct" do
-		LiteralStruct.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
-
-	x.report "Literal::Data" do
-		LiteralData.new(first_name: "Joel", last_name: "Drapper", age: 29)
-	end
-
-	x.compare!
+class TypesafeEnumColor < TypesafeEnum::Base
+	new :RED, "#FF0000"
+	new :GREEN, "#00FF00"
+	new :BLUE, "#0000FF"
 end
