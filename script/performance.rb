@@ -185,9 +185,10 @@ class Performance < Thor
 		say "[[[[ git Branch: '#{git_current_branch_name}' ]]]]", :yellow
 		execute_on_runtime(group, report_name, &)
 		if compare_with
-			git_change_branch(compare_with)
-			say "[[[[ compare with git Branch: '#{git_current_branch_name}' ]]]]", :yellow
-			execute_on_runtime(group, report_name, &)
+			git_change_branch(compare_with) do
+				say "[[[[ compare with git Branch: '#{git_current_branch_name}' ]]]]", :yellow
+				execute_on_runtime(group, report_name, &)
+			end
 		end
 	end
 
@@ -255,7 +256,13 @@ class Performance < Thor
 
 	def git_change_branch(branch)
 		# TODO: git to checkout branch (and stash first, then pop after)
+		previous_branch = git_current_branch_name
+		say "Switching to branch '#{branch}'"
 		git_client.checkout(branch)
+		yield
+	ensure
+		say "Switching back to branch '#{previous_branch}'"
+		git_client.checkout(previous_branch)
 	end
 
 	def git_current_branch_name
