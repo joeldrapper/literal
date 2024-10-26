@@ -47,6 +47,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer(buffer = +"")
+		buffer << "alias initialize initialize\n"
 		buffer << "def initialize(#{generate_initializer_params})\n"
 		generate_initializer_body(buffer)
 		buffer << "" \
@@ -63,6 +64,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_to_h(buffer = +"")
+		buffer << "alias to_h to_h\n"
 		buffer << "def to_h\n" << "  {\n"
 
 		sorted_properties = @sorted_properties
