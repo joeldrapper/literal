@@ -21,6 +21,15 @@ class Literal::Enum
 				@indexes = {}
 				@index = {}
 			end
+
+			if RUBY_ENGINE != "truffleruby"
+				TracePoint.trace(:end) do |tp|
+					if tp.self == subclass
+						tp.self.__after_defined__
+						tp.disable
+					end
+				end
+			end
 		end
 
 		def index(name, type, unique: true, &block)
@@ -168,15 +177,5 @@ class Literal::Enum
 
 	def _dump(level)
 		Marshal.dump(@value)
-	end
-end
-
-if RUBY_ENGINE != "truffleruby"
-	TracePoint.trace(:end) do |tp|
-		it = tp.self
-
-		if Class === it && it < Literal::Enum
-			it.__after_defined__
-		end
 	end
 end
