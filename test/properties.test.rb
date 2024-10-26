@@ -120,7 +120,7 @@ test "initializer type check" do
 		expect(error.message) == <<~ERROR
    Type mismatch
 
-   #{Person}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+   #{Person}#initialize (from #{error.backtrace[1]})
      name
        Expected: String
        Actual (Integer): 1
@@ -250,7 +250,7 @@ test "writer type error" do
 		expect(error.message) == <<~ERROR
 			Type mismatch
 
-			#{WithWriters}#example=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+			#{WithWriters}#example=(value) (from #{error.backtrace[1]})
 			  Expected: _Nilable(String)
 			  Actual (Integer): 0
 ERROR
@@ -260,7 +260,7 @@ ERROR
 	expect(error.message) == <<~ERROR
 		Type mismatch
 
-		#{WithWriters}#a=(value) (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+		#{WithWriters}#a=(value) (from #{error.backtrace[1]})
 		  Expected: _Nilable(_Array(String))
 		  Actual (Array): [1]
 	ERROR
@@ -292,7 +292,7 @@ test "nested properties raise in initializer" do
 		expect(error.message) == <<~ERROR
 			Type mismatch
 
-			#{Family}#initialize (from #{__FILE__}:#{__LINE__ - 16}:in `block (3 levels) in load_tests')
+			#{Family}#initialize (from #{error.backtrace[1]})
 			  members
 			    [0]
 			      [:role]
@@ -309,7 +309,7 @@ test "nested properties raise in initializer" do
 			expect(error.message) == <<~ERROR
     Type mismatch
 
-    #{Family}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+    #{Family}#initialize (from #{error.backtrace[1]})
       members
         [0]
           Expected: _Map({:person=>#{Person}, :role=>Symbol})
@@ -321,7 +321,7 @@ ERROR
 		expect(error.message) == <<~ERROR
    Type mismatch
 
-   #{Family}#initialize (from #{__FILE__}:#{__LINE__ - 4}:in `block (3 levels) in load_tests')
+   #{Family}#initialize (from #{error.backtrace[1]})
      last_reunion_year:
        Expected: _Nilable(Integer)
        Actual (Symbol): :two_thousand
