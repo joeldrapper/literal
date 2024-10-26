@@ -9,7 +9,7 @@ gem "benchmark-ips"
 
 group :development do
 	gem "solargraph", platform: :ruby
-	gem "rubocop"
-	gem "ruby-lsp"
-	gem "simplecov"
+	gem "rubocop", platform: :ruby
+	gem "ruby-lsp", platform: :ruby
+	gem "simplecov", platform: :ruby
 end
