@@ -25,7 +25,6 @@ module Literal::Types
 	autoload :ProcableType, "literal/types/procable_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
-	autoload :ShapeType, "literal/types/shape_type"
 	autoload :StringType, "literal/types/string_type"
 	autoload :SymbolType, "literal/types/symbol_type"
 	autoload :TruthyType, "literal/types/truthy_type"
@@ -292,20 +291,6 @@ module Literal::Types
 			SetType.new(...),
 		)
 	end
-
-	# Ensures a value matches the given shape of a Hash
-	def _Shape(...)
-		ShapeType.new(...)
-	end
-
-	# Nilable version of `_Shape`
-	def _Shape?(...)
-		NilableType.new(
-			ShapeType.new(...),
-		)
-	end
-
-	# Nilable version of `_Shape`
 
 	# Matches if the value is a `String` and matches the given constraints.
 	# If you don't need any constraints, use `String` instead of `_String`.
