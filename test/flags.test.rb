@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-Example = Literal::Flags[
-	enabled: 0,
-	started: 1,
-	ended: 2
-]
+class Example < Literal::Flags
+	define(
+		enabled: 0,
+		started: 1,
+		ended: 2,
+	)
+end
 
 test "to bit string" do
 	flags = Example.new(started: true)

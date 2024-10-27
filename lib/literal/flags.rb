@@ -18,12 +18,6 @@ class Literal::Flags
 	attr_reader :value
 
 	class << self
-		def [](**flags, &)
-			Class.new(self, &).tap do |flags_class|
-				flags_class.define(**flags)
-			end
-		end
-
 		def define(**flags)
 			raise ArgumentError if frozen?
 			unique_values = flags.values
