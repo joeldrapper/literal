@@ -19,7 +19,9 @@ class Literal::Properties::Schema
 	def <<(value)
 		@mutex.synchronize do
 			@properties_index[value.name] = value
-			@sorted_properties = @properties_index.values.sort!
+			# ruby's sort is unstable, this trick makes it stable
+			n = 0
+			@sorted_properties = @properties_index.values.sort_by! { |it| n += 1; [it, n] }
 		end
 
 		self
@@ -40,24 +42,71 @@ class Literal::Properties::Schema
 		@sorted_properties.size
 	end
 
+	def empty?
+		@sorted_properties.empty?
+	end
+
 	def generate_initializer(buffer = +"")
+		buffer << "alias initialize initialize\n"
 		buffer << "def initialize(#{generate_initializer_params})\n"
 		generate_initializer_body(buffer)
+		buffer << "" \
+			"rescue Literal::TypeError => error\n" \
+			"  error.set_backtrace(caller(2))\n" \
+			"  raise\n" \
+			"else\n"
+		generate_after_initializer(buffer)
 		buffer << "end\n"
 	end
 
+	def generate_after_initializer(buffer = +"")
+		buffer << "  after_initialize if respond_to?(:after_initialize)\n"
+	end
+
 	def generate_to_h(buffer = +"")
-		buffer << "def to_h\n" << "{\n"
+		buffer << "alias to_h to_h\n"
+		buffer << "def to_h\n" << "  {\n"
 
 		sorted_properties = @sorted_properties
 		i, n = 0, sorted_properties.size
 		while i < n
 			property = sorted_properties[i]
-			buffer << property.name.name << ": @" << property.name.name << ",\n"
+			buffer << "    " << property.name.name << ": @" << property.name.name << ",\n"
 			i += 1
 		end
 
-		buffer << "}\n" << "end\n"
+		buffer << "  }\n" << "end\n"
+	end
+
+	def generate_hash(buffer = +"")
+		buffer << "def hash\n  [self.class,\n"
+
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+			buffer << "  @" << property.name.name << ",\n"
+			i += 1
+		end
+
+		buffer << "  ].hash\n" << "end\n"
+	end
+
+	def generate_eq(buffer = +"")
+		buffer << "def ==(other)\n"
+		buffer << "  return false unless other.is_a?(self.class) && other.class.literal_properties.size == self.class.literal_properties.size\n"
+
+		sorted_properties = @sorted_properties
+		i, n = 0, sorted_properties.size
+		while i < n
+			property = sorted_properties[i]
+			buffer << "  @" << property.name.name << " == other.#{property.escaped_name}"
+			buffer << " &&\n  " if i < n - 1
+			i += 1
+		end
+		buffer << "  true" if n.zero?
+		buffer << "\nend\n"
+		buffer << "alias eql? ==\n"
 	end
 
 	private
@@ -103,9 +152,8 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "properties = self.class.literal_properties.properties_index\n"
+		buffer << "  properties = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
-		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end
 
 	def generate_initializer_handle_properties(properties, buffer = +"")

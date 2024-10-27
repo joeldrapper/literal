@@ -10,8 +10,19 @@ class Literal::Types::ConstraintType
 	def inspect = "_Constraint(#{inspect_constraints})"
 
 	def ===(value)
-		@object_constraints.all? { |t| t === value } &&
-			@property_constraints.all? { |a, t| t === value.public_send(a) }
+		object_constraints = @object_constraints
+
+		i, len = 0, object_constraints.size
+		while i < len
+			return false unless object_constraints[i] === value
+			i += 1
+		end
+
+		@property_constraints.each do |a, t|
+			return false unless t === value.public_send(a)
+		end
+
+		true
 	end
 
 	private

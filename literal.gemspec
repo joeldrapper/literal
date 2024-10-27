@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Joel Drapper"]
 	spec.email = ["joel@drapper.me"]
 
-	spec.summary = "A literal Ruby gem"
-	spec.description = ""
-	spec.homepage = "https://github.com/joeldrapper/literal"
+	spec.summary = "A literal Ruby gem."
+	spec.description = "Enums, properties, generics, structured objects."
+	spec.homepage = "https://literal.fun"
 	spec.license = "MIT"
 	spec.required_ruby_version = ">= 3.1"
 

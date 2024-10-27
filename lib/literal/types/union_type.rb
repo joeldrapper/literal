@@ -6,15 +6,21 @@ class Literal::Types::UnionType
 	def initialize(*types)
 		raise Literal::ArgumentError.new("_Union type must have at least one type.") if types.size < 1
 
-		@types = Set[]
+		@types = []
 		load_types(types)
+		@types.uniq!
 		@types.freeze
 	end
 
 	def inspect = "_Union(#{@types.inspect})"
 
 	def ===(value)
-		@types.any? { |type| type === value }
+		types = @types
+		i, len = 0, types.size
+		while i < len
+			return true if types[i] === value
+			i += 1
+		end
 	end
 
 	def each(&)

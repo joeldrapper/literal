@@ -10,25 +10,18 @@ class Literal::DataStructure
 		object
 	end
 
-	def ==(other)
-		if Literal::DataStructure === other
-			to_h == other.to_h
-		else
-			false
-		end
-	end
-
-	def hash
-		[self.class, to_h].hash
-	end
-
 	def [](key)
-		instance_variable_get("@#{key}")
+		instance_variable_get(:"@#{key}")
 	end
 
 	def []=(key, value)
-		@literal_properties[key].check(value) { ["#[#{key}]="] }
-		instance_variable_set("@#{key}", value)
+		# TODO: Sync error array w/ generated setter
+		@literal_properties[key].check(value) { |c| raise NotImplementedError }
+		instance_variable_set(:"@#{key}", value)
+	end
+
+	def to_h
+		{}
 	end
 
 	def deconstruct
@@ -56,5 +49,21 @@ class Literal::DataStructure
 
 	def marshal_dump
 		[1, to_h, frozen?]
+	end
+
+	def hash
+		self.class.hash
+	end
+
+	def ==(other)
+		other.is_a?(self.class) && other.class.literal_properties.empty?
+	end
+	alias eql? ==
+
+	def self.__generate_literal_methods__(new_property, buffer = +"")
+		super
+		literal_properties.generate_hash(buffer)
+		literal_properties.generate_eq(buffer)
+		buffer
 	end
 end

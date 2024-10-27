@@ -9,6 +9,12 @@ class Literal::Types::SetType
 	def inspect = "_Set(#{@type.inspect})"
 
 	def ===(value)
-		Set === value && value.all? { |item| @type === item }
+		return false unless Set === value
+
+		value.each do |v|
+			return false unless @type === v
+		end
+
+		true
 	end
 end

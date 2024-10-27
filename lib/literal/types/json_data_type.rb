@@ -9,7 +9,9 @@ module Literal::Types::JSONDataType
 		when String, Integer, Float, true, false, nil
 			true
 		when Hash
-			value.all? { |k, v| String === k && self === v }
+			value.each do |k, v|
+				return false unless String === k && self === v
+			end
 		when Array
 			value.all?(self)
 		else
