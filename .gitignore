@@ -6,7 +6,7 @@
 /doc/
 /pkg/
 /spec/reports/
-/tmp/
+/benchmarks/tmp/
 .DS_Store
 .tool-versions
 .rubocop-*

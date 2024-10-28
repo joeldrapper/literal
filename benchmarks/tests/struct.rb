@@ -6,23 +6,23 @@ Awfy.group "Struct" do
 	age = 29
 
 	report ".new" do
-		baseline "Ruby" do
+		control "Ruby Struct" do
 			NormalStruct.new(first_name:, last_name:, age:)
 		end
 
-		baseline "Dry" do
+		control "Dry::Struct" do
 			DryStruct.new(first_name:, last_name:, age:)
 		end
 
-		baseline "Data" do
+		control "Ruby Data" do
 			NormalData.new(first_name:, last_name:, age:)
 		end
 
-		baseline "ActiveModel" do
+		control "ActiveModel::Attributes" do
 			ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
 		end
 
-		test "Literal" do
+		test "Literal::Struct" do
 			LiteralStruct.new(first_name:, last_name:, age:)
 		end
 	end
@@ -34,19 +34,19 @@ Awfy.group "Struct" do
 		active_model = ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
 		literal = LiteralStruct.new(first_name:, last_name:, age:)
 
-		baseline "Ruby" do
+		control "Ruby" do
 			Marshal.dump(normal_class)
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			Marshal.dump(dry_class)
 		end
 
-		baseline "Data" do
+		control "Data" do
 			Marshal.dump(normal_data)
 		end
 
-		baseline "ActiveModel" do
+		control "ActiveModel" do
 			Marshal.dump(active_model)
 		end
 

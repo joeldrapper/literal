@@ -6,7 +6,7 @@ Awfy.group "Properties" do
 			extend Literal::Properties
 		end
 
-		baseline "simple property" do
+		control "simple property" do
 			example_class.prop(:name, String)
 		end
 
@@ -49,7 +49,7 @@ Awfy.group "Properties" do
 			prop :age, Integer
 		end
 
-		baseline "base" do
+		control "base" do
 			base_class.literal_properties
 		end
 
@@ -63,19 +63,19 @@ Awfy.group "Properties" do
 	age = 30
 
 	report "object instantiation" do
-		baseline "Hash" do
+		control "Hash" do
 			{ first_name: first_name, last_name: last_name, age: age }
 		end
 
-		baseline "Ruby" do
+		control "Ruby" do
 			NormalClass.new(first_name: name, last_name: name, age: age)
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			DryClass.new(first_name: name, last_name: name, age: age)
 		end
 
-		baseline "ActiveModel" do
+		control "ActiveModel" do
 			ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
 		end
 
@@ -91,19 +91,19 @@ Awfy.group "Properties" do
 	active_model_instance = ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
 
 	report "public property access" do
-		baseline "Hash" do
+		control "Hash" do
 			hash_instance[:first_name]
 		end
 
-		baseline "Ruby" do
+		control "Ruby" do
 			normal_instance.first_name
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_instance.first_name
 		end
 
-		baseline "ActiveModel" do
+		control "ActiveModel" do
 			active_model_instance.first_name
 		end
 

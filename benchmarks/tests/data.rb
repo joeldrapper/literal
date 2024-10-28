@@ -8,15 +8,15 @@ Awfy.group "Data" do
 	}
 
 	report ".new" do
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			NormalStruct.new(**shared_values)
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			DryStruct.new(**shared_values)
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			NormalData.new(**shared_values)
 		end
 
@@ -32,19 +32,19 @@ Awfy.group "Data" do
 	literal_data = LiteralData.new(**shared_values)
 
 	report "property access" do
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct.first_name
 			normal_struct.last_name
 			normal_struct.age
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_struct.first_name
 			dry_struct.last_name
 			dry_struct.age
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data.first_name
 			normal_data.last_name
 			normal_data.age
@@ -64,15 +64,15 @@ Awfy.group "Data" do
 		normal_data2 = NormalData.new(**shared_values)
 		literal_data2 = LiteralData.new(**shared_values)
 
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct == normal_struct2
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_struct == dry_struct2
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data == normal_data2
 		end
 
@@ -82,15 +82,15 @@ Awfy.group "Data" do
 	end
 
 	report "#to_h" do
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct.to_h
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_struct.to_h
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data.to_h
 		end
 
@@ -100,15 +100,15 @@ Awfy.group "Data" do
 	end
 
 	report "#hash" do
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct.hash
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_struct.hash
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data.hash
 		end
 
@@ -118,11 +118,11 @@ Awfy.group "Data" do
 	end
 
 	report "#deconstruct" do
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct.deconstruct
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data.deconstruct
 		end
 
@@ -134,15 +134,15 @@ Awfy.group "Data" do
 	report "#deconstruct_keys" do
 		keys = [:first_name, :last_name, :age]
 
-		baseline "Ruby Struct" do
+		control "Ruby Struct" do
 			normal_struct.deconstruct_keys(keys)
 		end
 
-		baseline "Dry" do
+		control "Dry" do
 			dry_struct.deconstruct_keys(keys)
 		end
 
-		baseline "Ruby Data" do
+		control "Ruby Data" do
 			normal_data.deconstruct_keys(keys)
 		end
 

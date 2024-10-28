@@ -2,11 +2,11 @@
 
 Awfy.group "Enum" do
 	report "Fetch" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor::RED
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor::RED
 		end
 
@@ -16,11 +16,11 @@ Awfy.group "Enum" do
 	end
 
 	report "value" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor.value(:RED)
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor.find_by_value("#FF0000")
 		end
 
@@ -30,11 +30,11 @@ Awfy.group "Enum" do
 	end
 
 	report "indexed" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor.key("#FF0000")
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor.find_by_value("#FF0000")
 		end
 
@@ -44,11 +44,11 @@ Awfy.group "Enum" do
 	end
 
 	report ".map" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor.map(&:itself)
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor.map(&:itself)
 		end
 
@@ -58,11 +58,11 @@ Awfy.group "Enum" do
 	end
 
 	report "#==" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor::RED == RubyEnumColor::RED
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor::RED == TypesafeEnumColor::RED
 		end
 
@@ -72,11 +72,11 @@ Awfy.group "Enum" do
 	end
 
 	report ".to_h" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor.to_h
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor.to_a
 		end
 
@@ -86,11 +86,11 @@ Awfy.group "Enum" do
 	end
 
 	report ".cast" do
-		baseline "Ruby::Enum" do
+		control "Ruby::Enum" do
 			RubyEnumColor.value(:RED)
 		end
 
-		baseline "TypesafeEnum" do
+		control "TypesafeEnum" do
 			TypesafeEnumColor.find_by_value("#FF0000")
 		end
 
