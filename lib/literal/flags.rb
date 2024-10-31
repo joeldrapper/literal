@@ -5,120 +5,148 @@ class Literal::Flags
 
 	def initialize(value = 0, **new_flags)
 		if new_flags.length > 0
-			flags = self.class.flags
-
-			value = new_flags.reduce(value) do |flag, (key, value)|
-				value ? flag | (2 ** flags.fetch(key)) : flag
-			end
+			value = self.class.calculate_from_hash(new_flags)
 		end
 
 		@value = value
+
+		freeze
 	end
 
 	attr_reader :value
 
-	class << self
-		def define(**flags)
-			raise ArgumentError if frozen?
-			unique_values = flags.values
-			unique_values.uniq!
-			raise ArgumentError if unique_values.length != flags.length
-			@max = unique_values.max
-			@flags = flags.dup.freeze
+	def self.define(**flags)
+		raise ArgumentError if frozen?
+		unique_values = flags.values
+		unique_values.uniq!
 
-			flags.each do |name, bit|
-				class_eval <<~RUBY, __FILE__, __LINE__ + 1
-					# frozen_string_literal: true
-
-					def #{name}=(value)
-						raise Literal::TypeError unless true == value || false == value
-
-						if value && @value & (2 ** #{bit}) == 0
-							@value |= 2 ** #{bit}
-						elsif !value && @value & (2 ** #{bit}) > 0
-							@value &= ~(2 ** #{bit})
-						end
-					end
-
-					def #{name}?
-						@value & (2 ** #{bit}) > 0
-					end
-				RUBY
-			end
-
-			freeze
+		if unique_values.length != flags.length
+			raise Literal::ArgumentError.new("Flags must be unique.")
 		end
 
-		def to_proc
-			proc { |value| new(value) }
+		const_set(:FLAGS, flags.dup.freeze)
+
+		flags.each do |name, bit|
+			class_eval <<~RUBY, __FILE__, __LINE__ + 1
+				# frozen_string_literal: true
+
+				def #{name}?
+					@value & (2 ** #{bit}) > 0
+				end
+			RUBY
 		end
 
-		def max
-			@max
-		end
+		freeze
+	end
 
-		def flags
-			@flags
-		end
+	# () -> (Integer) -> Literal::Flags
+	def self.to_proc
+		proc { |value| new(value) }
+	end
 
-		def keys
-			@flags.keys
-		end
+	# (Integer) -> String
+	def self.calculate_bit_string(value)
+		value.to_s(2).rjust(self::BITS, "0")
+	end
 
-		def bits
-			@flags.values
-		end
-
-		def bit_length
-			(2 ** @max).bit_length
-		end
-
-		def bytesize
-			(bit_length / 8.0).ceil
-		end
-
-		def from_bit_string(bit_string)
-			new(
-				bit_string.to_i(2),
-			)
-		end
-
-		def unpack(value, ...)
-			new(
-				value.unpack1(...),
-			)
+	# (Array(Boolean)) -> Integer
+	def self.calculate_from_array(array)
+		array.reverse_each.with_index.reduce(0) do |value, (bit, index)|
+			value | (bit ? 1 << index : 0)
 		end
 	end
 
+	# (Hash(Symbol, Boolean)) -> Integer
+	def self.calculate_from_hash(hash)
+		flags = self::FLAGS
+		hash.reduce(0) do |value, (key, bit)|
+			value | (bit ? 2 ** flags.fetch(key) : 0)
+		end
+	end
+
+	# (Integer) -> Array(Symbol)
+	def self.calculate_tokens(value)
+		flags = self::FLAGS
+		flags.keys.select { |t| value & (2 ** flags.fetch(t)) > 0 }
+	end
+
+	# (Integer) -> Array(Boolean)
+	def self.calculate_array(value)
+		bits = self::BITS
+		Array.new(bits) { |i| (value & (2 ** (bits - 1 - i)) > 0) }
+	end
+
+	# (Array(Symbol)) -> Integer
+	def self.calculate_from_tokens(tokens)
+		flags = self::FLAGS
+		tokens.reduce(0) { |f, t| f | (2 ** flags.fetch(t)) }
+	end
+
+	# (Integer) -> Hash(Symbol, Boolean)
+	def self.calculate_hash_from_value(value)
+		self::FLAGS.transform_values do |bit|
+			(value & (2 ** bit)) > 0
+		end
+	end
+
+	# () -> Array(Symbol)
+	def self.keys
+		@flags.keys
+	end
+
+	# (String) -> Literal::Flags
+	def self.from_bit_string(bit_string)
+		new(bit_string.to_i(2))
+	end
+
+	# (Array(Boolean)) -> Literal::Flags
+	def self.from_array(array)
+		if array.length != self::BITS
+			raise Literal::ArgumentError.new("The array must have #{self::BITS} items.")
+		end
+
+		new(calculate_from_array(array))
+	end
+
+	# (Array(Symbol)) -> Literal::Flags
+	def self.from_tokens(tokens)
+		new(calculate_from_tokens(tokens))
+	end
+
+	# (String) -> Integer
+	def self.unpack_int(value)
+		value.unpack1(self::PACKER)
+	end
+
+	# (String) -> Literal::Flags
+	def self.unpack(value)
+		new(unpack_int(value))
+	end
+
+	# () -> String
+	def pack
+		[@value].pack(self.class::PACKER)
+	end
+
+	# () -> String
 	def inspect
 		to_h.inspect
 	end
 
+	# () -> Hash(Symbol, Boolean)
 	def to_h
-		self.class.flags.transform_values do |bit|
-			@value & (2 ** bit) > 0
-		end
+		self.class.calculate_hash_from_value(@value)
 	end
 
 	def each
-		self.class.flags.each do |key, bit|
+		self.class::FLAGS.each do |key, bit|
 			yield key, @value & (2 ** bit) > 0
 		end
 	end
 
+	# (Symbol) -> Boolean
 	def [](key)
-		@value & (2 ** self.class.flags[key]) > 0
-	end
-
-	def []=(key, value)
-		raise Literal::TypeError unless true == value || false == value
-		bit = self.class.flags[key]
-
-		if value && @value & (2 ** bit) == 0
-			@value |= 2 ** bit
-		elsif !value && @value & (2 ** bit) > 0
-			@value &= ~(2 ** bit)
-		end
+		@value & (2 ** self.class::FLAGS.fetch(key)) > 0
 	end
 
 	def |(other)
@@ -139,44 +167,27 @@ class Literal::Flags
 		end
 	end
 
-	def merge(other)
-		dup.merge!(other)
-	end
-
-	def merge!(other)
-		other.each { |k, v| self[k] = v }
-	end
-
 	def to_i
 		@value
 	end
 
-	def to_bit_string(bits = nil)
-		bits ||= self.class.bytesize * 8
-		@value.to_s(2).rjust(bits, "0")
+	def to_bit_string
+		self.class.calculate_bit_string(@value)
 	end
 
-	def pack(...)
-		[@value].pack(...)
+	def to_tokens
+		self.class.calculate_tokens(@value)
 	end
 
 	def to_a
-		buffer = []
-
-		i, length = 0, self.class.max
-		while i <= length
-			buffer << (@value & (2 ** i) > 0)
-			i += 1
-		end
-
-		buffer
+		self.class.calculate_array(@value)
 	end
 
 	alias_method :deconstruct, :to_a
 
 	def deconstruct_keys(keys = nil)
 		if keys
-			flags = self.class.flags
+			flags = self.class::FLAGS
 			keys.to_h do |key|
 				[key, @value & (2 ** flags.fetch(key)) > 0]
 			end
@@ -184,4 +195,28 @@ class Literal::Flags
 			to_h
 		end
 	end
+end
+
+class Literal::Flags8 < Literal::Flags
+	BYTES = 1
+	BITS = BYTES * 8
+	PACKER = "C"
+end
+
+class Literal::Flags16 < Literal::Flags
+	BYTES = 2
+	BITS = BYTES * 8
+	PACKER = "S"
+end
+
+class Literal::Flags32 < Literal::Flags
+	BYTES = 4
+	BITS = BYTES * 8
+	PACKER = "L"
+end
+
+class Literal::Flags64 < Literal::Flags
+	BYTES = 8
+	BITS = BYTES * 8
+	PACKER = "Q"
 end

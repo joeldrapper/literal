@@ -14,6 +14,10 @@ module Literal
 	autoload :Struct, "literal/struct"
 	autoload :Types, "literal/types"
 	autoload :Flags, "literal/flags"
+	autoload :Flags8, "literal/flags"
+	autoload :Flags16, "literal/flags"
+	autoload :Flags32, "literal/flags"
+	autoload :Flags64, "literal/flags"
 
 	# Errors
 	autoload :Error, "literal/errors/error"
