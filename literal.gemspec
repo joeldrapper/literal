@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Joel Drapper"]
 	spec.email = ["joel@drapper.me"]
 
-	spec.summary = "A literal Ruby gem."
-	spec.description = "Enums, properties, generics, structured objects."
+	spec.summary = "Enums, properties, generics, structured objects and runtime type checking."
+	spec.description = "A literal Ruby gem."
 	spec.homepage = "https://literal.fun"
 	spec.license = "MIT"
 	spec.required_ruby_version = ">= 3.1"
