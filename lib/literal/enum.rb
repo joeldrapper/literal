@@ -142,8 +142,17 @@ class Literal::Enum
 			@values.fetch(...)
 		end
 
+		def coerce(value)
+			case value
+			when self
+				value
+			else
+				self[value]
+			end
+		end
+
 		def to_proc
-			method(:cast).to_proc
+			method(:coerce).to_proc
 		end
 
 		def to_h(*args)

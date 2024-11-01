@@ -44,11 +44,14 @@ test do
 	expect(Color::Red).to_be(:frozen?)
 	expect(Color[1]) == Color::Red
 	expect(Color.cast(1)) == Color::Red
+	expect(Color.coerce(1)) == Color::Red
+	expect(Color.coerce(Color::Red)) == Color::Red
 	expect(Color.to_set) == Set[Color::Red, Color::Green, Color::Blue]
 	expect(Color.to_h) == { 1 => Color::Red, 2 => Color::Green, 3 => Color::Blue }
 	expect(Color.to_a) == [Color::Red, Color::Green, Color::Blue] if RUBY_VERSION >= "3.2"
 	expect(Color.values) == [1, 2, 3] if RUBY_VERSION >= "3.2"
 	expect([3, 2, 1].map(&Color)) == [Color::Blue, Color::Green, Color::Red]
+	expect([Color::Red, 2].map(&Color)) == [Color::Red, Color::Green]
 
 	expect(Switch::Off.toggle) == Switch::On
 	expect(Switch::On.toggle) == Switch::Off
