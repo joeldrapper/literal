@@ -47,8 +47,10 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer(buffer = +"")
-		buffer << "alias initialize initialize\n"
-		buffer << "def initialize(#{generate_initializer_params})\n"
+		buffer << "alias initialize initialize\n" \
+			"def initialize("
+		generate_initializer_params(buffer)
+		buffer << ")\n"
 		generate_initializer_body(buffer)
 		buffer << "" \
 			"rescue Literal::TypeError => error\n" \
@@ -100,7 +102,7 @@ class Literal::Properties::Schema
 		i, n = 0, sorted_properties.size
 		while i < n
 			property = sorted_properties[i]
-			buffer << "  @" << property.name.name << " == other.#{property.escaped_name}"
+			buffer << "  @" << property.name.name << " == other." << property.escaped_name
 			buffer << " &&\n  " if i < n - 1
 			i += 1
 		end

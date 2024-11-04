@@ -38,7 +38,7 @@ module Literal::Types
 	NilableLambdaType = NilableType.new(LambdaType)
 	NilableProcableType = NilableType.new(ProcableType)
 
-	# Matches any value except `nil`. Use `_Any?` or `_Unit` to match any value including `nil`.
+	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	def _Any
 		AnyType
 	end

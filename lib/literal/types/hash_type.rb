@@ -18,4 +18,21 @@ class Literal::Types::HashType
 
 		true
 	end
+
+	def record_literal_type_errors(context)
+		unless Hash === context.actual
+			return
+		end
+
+		context.actual.each do |key, item|
+			unless @key_type === key
+				context.add_child(label: "[]", expected: @key_type, actual: key)
+				next
+			end
+
+			unless @value_type === item
+				context.add_child(label: "[#{key.inspect}]", expected: @value_type, actual: item)
+			end
+		end
+	end
 end

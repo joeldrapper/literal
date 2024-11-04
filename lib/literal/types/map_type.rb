@@ -22,8 +22,13 @@ class Literal::Types::MapType
 		end
 
 		context.actual.each do |key, item|
-			unless @shape[key] === item
-				context.add_child(label: "[#{key.inspect}]", expected: @shape[key], actual: item)
+			unless (expected = @shape[key])
+				context.add_child(label: "[]", expected: @shape.keys, actual: key)
+				next
+			end
+
+			unless expected === item
+				context.add_child(label: "[#{key.inspect}]", expected:, actual: item)
 			end
 		end
 	end

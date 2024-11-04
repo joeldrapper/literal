@@ -286,6 +286,9 @@ test "nested properties raise in initializer" do
 					person: Person.new("John", age: 30),
 					role: "Father",
 				},
+				{
+					1 => 2,
+				},
 			],
 		)
 	end.to_raise(Literal::TypeError) do |error|
@@ -302,6 +305,10 @@ test "nested properties raise in initializer" do
 			      [:role]
 			        Expected: Symbol
 			        Actual (String): "Father"
+			    [2]
+			      []
+			        Expected: [:person, :role]
+			        Actual (Integer): 1
 		ERROR
 	end
 

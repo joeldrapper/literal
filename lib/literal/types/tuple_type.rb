@@ -23,4 +23,20 @@ class Literal::Types::TupleType
 
 		true
 	end
+
+	def record_literal_type_errors(context)
+		return unless Array === context.actual
+
+		len = [@types.size, context.actual.size].max
+		i = 0
+		while i < len
+			actual = context.actual[i]
+			if !(expected = @types[i])
+				context.add_child(label: "[#{i}]", expected: Literal::Types::NeverType, actual:)
+			elsif !(expected === actual)
+				context.add_child(label: "[#{i}]", expected:, actual:)
+			end
+			i += 1
+		end
+	end
 end
