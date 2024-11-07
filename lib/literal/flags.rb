@@ -13,6 +13,11 @@ class Literal::Flags
 		freeze
 	end
 
+	def __initialize_from_value__(value)
+		@value = value
+		freeze
+	end
+
 	attr_reader :value
 
 	def self.define(**flags)
@@ -96,7 +101,7 @@ class Literal::Flags
 
 	# (String) -> Literal::Flags
 	def self.from_bit_string(bit_string)
-		new(bit_string.to_i(2))
+		from_int(bit_string.to_i(2))
 	end
 
 	# (Array(Boolean)) -> Literal::Flags
@@ -105,12 +110,17 @@ class Literal::Flags
 			raise Literal::ArgumentError.new("The array must have #{self::BITS} items.")
 		end
 
-		new(calculate_from_array(array))
+		from_int(calculate_from_array(array))
 	end
 
 	# (Array(Symbol)) -> Literal::Flags
 	def self.from_tokens(tokens)
-		new(calculate_from_tokens(tokens))
+		from_int(calculate_from_tokens(tokens))
+	end
+
+	# (Integer) -> Literal::Flags
+	def self.from_int(value)
+		allocate.__initialize_from_value__(value)
 	end
 
 	# (String) -> Integer
