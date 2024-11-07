@@ -25,6 +25,21 @@ class Literal::Types::ConstraintType
 		true
 	end
 
+	def record_literal_type_errors(context)
+		@object_constraints.each do |constraint|
+			next if constraint === context.actual
+
+			context.add_child(label: inspect, expected: constraint, actual: context.actual)
+		end
+
+		@property_constraints.each do |property, constraint|
+			actual = context.actual.public_send(property)
+			next if constraint === actual
+
+			context.add_child(label: ".#{property}", expected: constraint, actual:)
+		end
+	end
+
 	private
 
 	def inspect_constraints

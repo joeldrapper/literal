@@ -2,6 +2,14 @@
 
 include Literal::Types
 
+def expect_type_error(expected:, actual:, message:)
+	expect do
+		Literal.check(expected:, actual:)
+	end.to_raise(Literal::TypeError) do |error|
+		expect(error.message) == message
+	end
+end
+
 test "_Any" do
 	Fixtures::Objects.each do |object|
 		assert AnyType === object
@@ -46,6 +54,21 @@ test "_Constraint with object constraints" do
 
 	refute age_constraint === 17
 	refute age_constraint === 17.5
+
+	expect_type_error(expected: age_constraint, actual: 17, message: <<~MSG)
+		Type mismatch
+
+		    _Constraint(Integer, 18..)
+		      Expected: 18..
+		      Actual (Integer): 17
+	MSG
+	expect_type_error(expected: age_constraint, actual: 18.5, message: <<~MSG)
+		Type mismatch
+
+		    _Constraint(Integer, 18..)
+		      Expected: Integer
+		      Actual (Float): 18.5
+	MSG
 end
 
 test "_Constraint with property constraints" do
@@ -113,6 +136,17 @@ test "_Hash" do
 	refute _Hash(String, Integer) === { "a" => "1", "b" => 2 }
 	refute _Hash(String, Integer) === { 1 => 2, 3 => 4 }
 	refute _Hash(Symbol, String) === { "foo" => "bar", :baz => "qux" }
+
+	expect_type_error(expected: _Hash(Symbol, Integer), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
+  Type mismatch
+
+      []
+        Expected: Symbol
+        Actual (Integer): 1
+      [:a]
+        Expected: Integer
+        Actual (Symbol): :b
+		MSG
 end
 
 test "_Integer" do
@@ -146,6 +180,14 @@ test "_Intersection" do
 	assert type === Set.new
 
 	refute type === "string"
+
+	expect_type_error(actual: "string", expected: type, message: <<~MSG)
+  Type mismatch
+
+      _Intersection(_Interface(:size), _Interface(:each))
+        Expected: _Interface(:each)
+        Actual (String): "string"
+		MSG
 end
 
 test "_JSONData" do
@@ -280,6 +322,33 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === ["a", 1, 2]
 	refute _Tuple(String, Integer) === ["a"]
 	refute _Tuple(String, Integer) === nil
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: [1, "a"], message: <<~ERROR)
+		Type mismatch
+
+		    [0]
+		      Expected: String
+		      Actual (Integer): 1
+		    [1]
+		      Expected: Integer
+		      Actual (String): "a"
+	ERROR
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: ["a", 1, 2], message: <<~ERROR)
+		Type mismatch
+
+		    [2]
+		      Expected: _Never
+		      Actual (Integer): 2
+	ERROR
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: ["a"], message: <<~ERROR)
+  Type mismatch
+
+      [1]
+        Expected: Integer
+        Actual (NilClass): nil
+	ERROR
 end
 
 test "_Union matching" do

@@ -17,4 +17,12 @@ class Literal::Types::IntersectionType
 	def nil?
 		@types.all?(&:nil?)
 	end
+
+	def record_literal_type_errors(context)
+		@types.each do |type|
+			next if type === context.actual
+
+			context.add_child(label: inspect, expected: type, actual: context.actual)
+		end
+	end
 end
