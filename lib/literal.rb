@@ -18,6 +18,8 @@ module Literal
 	autoload :Flags16, "literal/flags"
 	autoload :Flags32, "literal/flags"
 	autoload :Flags64, "literal/flags"
+	autoload :Array, "literal/array"
+	autoload :ArrayGeneric, "literal/array"
 
 	# Errors
 	autoload :Error, "literal/errors/error"
@@ -28,6 +30,10 @@ module Literal
 		Class.new(Literal::Enum) do
 			prop :value, type, :positional
 		end
+	end
+
+	def self.Array(type)
+		Literal::ArrayGeneric.new(type)
 	end
 
 	def self.check(actual:, expected:)
