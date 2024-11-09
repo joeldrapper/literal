@@ -9,6 +9,10 @@ test "Array" do
 	expect { array << "1" }.to_raise
 	expect { array << 1 }.not_to_raise
 
+	expect {
+		Literal::Array(String).new(1, 2, 3)
+	}.to_raise(Literal::TypeError)
+
 	assert Literal::Array(Integer) === array
 	refute Literal::Array(String) === array
 end

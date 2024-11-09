@@ -14,16 +14,25 @@ class Literal::ArrayGeneric
 	def ===(value)
 		Literal::Array === value && @type == value.__type__
 	end
+
+	def inspect
+		"Literal::Array(#{@type.inspect})"
+	end
 end
 
 class Literal::Array
+	include Enumerable
+
 	def initialize(type, value)
-		unless Array === value && value.all?(type)
-			raise
+		collection_type = Literal::Types::ArrayType.new(type)
+
+		Literal.check(actual: value, expected: collection_type) do |c|
+			c.fill_receiver(receiver: self, method: "#initialize")
 		end
 
 		@__type__ = type
 		@__value__ = value
+		@__collection_type__ = collection_type
 	end
 
 	attr_reader :__type__
@@ -41,11 +50,38 @@ class Literal::Array
 	end
 
 	def <<(value)
-		unless @__type__ === value
-			raise
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#<<")
 		end
 
 		@__value__ << value
 		self
 	end
+
+	def push(value)
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#push")
+		end
+
+		@__value__.push(value)
+		self
+	end
+
+	def unshift(value)
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#unshift")
+		end
+
+		@__value__.unshift(value)
+		self
+	end
+
+	def to_a
+		@__value__.dup
+	end
+
+	alias_method :to_ary, :to_a
+
+	def pop(...) = @__value__.pop(...)
+	def shift(...) = @__value__.shift(...)
 end
