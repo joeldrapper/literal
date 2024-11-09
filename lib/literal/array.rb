@@ -35,7 +35,7 @@ class Literal::Array
 		@__collection_type__ = collection_type
 	end
 
-	attr_reader :__type__
+	attr_reader :__type__, :__value__
 
 	def each(...)
 		@__value__.each(...)
@@ -47,6 +47,14 @@ class Literal::Array
 
 	def [](index)
 		@__value__[index]
+	end
+
+	def []=(index, value)
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#[]=")
+		end
+
+		@__value__[index] = value
 	end
 
 	def <<(value)
