@@ -37,6 +37,11 @@ class Literal::Array
 
 	attr_reader :__type__, :__value__
 
+	def freeze
+		@__value__.freeze
+		super
+	end
+
 	def each(...)
 		@__value__.each(...)
 	end
