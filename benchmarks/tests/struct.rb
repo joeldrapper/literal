@@ -19,7 +19,7 @@ Awfy.group "Struct" do
 		end
 
 		control "ActiveModel::Attributes" do
-			ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
+			ActiveModelAttributesClass.new(first_name:, last_name:, age:)
 		end
 
 		test "Literal::Struct" do
@@ -31,7 +31,7 @@ Awfy.group "Struct" do
 		normal_class = NormalClass.new(first_name:, last_name:, age:)
 		dry_class = DryClass.new(first_name:, last_name:, age:)
 		normal_data = NormalData.new(first_name:, last_name:, age:)
-		active_model = ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
+		active_model = ActiveModelAttributesClass.new(first_name:, last_name:, age:)
 		literal = LiteralStruct.new(first_name:, last_name:, age:)
 
 		control "Ruby" do

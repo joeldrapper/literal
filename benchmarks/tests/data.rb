@@ -4,7 +4,7 @@ Awfy.group "Data" do
 	shared_values = {
 		first_name: "Joel",
 		last_name: "Drapper",
-		age: 29
+		age: 29,
 	}
 
 	report ".new" do

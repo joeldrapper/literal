@@ -25,17 +25,17 @@ Awfy.group "Properties" do
 			)
 		end
 
-		default = "default".freeze
+		default = "default"
 		test "property with default" do
-			example_class.prop(:name, String, default: default)
+			example_class.prop(:name, String, default:)
 		end
 
 		test "property with default and reader" do
-			example_class.prop(:name, String, default: default, reader: :public)
+			example_class.prop(:name, String, default:, reader: :public)
 		end
 
 		test "property with coercion" do
-			example_class.prop(:name, String) { |value| value.to_s }
+			example_class.prop(:name, String, &:to_s)
 		end
 	end
 
@@ -64,31 +64,31 @@ Awfy.group "Properties" do
 
 	report "object instantiation" do
 		control "Hash" do
-			{ first_name: first_name, last_name: last_name, age: age }
+			{ first_name:, last_name:, age: }
 		end
 
 		control "Ruby" do
-			NormalClass.new(first_name: name, last_name: name, age: age)
+			NormalClass.new(first_name: name, last_name: name, age:)
 		end
 
 		control "Dry" do
-			DryClass.new(first_name: name, last_name: name, age: age)
+			DryClass.new(first_name: name, last_name: name, age:)
 		end
 
 		control "ActiveModel" do
-			ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
+			ActiveModelAttributesClass.new(first_name:, last_name:, age:)
 		end
 
 		test "Literal" do
-			LiteralClass.new(first_name: name, last_name:, age: age)
+			LiteralClass.new(first_name: name, last_name:, age:)
 		end
 	end
 
-	hash_instance = { first_name: first_name, last_name: last_name, age: age }
-	literal_instance = LiteralClassWithReaders.new(first_name: name, last_name:, age: age)
-	dry_instance = DryClass.new(first_name: name, last_name: name, age: age)
-	normal_instance = NormalClass.new(first_name: name, last_name: name, age: age)
-	active_model_instance = ActiveModelAttributesClass.new(first_name: first_name, last_name: last_name, age: age)
+	hash_instance = { first_name:, last_name:, age: }
+	literal_instance = LiteralClassWithReaders.new(first_name: name, last_name:, age:)
+	dry_instance = DryClass.new(first_name: name, last_name: name, age:)
+	normal_instance = NormalClass.new(first_name: name, last_name: name, age:)
+	active_model_instance = ActiveModelAttributesClass.new(first_name:, last_name:, age:)
 
 	report "public property access" do
 		control "Hash" do
