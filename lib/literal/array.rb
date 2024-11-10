@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
-class Literal::ArrayGeneric
-	def initialize(type)
-		@type = type
-	end
-
-	def new(*value)
-		Literal::Array.new(@type, value)
-	end
-
-	alias_method :[], :new
-
-	def ===(value)
-		Literal::Array === value && @type == value.__type__
-	end
-
-	def inspect
-		"Literal::Array(#{@type.inspect})"
-	end
-end
-
 class Literal::Array
+	class Generic
+		def initialize(type)
+			@type = type
+		end
+
+		def new(*value)
+			Literal::Array.new(value, type: @type)
+		end
+
+		alias_method :[], :new
+
+		def ===(value)
+			Literal::Array === value && @type == value.__type__
+		end
+
+		def inspect
+			"Literal::Array(#{@type.inspect})"
+		end
+	end
+
 	include Enumerable
 
-	def initialize(type, value)
+	def initialize(value, type:)
 		collection_type = Literal::Types::ArrayType.new(type)
 
 		Literal.check(actual: value, expected: collection_type) do |c|
@@ -47,7 +47,7 @@ class Literal::Array
 	end
 
 	def map(type, &)
-		Literal::Array.new(type, @__value__.map(&))
+		Literal::Array.new(@__value__.map(&), type:)
 	end
 
 	def [](index)

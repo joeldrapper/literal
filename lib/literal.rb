@@ -3,23 +3,24 @@
 module Literal
 	TYPE_CHECKS_DISABLED = ENV["LITERAL_TYPE_CHECKS"] == "false"
 
+	autoload :Array, "literal/array"
 	autoload :Data, "literal/data"
 	autoload :DataProperty, "literal/data_property"
 	autoload :DataStructure, "literal/data_structure"
 	autoload :Enum, "literal/enum"
+	autoload :Flags, "literal/flags"
+	autoload :Flags16, "literal/flags"
+	autoload :Flags32, "literal/flags"
+	autoload :Flags64, "literal/flags"
+	autoload :Flags8, "literal/flags"
+	autoload :Hash, "literal/hash"
 	autoload :Null, "literal/null"
 	autoload :Object, "literal/object"
 	autoload :Properties, "literal/properties"
 	autoload :Property, "literal/property"
+	autoload :Set, "literal/set"
 	autoload :Struct, "literal/struct"
 	autoload :Types, "literal/types"
-	autoload :Flags, "literal/flags"
-	autoload :Flags8, "literal/flags"
-	autoload :Flags16, "literal/flags"
-	autoload :Flags32, "literal/flags"
-	autoload :Flags64, "literal/flags"
-	autoload :Array, "literal/array"
-	autoload :ArrayGeneric, "literal/array"
 
 	# Errors
 	autoload :Error, "literal/errors/error"
@@ -33,7 +34,15 @@ module Literal
 	end
 
 	def self.Array(type)
-		Literal::ArrayGeneric.new(type)
+		Literal::Array::Generic.new(type)
+	end
+
+	def self.Set(type)
+		Literal::Set::Generic.new(type)
+	end
+
+	def self.Hash(key_type, value_type)
+		Literal::Hash::Generic.new(key_type, value_type)
 	end
 
 	def self.check(actual:, expected:)
