@@ -68,3 +68,17 @@ test "#<< raises if the type is wrong" do
 
 	expect { array << "4" }.to_raise(Literal::TypeError)
 end
+
+test "#& performs bitwise AND with another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(2, 3, 4)
+
+	expect((array & other).to_a) == [2, 3]
+end
+
+test "#& performs bitwise AND with an Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [2, 3, 4]
+
+	expect((array & other).to_a) == [2, 3]
+end
