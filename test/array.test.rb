@@ -90,3 +90,22 @@ test "#sort sorts the array" do
 	assert Literal::Array(Integer) === result
 	expect(array.sort.to_a) == [1, 2, 3]
 end
+
+test "#push appends single value" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.push(4)).to_a) == [1, 2, 3, 4]
+end
+
+test "#push appends multiple values" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.push(4, 5)).to_a) == [1, 2, 3, 4, 5]
+end
+
+test "#push raises if any type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.push("4") }.to_raise(Literal::TypeError)
+	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
+end

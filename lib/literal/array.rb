@@ -176,12 +176,17 @@ class Literal::Array
 		@__value__.pop(...)
 	end
 
-	def push(value)
-		Literal.check(actual: value, expected: @__type__) do |c|
-			c.fill_receiver(receiver: self, method: "#push")
+	def push(*value)
+		case value
+		when ::Array
+			Literal::Array(@__type__).new(*value)
+		else
+			Literal.check(actual: value, expected: @__type__) do |c|
+				c.fill_receiver(receiver: self, method: "#push")
+			end
 		end
 
-		@__value__.push(value)
+		@__value__.push(*value)
 		self
 	end
 
