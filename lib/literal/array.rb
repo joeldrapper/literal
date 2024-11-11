@@ -77,6 +77,15 @@ class Literal::Array
 		end
 	end
 
+	def *(times)
+		case times
+		when String
+			@__value__ * times
+		else
+			__with__(@__value__ * times)
+		end
+	end
+
 	def <<(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")

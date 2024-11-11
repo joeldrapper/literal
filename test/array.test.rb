@@ -103,6 +103,26 @@ test "#& performs bitwise AND with an Array" do
 	expect((array & other).to_a) == [2, 3]
 end
 
+test "#* with an integer multiplies the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	result = array * 2
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 1, 2, 3]
+end
+
+test "#* raises with a negative integer" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array * -1 }.to_raise(ArgumentError)
+end
+
+test "#* with a string joins the elements" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array * ",") == "1,2,3"
+end
+
 test "#sort sorts the array" do
 	array = Literal::Array(Integer).new(3, 2, 1)
 
