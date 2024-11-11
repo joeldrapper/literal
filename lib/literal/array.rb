@@ -231,4 +231,6 @@ class Literal::Array
 		@__value__.unshift(value)
 		self
 	end
+
+	alias_method :prepend, :unshift
 end
