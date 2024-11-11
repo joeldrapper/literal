@@ -52,17 +52,24 @@ class Literal::Array
 
 	attr_reader :__type__, :__value__
 
-	def freeze
-		@__value__.freeze
-		super
+	def &(other)
+		case other
+		when ::Array
+			__with__(@__value__ & other)
+		when Literal::Array
+			__with__(@__value__ & other.__value__)
+		else
+			raise ArgumentError.new("Cannot perform bitwise AND with #{other.class.name}.")
+		end
 	end
 
-	def each(...)
-		@__value__.each(...)
-	end
+	def <<(value)
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#<<")
+		end
 
-	def map(type, &)
-		Literal::Array.new(@__value__.map(&), type:)
+		@__value__ << value
+		self
 	end
 
 	def [](index)
@@ -77,24 +84,62 @@ class Literal::Array
 		@__value__[index] = value
 	end
 
-	def <<(value)
-		Literal.check(actual: value, expected: @__type__) do |c|
-			c.fill_receiver(receiver: self, method: "#<<")
-		end
+	def all?(...)
+		@__value__.all?(...)
+	end
 
-		@__value__ << value
+	def any?(...)
+		@__value__.any?(...)
+	end
+
+	def at(...)
+		@__value__.at(...)
+	end
+
+	def bsearch(...)
+		@__value__.bsearch(...)
+	end
+
+	def clear(...)
+		@__value__.clear(...)
 		self
 	end
 
-	def &(other)
-		case other
-		when ::Array
-			__with__(@__value__ & other)
-		when Literal::Array
-			__with__(@__value__ & other.__value__)
-		else
-			raise ArgumentError.new("Cannot perform bitwise AND with #{other.class.name}.")
-		end
+	def count(...)
+		@__value__.count(...)
+	end
+
+	def each(...)
+		@__value__.each(...)
+	end
+
+	def first(...)
+		@__value__.first(...)
+	end
+
+	def freeze
+		@__value__.freeze
+		super
+	end
+
+	def last(...)
+		@__value__.last(...)
+	end
+
+	def length(...)
+		@__value__.length(...)
+	end
+
+	def map(type, &)
+		Literal::Array.new(@__value__.map(&), type:)
+	end
+
+	def one?(...)
+		@__value__.one?(...)
+	end
+
+	def pop(...)
+		@__value__.pop(...)
 	end
 
 	def push(value)
@@ -106,12 +151,24 @@ class Literal::Array
 		self
 	end
 
-	def unshift(value)
-		Literal.check(actual: value, expected: @__type__) do |c|
-			c.fill_receiver(receiver: self, method: "#unshift")
-		end
+	def sample(...)
+		@__value__.sample(...)
+	end
 
-		@__value__.unshift(value)
+	def shift(...)
+		@__value__.shift(...)
+	end
+
+	def size(...)
+		@__value__.size(...)
+	end
+
+	def sort(...)
+		__with__(@__value__.sort(...))
+	end
+
+	def sort!(...)
+		@__value__.sort!(...)
 		self
 	end
 
@@ -121,31 +178,12 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
-	def sort(...)
-		__with__(@__value__.sort(...))
-	end
+	def unshift(value)
+		Literal.check(actual: value, expected: @__type__) do |c|
+			c.fill_receiver(receiver: self, method: "#unshift")
+		end
 
-	def clear(...)
-		@__value__.clear(...)
+		@__value__.unshift(value)
 		self
 	end
-
-	def sort!(...)
-		@__value__.sort!(...)
-		self
-	end
-
-	def all?(...) = @__value__.all?(...)
-	def any?(...) = @__value__.any?(...)
-	def at(...) = @__value__.at(...)
-	def bsearch(...) = @__value__.bsearch(...)
-	def count(...) = @__value__.count(...)
-	def first(...) = @__value__.first(...)
-	def last(...) = @__value__.last(...)
-	def length(...) = @__value__.length(...)
-	def pop(...) = @__value__.pop(...)
-	def sample(...) = @__value__.sample(...)
-	def shift(...) = @__value__.shift(...)
-	def size(...) = @__value__.size(...)
-	def one?(...) = @__value__.one?(...)
 end
