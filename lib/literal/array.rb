@@ -147,6 +147,26 @@ class Literal::Array
 		Literal::Array.new(@__value__.map(&), type:)
 	end
 
+	def min(n = nil, &)
+		if n
+			__with__(@__value__.min(n, &))
+		else
+			@__value__.min(&)
+		end
+	end
+
+	def max(n = nil, &)
+		if n
+			__with__(@__value__.max(n, &))
+		else
+			@__value__.max(&)
+		end
+	end
+
+	def minmax(...)
+		__with__(@__value__.minmax(...))
+	end
+
 	def one?(...)
 		@__value__.one?(...)
 	end
