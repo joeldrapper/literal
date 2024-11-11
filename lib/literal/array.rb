@@ -35,6 +35,13 @@ class Literal::Array
 		@__collection_type__ = collection_type
 	end
 
+	def __initialize_without_check__(value, type:, collection_type:)
+		@__type__ = type
+		@__value__ = value
+		@__collection_type__ = type
+		self
+	end
+
 	attr_reader :__type__, :__value__
 
 	def freeze
@@ -69,6 +76,25 @@ class Literal::Array
 
 		@__value__ << value
 		self
+	end
+
+	def &(other)
+		case other
+		when ::Array
+			Literal::Array.allocate.__initialize_without_check__(
+				@__value__ & other,
+				type: @__type__,
+				collection_type: @__collection_type__
+			)
+		when Literal::Array
+			Literal::Array.allocate.__initialize_without_check__(
+				@__value__ & other.__value__,
+				type: @__type__,
+				collection_type: @__collection_type__
+			)
+		else
+			raise ArgumentError.new("Cannot perform bitwise AND with #{other.class.name}.")
+		end
 	end
 
 	def push(value)
