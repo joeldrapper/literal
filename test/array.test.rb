@@ -123,6 +123,33 @@ test "#* with a string joins the elements" do
 	expect(array * ",") == "1,2,3"
 end
 
+test "#+ adds another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(4, 5)
+
+	result = array + other
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 4, 5]
+end
+
+test "#+ adds an array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [4, 5]
+
+	result = array + other
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 4, 5]
+end
+
+test "#+ raises if the type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(String).new("a", "b")
+	other_primitive = ["a", "b"]
+
+	expect { array + other }.to_raise(Literal::TypeError)
+	expect { array + other_primitive }.to_raise(Literal::TypeError)
+end
+
 test "#sort sorts the array" do
 	array = Literal::Array(Integer).new(3, 2, 1)
 

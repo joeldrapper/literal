@@ -86,6 +86,19 @@ class Literal::Array
 		end
 	end
 
+	def +(other)
+		case other
+		when ::Array
+			other = Literal::Array(@__type__).new(*other)
+		when Literal::Array
+			# Do nothing
+		else
+			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
+		end
+
+		Literal::Array.new(@__value__ + other.__value__, type: @__type__)
+	end
+
 	def <<(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")
