@@ -113,6 +113,19 @@ class Literal::Array
 		@__value__.each(...)
 	end
 
+	def empty?
+		@__value__.empty?
+	end
+
+	def filter(...)
+		__with__(@__value__.filter(...))
+	end
+
+	def filter!(...)
+		@__value__.filter!(...)
+		self
+	end
+
 	def first(...)
 		@__value__.first(...)
 	end
@@ -148,6 +161,15 @@ class Literal::Array
 		end
 
 		@__value__.push(value)
+		self
+	end
+
+	def reject(...)
+		__with__(@__value__.reject(...))
+	end
+
+	def reject!(...)
+		@__value__.reject!(...)
 		self
 	end
 
