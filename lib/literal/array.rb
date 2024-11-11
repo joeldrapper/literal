@@ -46,12 +46,14 @@ class Literal::Array
 		@__type__ = type
 		@__value__ = value
 		@__collection_type__ = collection_type
+		@__generic__ = Literal::Array(type)
 	end
 
 	def __initialize_without_check__(value, type:, collection_type:)
 		@__type__ = type
 		@__value__ = value
 		@__collection_type__ = collection_type
+		@__generic__ = Literal::Array(type)
 		self
 	end
 
@@ -89,7 +91,7 @@ class Literal::Array
 	def +(other)
 		case other
 		when ::Array
-			other = Literal::Array(@__type__).new(*other)
+			other = @__generic__.new(*other)
 		when Literal::Array
 			# Do nothing
 		else
