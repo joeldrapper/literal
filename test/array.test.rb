@@ -109,3 +109,22 @@ test "#push raises if any type is wrong" do
 	expect { array.push("4") }.to_raise(Literal::TypeError)
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
 end
+
+test "#insert inserts single element at index offset" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.insert(1, 4)).to_a) == [1, 4, 2, 3]
+end
+
+test "#insert inserts multiple elements at index offset" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.insert(1, 4, 5, 6)).to_a) == [1, 4, 5, 6, 2, 3]
+end
+
+test "#insert raises if any type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.insert(1, "4") }.to_raise(Literal::TypeError)
+	expect { array.insert(1, 4, "5", 6) }.to_raise(Literal::TypeError)
+end

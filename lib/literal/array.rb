@@ -136,6 +136,15 @@ class Literal::Array
 		super
 	end
 
+	def insert(index, *value)
+		Literal.check(actual: value, expected: @__collection_type__) do |c|
+			c.fill_receiver(receiver: self, method: "#insert")
+		end
+
+		@__value__.insert(index, *value)
+		self
+	end
+
 	def last(...)
 		@__value__.last(...)
 	end
