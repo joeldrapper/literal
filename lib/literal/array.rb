@@ -190,6 +190,8 @@ class Literal::Array
 		self
 	end
 
+	alias_method :append, :push
+
 	def reject(...)
 		__with__(@__value__.reject(...))
 	end
