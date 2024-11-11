@@ -99,6 +99,17 @@ class Literal::Array
 		Literal::Array.new(@__value__ + other.__value__, type: @__type__)
 	end
 
+	def -(other)
+		case other
+		when ::Array
+			__with__(@__value__ - other)
+		when Literal::Array
+			__with__(@__value__ - other.__value__)
+		else
+			raise ArgumentError.new("Cannot perform `-` with #{other.class.name}.")
+		end
+	end
+
 	def <<(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")

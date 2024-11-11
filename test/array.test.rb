@@ -150,6 +150,22 @@ test "#+ raises if the type is wrong" do
 	expect { array + other_primitive }.to_raise(Literal::TypeError)
 end
 
+test "#- removes elements from another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(1)
+
+	result = array - other
+	expect(result.to_a) == [2, 3]
+end
+
+test "#- removes elements from an array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [1]
+
+	result = array - other
+	expect(result.to_a) == [2, 3]
+end
+
 test "#sort sorts the array" do
 	array = Literal::Array(Integer).new(3, 2, 1)
 
