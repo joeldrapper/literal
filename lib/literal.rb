@@ -20,6 +20,7 @@ module Literal
 	autoload :Property, "literal/property"
 	autoload :Set, "literal/set"
 	autoload :Struct, "literal/struct"
+	autoload :Type, "literal/type"
 	autoload :Types, "literal/types"
 
 	# Errors
