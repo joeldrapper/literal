@@ -125,6 +125,8 @@ class Literal::Array
 		__with__(@__value__.sort(...))
 	end
 
+	def any?(...) = @__value__.any?(...)
+	def all?(...) = @__value__.all?(...)
 	def sample(...) = @__value__.sample(...)
 	def sort!(...) = @__value__.sort!(...)
 	def pop(...) = @__value__.pop(...)
