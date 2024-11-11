@@ -177,13 +177,8 @@ class Literal::Array
 	end
 
 	def push(*value)
-		case value
-		when ::Array
-			Literal::Array(@__type__).new(*value)
-		else
-			Literal.check(actual: value, expected: @__type__) do |c|
-				c.fill_receiver(receiver: self, method: "#push")
-			end
+		Literal.check(actual: value, expected: @__collection_type__) do |c|
+			c.fill_receiver(receiver: self, method: "#push")
 		end
 
 		@__value__.push(*value)
