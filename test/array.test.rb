@@ -82,3 +82,11 @@ test "#& performs bitwise AND with an Array" do
 
 	expect((array & other).to_a) == [2, 3]
 end
+
+test "#sort sorts the array" do
+	array = Literal::Array(Integer).new(3, 2, 1)
+
+	result = array.sort
+	assert Literal::Array(Integer) === result
+	expect(array.sort.to_a) == [1, 2, 3]
+end
