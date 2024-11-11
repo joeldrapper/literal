@@ -125,10 +125,27 @@ class Literal::Array
 		__with__(@__value__.sort(...))
 	end
 
-	def any?(...) = @__value__.any?(...)
+	def clear(...)
+		@__value__.clear(...)
+		self
+	end
+
+	def sort!(...)
+		@__value__.sort!(...)
+		self
+	end
+
 	def all?(...) = @__value__.all?(...)
-	def sample(...) = @__value__.sample(...)
-	def sort!(...) = @__value__.sort!(...)
+	def any?(...) = @__value__.any?(...)
+	def at(...) = @__value__.at(...)
+	def bsearch(...) = @__value__.bsearch(...)
+	def count(...) = @__value__.count(...)
+	def first(...) = @__value__.first(...)
+	def last(...) = @__value__.last(...)
+	def length(...) = @__value__.length(...)
 	def pop(...) = @__value__.pop(...)
+	def sample(...) = @__value__.sample(...)
 	def shift(...) = @__value__.shift(...)
+	def size(...) = @__value__.size(...)
+	def one?(...) = @__value__.one?(...)
 end
