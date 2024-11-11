@@ -42,6 +42,7 @@ class Literal::Array
 		self
 	end
 
+	# Used to create a new Literal::Array with the same type and collection type but a new value. The value is not checked.
 	def __with__(value)
 		Literal::Array.allocate.__initialize_without_check__(
 			value,
