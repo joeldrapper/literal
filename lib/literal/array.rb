@@ -222,6 +222,11 @@ class Literal::Array
 		end
 	end
 
+	def map!(&)
+    new_array = map(@__type__, &)
+    @__value__ = new_array.__value__
+	end
+
 	def max(n = nil, &)
 		if n
 			__with__(@__value__.max(n, &))

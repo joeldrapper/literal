@@ -50,6 +50,18 @@ test "#map raises if the type is wrong" do
 	}.to_raise(Literal::TypeError)
 end
 
+test "#map! maps each item correctly" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.map!(&:succ).to_a) == [2, 3, 4]
+end
+
+test "map! raises if the type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.map!(&:to_s) }.to_raise(Literal::TypeError)
+end
+
 test "#[]" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
