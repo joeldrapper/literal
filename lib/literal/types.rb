@@ -32,7 +32,7 @@ module Literal::Types
 	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
 
-	NilableBooleanType = NilableType.new(BooleanType)
+	NilableBooleanType = NilableType.new(BooleanType::Instance)
 	NilableCallableType = NilableType.new(CallableType)
 	NilableJSONDataType = NilableType.new(JSONDataType)
 	NilableLambdaType = NilableType.new(LambdaType)
@@ -61,7 +61,7 @@ module Literal::Types
 
 	# Matches if the value is `true` or `false`.
 	def _Boolean
-		BooleanType
+		BooleanType::Instance
 	end
 
 	# Nilable version of `_Boolean`
