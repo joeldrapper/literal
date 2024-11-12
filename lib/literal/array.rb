@@ -247,6 +247,7 @@ class Literal::Array
 	def map!(&)
 		new_array = map(@__type__, &)
 		@__value__ = new_array.__value__
+		self
 	end
 
 	def max(n = nil, &)
