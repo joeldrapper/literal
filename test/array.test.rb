@@ -228,3 +228,16 @@ test "#assoc returns the correct element" do
 	expect(array.assoc(1)) == [1, 2]
 	expect(array.assoc(3)) == [3, 4]
 end
+
+test "#compact returns a new Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.compact.to_a) == [1, 2, 3]
+	expect(array.compact) != array
+end
+
+test "#compact! returns nil" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.compact!) == nil
+end

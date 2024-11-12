@@ -91,14 +91,26 @@ class Literal::Array
 	def +(other)
 		case other
 		when ::Array
-			other = @__generic__.new(*other)
+			values = @__value__ + @__generic__.new(*other).__value__
 		when Literal::Array
-			# Do nothing
+			values = @__value__ + other.__value__
+		else
+			raise ArgumentError, "Cannot perform `+` with #{other.class.name}."
+		end
+
+		Literal::Array.new(values, type: @__type__)
+	end
+
+	def +(other)
+		case other
+		when ::Array
+			other = @__generic__.new(*other)
+			Literal::Array.new(@__value__ + other.__value__, type: @__type__)
+		when Literal::Array
+			Literal::Array.new(@__value__ + other.__value__, type: @__type__)
 		else
 			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
 		end
-
-		Literal::Array.new(@__value__ + other.__value__, type: @__type__)
 	end
 
 	def -(other)
@@ -169,6 +181,16 @@ class Literal::Array
 		self
 	end
 
+	def compact
+		# @TODO if this is an array of nils, we should return an emtpy array
+		__with__(@__value__)
+	end
+
+	def compact!
+		# @TODO if this is an array of nils, we should set @__value__ = [] and return self
+		nil
+	end
+
 	def count(...)
 		@__value__.count(...)
 	end
@@ -223,8 +245,8 @@ class Literal::Array
 	end
 
 	def map!(&)
-    new_array = map(@__type__, &)
-    @__value__ = new_array.__value__
+		new_array = map(@__type__, &)
+		@__value__ = new_array.__value__
 	end
 
 	def max(n = nil, &)
