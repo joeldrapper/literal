@@ -121,6 +121,17 @@ class Literal::Array
 		self
 	end
 
+	def <=>(other)
+		case other
+		when ::Array
+			@__value__ <=> other
+		when Literal::Array
+			@__value__ <=> other.__value__
+		else
+			raise ArgumentError.new("Cannot perform `<=>` with #{other.class.name}.")
+		end
+	end
+
 	def [](index)
 		@__value__[index]
 	end

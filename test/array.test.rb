@@ -166,6 +166,23 @@ test "#- removes elements from an array" do
 	expect(result.to_a) == [2, 3]
 end
 
+test "#<=> works as expected" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array <=> [1, 2, 4]) == -1
+	expect(array <=> [1, 2, 2]) == 1
+	expect(array <=> [1, 2, 3, 4]) == -1
+	expect(array <=> [1, 2]) == 1
+	expect(array <=> [1, 2, 3]) == 0
+end
+
+test "#<=> works with another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(1, 2, 4)
+
+	expect(array <=> other) == -1
+end
+
 test "#sort sorts the array" do
 	array = Literal::Array(Integer).new(3, 2, 1)
 
