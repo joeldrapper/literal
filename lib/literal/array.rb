@@ -152,6 +152,10 @@ class Literal::Array
 		@__value__.any?(...)
 	end
 
+	def assoc(...)
+		@__value__.assoc(...)
+	end
+
 	def at(...)
 		@__value__.at(...)
 	end

@@ -209,3 +209,10 @@ test "#push raises if any type is wrong" do
 	expect { array.push("4") }.to_raise(Literal::TypeError)
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
 end
+
+test "#assoc returns the correct element" do
+	array = Literal::Array(Array).new([1, 2], [3, 4])
+
+	expect(array.assoc(1)) == [1, 2]
+	expect(array.assoc(3)) == [3, 4]
+end
