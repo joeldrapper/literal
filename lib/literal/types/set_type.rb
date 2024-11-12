@@ -17,4 +17,14 @@ class Literal::Types::SetType
 
 		true
 	end
+
+	def record_literal_type_errors(context)
+		return unless Set === context.actual
+
+		context.actual.each do |actual|
+			unless @type === actual
+				context.add_child(label: "[]", expected: @type, actual:)
+			end
+		end
+	end
 end
