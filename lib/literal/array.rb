@@ -38,7 +38,7 @@ class Literal::Array
 	def __initialize_without_check__(value, type:, collection_type:)
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = type
+		@__collection_type__ = collection_type
 		self
 	end
 
