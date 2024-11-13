@@ -1,5 +1,25 @@
 # frozen_string_literal: true
 
+include Literal::Types
+
+test "===" do
+	assert Literal::Array(_Boolean) === Literal::Array(true).new(true)
+	assert Literal::Array(Object) === Literal::Array(Integer).new(1)
+	assert Literal::Array(Numeric) === Literal::Array(Integer).new(1)
+	assert Literal::Array(Numeric) === Literal::Array(Float).new(1.0)
+
+	assert Literal::Array(
+		Literal::Array(Numeric)
+	) === Literal::Array(
+		Literal::Array(Integer)
+	).new(
+		Literal::Array(Integer).new(1)
+	)
+
+	refute Literal::Array(true) === Literal::Array(_Boolean).new(true, false)
+	refute Literal::Array(Integer) === Literal::Array(Numeric).new(1, 1.234)
+end
+
 test "#initialize" do
 	expect {
 		Literal::Array(String).new(1, 2, 3)
