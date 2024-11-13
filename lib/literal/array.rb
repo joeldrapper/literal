@@ -101,18 +101,6 @@ class Literal::Array
 		Literal::Array.new(values, type: @__type__)
 	end
 
-	def +(other)
-		case other
-		when ::Array
-			other = @__generic__.new(*other)
-			Literal::Array.new(@__value__ + other.__value__, type: @__type__)
-		when Literal::Array
-			Literal::Array.new(@__value__ + other.__value__, type: @__type__)
-		else
-			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
-		end
-	end
-
 	def -(other)
 		case other
 		when ::Array
