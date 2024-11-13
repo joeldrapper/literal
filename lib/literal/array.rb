@@ -2,9 +2,13 @@
 
 class Literal::Array
 	class Generic
+		include Literal::Type
+
 		def initialize(type)
 			@type = type
 		end
+
+		attr_reader :type
 
 		def new(*value)
 			Literal::Array.new(value, type: @type)
@@ -13,7 +17,16 @@ class Literal::Array
 		alias_method :[], :new
 
 		def ===(value)
-			Literal::Array === value && @type == value.__type__
+			Literal::Array === value && Literal.subtype?(value.__type__, of: @type)
+		end
+
+		def <=>(other)
+			case other
+			when Literal::Array::Generic
+				@type <=> other.type
+			else
+				-1
+			end
 		end
 
 		def inspect

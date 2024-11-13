@@ -56,6 +56,17 @@ module Literal
 			raise Literal::TypeError.new(context:)
 		end
 	end
+
+	def self.subtype?(type, of:)
+		of == type || (
+			case of
+			when Literal::Type, Module
+				of >= type
+			else
+				false
+			end
+		)
+	end
 end
 
 require_relative "literal/rails" if defined?(Rails)
