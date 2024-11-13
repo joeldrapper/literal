@@ -39,6 +39,13 @@ class Literal::Types::UnionType
 		end
 	end
 
+	def record_literal_type_errors(ctx)
+		@types.each do |type|
+			ctx.add_child(label: type.inspect, expected: type, actual: ctx.actual)
+		end
+		ctx.children.clear if ctx.children.none? { |c| c.children.any? }
+	end
+
 	protected
 
 	attr_reader :types
