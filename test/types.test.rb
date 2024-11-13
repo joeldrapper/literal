@@ -299,7 +299,7 @@ test "_Map" do
 	MSG
 
 	object_keys_map = _Map(**{ 1 => Integer, "2" => String, :symbol => _Nilable(Symbol) })
-	expect(object_keys_map.inspect) == "_Map({1=>Integer, \"2\"=>String, :symbol=>_Nilable(Symbol)})"
+	expect(object_keys_map.inspect) == "_Map(#{{ 1 => Integer, '2' => String, :symbol => _Nilable(Symbol) }.inspect})"
 	expect(object_keys_map) === { 1 => 2, "2" => "string" }
 	expect(object_keys_map) === { 1 => 2, "2" => "string", :symbol => :foo }
 	refute object_keys_map === {}
