@@ -51,7 +51,7 @@ class Literal::Array
 	def __initialize_without_check__(value, type:, collection_type:)
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = type
+		@__collection_type__ = collection_type
 		self
 	end
 
@@ -157,8 +157,19 @@ class Literal::Array
 		@__value__.length(...)
 	end
 
-	def map(type, &)
-		Literal::Array.new(@__value__.map(&), type:)
+	def map(type, &block)
+		my_type = @__type__
+		transform_type = Literal::TRANSFORMS.dig(my_type, block)
+
+		if transform_type && Literal.subtype?(transform_type, of: my_type)
+			Literal::Array.allocate.__initialize_without_check__(
+				@__value__.map(&block),
+				type:,
+				collection_type: Literal::Types::ArrayType.new(type),
+			)
+		else
+			Literal::Array.new(@__value__.map(&block), type:)
+		end
 	end
 
 	def max(n = nil, &)

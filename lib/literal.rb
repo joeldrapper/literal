@@ -28,6 +28,47 @@ module Literal
 	autoload :TypeError, "literal/errors/type_error"
 	autoload :ArgumentError, "literal/errors/argument_error"
 
+	TRANSFORMS = {
+		Integer => {
+			:abs.to_proc => Integer,
+			:ceil.to_proc => Integer,
+			:chr.to_proc => String,
+			:denominator.to_proc => Integer,
+			:floor.to_proc => Integer,
+			:hash.to_proc => Integer,
+			:magnitude.to_proc => Integer,
+			:next.to_proc => Integer,
+			:numerator.to_proc => Integer,
+			:ord.to_proc => Integer,
+			:pred.to_proc => Integer,
+			:round.to_proc => Integer,
+			:size.to_proc => Integer,
+			:succ.to_proc => Integer,
+			:to_i.to_proc => Integer,
+			:to_int.to_proc => Integer,
+			:to_s.to_proc => String,
+			:truncate.to_proc => Integer,
+			:inspect.to_proc => String,
+			:to_s.to_proc => String,
+			:to_f.to_proc => Float,
+			:even?.to_proc => Types::BooleanType::Instance,
+			:integer?.to_proc => true,
+			:negative?.to_proc => Types::BooleanType::Instance,
+			:odd?.to_proc => Types::BooleanType::Instance,
+			:positive?.to_proc => Types::BooleanType::Instance,
+			:zero?.to_proc => Types::BooleanType::Instance,
+			:nonzero?.to_proc => Types::BooleanType::Instance,
+			:to_r.to_proc => Rational,
+		},
+		String => {
+			:length.to_proc => Integer,
+		},
+		Array => {
+			:size.to_proc => Integer,
+			:length.to_proc => Integer,
+		},
+	}
+
 	def self.Enum(type)
 		Class.new(Literal::Enum) do
 			prop :value, type, :positional
