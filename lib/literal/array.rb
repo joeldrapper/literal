@@ -95,7 +95,7 @@ class Literal::Array
 		when Literal::Array
 			values = @__value__ + other.__value__
 		else
-			raise ArgumentError, "Cannot perform `+` with #{other.class.name}."
+			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
 		end
 
 		Literal::Array.new(values, type: @__type__)
@@ -361,11 +361,10 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
-
 	def uniq!(...)
 		@__value__.uniq!(...) ? self : nil
-  end
-  
+	end
+
 	def uniq
 		__with__(@__value__.uniq)
 	end

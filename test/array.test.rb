@@ -229,7 +229,6 @@ test "#push raises if any type is wrong" do
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
 end
 
-
 test "#assoc returns the correct element" do
 	array = Literal::Array(Array).new([1, 2], [3, 4])
 
@@ -241,7 +240,7 @@ test "#compact returns a new Literal::Array" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
 	expect(array.compact.to_a) == [1, 2, 3]
-	expect(array.compact) != array
+	assert Literal::Array(Integer) === array.compact
 end
 
 test "#compact! returns nil" do
