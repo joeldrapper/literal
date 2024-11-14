@@ -20,12 +20,21 @@ class Literal::Array
 			Literal::Array === value && Literal.subtype?(value.__type__, of: @type)
 		end
 
-		def <=>(other)
+		def >(other)
 			case other
 			when Literal::Array::Generic
-				@type <=> other.type
+				@type > other.type
 			else
-				-1
+				false
+			end
+		end
+
+		def ==(other)
+			case other
+			when Literal::Array::Generic
+				@type == other.type
+			else
+				false
 			end
 		end
 
@@ -35,23 +44,20 @@ class Literal::Array
 	end
 
 	include Enumerable
+	include Literal::Types
 
 	def initialize(value, type:)
-		collection_type = Literal::Types::ArrayType.new(type)
-
-		Literal.check(actual: value, expected: collection_type) do |c|
+		Literal.check(actual: value, expected: _Array(type)) do |c|
 			c.fill_receiver(receiver: self, method: "#initialize")
 		end
 
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = collection_type
 	end
 
-	def __initialize_without_check__(value, type:, collection_type:)
+	def __initialize_without_check__(value, type:)
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = collection_type
 		self
 	end
 
@@ -60,7 +66,6 @@ class Literal::Array
 		Literal::Array.allocate.__initialize_without_check__(
 			value,
 			type: @__type__,
-			collection_type: @__collection_type__
 		)
 	end
 
@@ -77,6 +82,48 @@ class Literal::Array
 		end
 	end
 
+	def *(times)
+		case times
+		when String
+			@__value__ * times
+		else
+			__with__(@__value__ * times)
+		end
+	end
+
+	def +(other)
+		case other
+		when ::Array
+			Literal.check(actual: other, expected: _Array(@__type__)) do |c|
+				c.fill_receiver(receiver: self, method: "#+")
+			end
+
+			__with__(@__value__ + other)
+		when Literal::Array(@__type__)
+			__with__(@__value__ + other.__value__)
+		when Literal::Array
+			raise Literal::TypeError.new(
+				context: Literal::TypeError::Context.new(
+					expected: Literal::Array(@__type__),
+					actual: other
+				)
+			)
+		else
+			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
+		end
+	end
+
+	def -(other)
+		case other
+		when ::Array
+			__with__(@__value__ - other)
+		when Literal::Array
+			__with__(@__value__ - other.__value__)
+		else
+			raise ArgumentError.new("Cannot perform `-` with #{other.class.name}.")
+		end
+	end
+
 	def <<(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")
@@ -84,6 +131,17 @@ class Literal::Array
 
 		@__value__ << value
 		self
+	end
+
+	def <=>(other)
+		case other
+		when ::Array
+			@__value__ <=> other
+		when Literal::Array
+			@__value__ <=> other.__value__
+		else
+			raise ArgumentError.new("Cannot perform `<=>` with #{other.class.name}.")
+		end
 	end
 
 	def [](index)
@@ -99,8 +157,10 @@ class Literal::Array
 	end
 
 	def ==(other)
-				Literal::Array === other && @__value__ == other.__value__
+		Literal::Array === other && @__value__ == other.__value__
 	end
+
+	alias_method :eql?, :==
 
 	def all?(...)
 		@__value__.all?(...)
@@ -108,6 +168,10 @@ class Literal::Array
 
 	def any?(...)
 		@__value__.any?(...)
+	end
+
+	def assoc(...)
+		@__value__.assoc(...)
 	end
 
 	def at(...)
@@ -121,6 +185,16 @@ class Literal::Array
 	def clear(...)
 		@__value__.clear(...)
 		self
+	end
+
+	def compact
+		# @TODO if this is an array of nils, we should return an emtpy array
+		__with__(@__value__)
+	end
+
+	def compact!
+		# @TODO if this is an array of nils, we should set @__value__ = [] and return self
+		nil
 	end
 
 	def count(...)
@@ -166,12 +240,25 @@ class Literal::Array
 	end
 
 	def insert(index, *value)
-		Literal.check(actual: value, expected: @__collection_type__) do |c|
+		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#insert")
 		end
 
 		@__value__.insert(index, *value)
 		self
+	end
+
+	def intersection(*values)
+		values.map! do |value|
+			case value
+			when Literal::Array
+				value.__value__
+			else
+				value
+			end
+		end
+
+		__with__(@__value__.intersection(*values))
 	end
 
 	def last(...)
@@ -190,11 +277,16 @@ class Literal::Array
 			Literal::Array.allocate.__initialize_without_check__(
 				@__value__.map(&block),
 				type:,
-				collection_type: Literal::Types::ArrayType.new(type),
 			)
 		else
 			Literal::Array.new(@__value__.map(&block), type:)
 		end
+	end
+
+	def map!(&)
+		new_array = map(@__type__, &)
+		@__value__ = new_array.__value__
+		self
 	end
 
 	def max(n = nil, &)
@@ -226,7 +318,7 @@ class Literal::Array
 	end
 
 	def push(*value)
-		Literal.check(actual: value, expected: @__collection_type__) do |c|
+		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#push")
 		end
 
@@ -248,7 +340,7 @@ class Literal::Array
 	def replace(value)
 		case value
 		when Array
-			Literal.check(actual: value, expected: @__collection_type__) do |c|
+			Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 				c.fill_receiver(receiver: self, method: "#replace")
 			end
 
@@ -305,6 +397,14 @@ class Literal::Array
 		end
 	end
 
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
+	end
+
+	def uniq
+		__with__(@__value__.uniq)
+	end
+
 	def unshift(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#unshift")
@@ -315,4 +415,30 @@ class Literal::Array
 	end
 
 	alias_method :prepend, :unshift
+
+	def values_at(*indexes)
+		unless @__type__ === nil
+			max_value = length - 1
+			min_value = -length
+
+			indexes.each do |index|
+				case index
+				when Integer
+					if index < min_value || index > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				when Range
+					if index.begin < min_value || index.end > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				else
+					raise ArgumentError.new("Invalid index: #{index.inspect}")
+				end
+			end
+		end
+
+		__with__(
+			@__value__.values_at(*indexes)
+		)
+	end
 end

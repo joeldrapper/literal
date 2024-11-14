@@ -50,6 +50,18 @@ test "#map raises if the type is wrong" do
 	}.to_raise(Literal::TypeError)
 end
 
+test "#map! maps each item correctly" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.map!(&:succ).to_a) == [2, 3, 4]
+end
+
+test "map! raises if the type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.map!(&:to_s) }.to_raise(Literal::TypeError)
+end
+
 test "#[]" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
@@ -110,6 +122,86 @@ test "#& performs bitwise AND with an Array" do
 	expect((array & other).to_a) == [2, 3]
 end
 
+test "#* with an integer multiplies the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	result = array * 2
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 1, 2, 3]
+end
+
+test "#* raises with a negative integer" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array * -1 }.to_raise(ArgumentError)
+end
+
+test "#* with a string joins the elements" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array * ",") == "1,2,3"
+end
+
+test "#+ adds another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(4, 5)
+
+	result = array + other
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 4, 5]
+end
+
+test "#+ adds an array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [4, 5]
+
+	result = array + other
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2, 3, 4, 5]
+end
+
+test "#+ raises if the type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(String).new("a", "b")
+	other_primitive = ["a", "b"]
+
+	expect { array + other }.to_raise(Literal::TypeError)
+	expect { array + other_primitive }.to_raise(Literal::TypeError)
+end
+
+test "#- removes elements from another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(1)
+
+	result = array - other
+	expect(result.to_a) == [2, 3]
+end
+
+test "#- removes elements from an array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [1]
+
+	result = array - other
+	expect(result.to_a) == [2, 3]
+end
+
+test "#<=> works as expected" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array <=> [1, 2, 4]) == -1
+	expect(array <=> [1, 2, 2]) == 1
+	expect(array <=> [1, 2, 3, 4]) == -1
+	expect(array <=> [1, 2]) == 1
+	expect(array <=> [1, 2, 3]) == 0
+end
+
+test "#<=> works with another Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(1, 2, 4)
+
+	expect(array <=> other) == -1
+end
+
 test "#sort sorts the array" do
 	array = Literal::Array(Integer).new(3, 2, 1)
 
@@ -135,6 +227,26 @@ test "#push raises if any type is wrong" do
 
 	expect { array.push("4") }.to_raise(Literal::TypeError)
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
+end
+
+test "#assoc returns the correct element" do
+	array = Literal::Array(Array).new([1, 2], [3, 4])
+
+	expect(array.assoc(1)) == [1, 2]
+	expect(array.assoc(3)) == [3, 4]
+end
+
+test "#compact returns a new Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.compact.to_a) == [1, 2, 3]
+	assert Literal::Array(Integer) === array.compact
+end
+
+test "#compact! returns nil" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.compact!) == nil
 end
 
 test "#drop returns a new array with the first n elements removed" do
@@ -176,6 +288,16 @@ test "#insert raises if any type is wrong" do
 	expect { array.insert(1, 4, "5", 6) }.to_raise(Literal::TypeError)
 end
 
+test "#intersection returns an array of the intersection of two arrays" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(2, 3, 4)
+
+	intersection = array.intersection(other, [2])
+
+	assert Literal::Array(Integer) === intersection
+	expect(intersection.to_a) == [2]
+end
+
 test "#replace replaces with passed in array" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
@@ -213,4 +335,42 @@ test "#transpose returns a new array with rows and columns transposed" do
 
 	transposed = array.transpose
 	expect(transposed.to_a) == [[1, 3, 5], [2, 4, 6]]
+end
+
+test "#values_at returns the values at the given indexes" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.values_at(0).to_a) == [1]
+	expect(array.values_at(1).to_a) == [2]
+	expect(array.values_at(2).to_a) == [3]
+	expect(array.values_at(1..2).to_a) == [2, 3]
+
+	expect { array.values_at(3) }.to_raise(IndexError)
+	expect { array.values_at(-4) }.to_raise(IndexError)
+	expect { array.values_at(-4..2) }.to_raise(IndexError)
+	expect { array.values_at(1..3) }.to_raise(IndexError)
+
+	nilable_array = Literal::Array(_Nilable(Integer)).new(1, 2, 3)
+
+	expect(nilable_array.values_at(-4).to_a) == [nil]
+	expect(nilable_array.values_at(3).to_a) == [nil]
+end
+
+test "#uniq! removes duplicates" do
+	array = Literal::Array(Integer).new(1, 2, 3, 2, 1)
+
+	expect((array.uniq!).to_a) == [1, 2, 3]
+end
+
+test "#uniq! returns nil if no duplicates" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.uniq!) == nil
+end
+
+test "#uniq returns a new array with duplicates removed" do
+	array = Literal::Array(Integer).new(1, 2, 2, 3, 3, 3)
+
+	expect((array.uniq).to_a) == [1, 2, 3]
+	expect(array.uniq) == Literal::Array(Integer).new(1, 2, 3)
 end
