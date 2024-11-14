@@ -293,6 +293,10 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
+	end
+
 	def unshift(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#unshift")
