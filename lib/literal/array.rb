@@ -46,12 +46,14 @@ class Literal::Array
 		@__type__ = type
 		@__value__ = value
 		@__collection_type__ = collection_type
+		@__generic__ = Literal::Array(type)
 	end
 
 	def __initialize_without_check__(value, type:, collection_type:)
 		@__type__ = type
 		@__value__ = value
 		@__collection_type__ = collection_type
+		@__generic__ = Literal::Array(type)
 		self
 	end
 
@@ -77,6 +79,39 @@ class Literal::Array
 		end
 	end
 
+	def *(times)
+		case times
+		when String
+			@__value__ * times
+		else
+			__with__(@__value__ * times)
+		end
+	end
+
+	def +(other)
+		case other
+		when ::Array
+			values = @__value__ + @__generic__.new(*other).__value__
+		when Literal::Array
+			values = @__value__ + other.__value__
+		else
+			raise ArgumentError, "Cannot perform `+` with #{other.class.name}."
+		end
+
+		Literal::Array.new(values, type: @__type__)
+	end
+
+	def -(other)
+		case other
+		when ::Array
+			__with__(@__value__ - other)
+		when Literal::Array
+			__with__(@__value__ - other.__value__)
+		else
+			raise ArgumentError.new("Cannot perform `-` with #{other.class.name}.")
+		end
+	end
+
 	def <<(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")
@@ -84,6 +119,17 @@ class Literal::Array
 
 		@__value__ << value
 		self
+	end
+
+	def <=>(other)
+		case other
+		when ::Array
+			@__value__ <=> other
+		when Literal::Array
+			@__value__ <=> other.__value__
+		else
+			raise ArgumentError.new("Cannot perform `<=>` with #{other.class.name}.")
+		end
 	end
 
 	def [](index)
@@ -112,6 +158,10 @@ class Literal::Array
 		@__value__.any?(...)
 	end
 
+	def assoc(...)
+		@__value__.assoc(...)
+	end
+
 	def at(...)
 		@__value__.at(...)
 	end
@@ -123,6 +173,16 @@ class Literal::Array
 	def clear(...)
 		@__value__.clear(...)
 		self
+	end
+
+	def compact
+		# @TODO if this is an array of nils, we should return an emtpy array
+		__with__(@__value__)
+	end
+
+	def compact!
+		# @TODO if this is an array of nils, we should set @__value__ = [] and return self
+		nil
 	end
 
 	def count(...)
@@ -197,6 +257,12 @@ class Literal::Array
 		else
 			Literal::Array.new(@__value__.map(&block), type:)
 		end
+	end
+
+	def map!(&)
+		new_array = map(@__type__, &)
+		@__value__ = new_array.__value__
+		self
 	end
 
 	def max(n = nil, &)
