@@ -202,6 +202,7 @@ test "#replace raises with non-array argument" do
 	expect { array.replace("not an array") }.to_raise(ArgumentError)
 end
 
+
 test "#uniq! removes duplicates" do
 	array = Literal::Array(Integer).new(1, 2, 3, 2, 1)
 
@@ -212,4 +213,11 @@ test "#uniq! returns nil if no duplicates" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
 	expect(array.uniq!) == nil
+end
+
+test "#uniq returns a new array with duplicates removed" do
+	array = Literal::Array(Integer).new(1, 2, 2, 3, 3, 3)
+
+	expect((array.uniq).to_a) == [1, 2, 3]
+	expect(array.uniq) == Literal::Array(Integer).new(1, 2, 3)
 end
