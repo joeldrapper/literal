@@ -85,4 +85,43 @@ end
 test "can be deconstructed with keys" do
 	person = Person.new(name: "Joel")
 	expect(person.deconstruct_keys([:name])) == { name: "Joel" }
+	expect(person.deconstruct_keys(nil)) == { name: "Joel" }
+end
+
+test "can be indexed" do
+	person = Person.new(name: "Joel")
+	expect(person[:name]) == "Joel"
+end
+
+test "returns nil for unknown keys" do
+	person = Person.new(name: "Joel")
+	expect { person[:age] }.to_raise(NameError)
+	expect(person["name"]) == "Joel"
+	expect { person[0] }.to_raise(TypeError)
+end
+
+class WithKeywordPropertyNames < Literal::Struct
+	prop :begin, String
+	prop :end, String
+	prop :module, _Nilable(Module)
+end
+
+test do
+	with_keyword_property_names = WithKeywordPropertyNames.new(begin: "start", end: "finish")
+	expect(with_keyword_property_names.to_h) == { :begin => "start", :end => "finish", :module => nil }
+	expect(with_keyword_property_names) == with_keyword_property_names
+	expect(with_keyword_property_names) == with_keyword_property_names.dup
+	expect(with_keyword_property_names.hash) == with_keyword_property_names.dup.hash
+	expect(with_keyword_property_names[:begin]) == "start"
+	expect(with_keyword_property_names[:end]) == "finish"
+	expect(with_keyword_property_names[:module]) == nil
+	expect(with_keyword_property_names["begin"]) == "start"
+	expect(with_keyword_property_names["end"]) == "finish"
+	expect(with_keyword_property_names["module"]) == nil
+	expect(with_keyword_property_names.begin) == "start"
+	expect(with_keyword_property_names.end) == "finish"
+	expect(with_keyword_property_names.module) == nil
+	with_keyword_property_names[:begin] = "start2"
+	with_keyword_property_names.end = "finish2"
+	expect(with_keyword_property_names.to_h) == { :begin => "start2", :end => "finish2", :module => nil }
 end

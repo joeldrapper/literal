@@ -102,7 +102,7 @@ class Literal::Properties::Schema
 		i, n = 0, sorted_properties.size
 		while i < n
 			property = sorted_properties[i]
-			buffer << "  @" << property.name.name << " == other." << property.escaped_name
+			buffer << "  @" << property.name.name << " == other." << property.name.name
 			buffer << " &&\n  " if i < n - 1
 			i += 1
 		end

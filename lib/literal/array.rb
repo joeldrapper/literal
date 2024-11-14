@@ -144,6 +144,12 @@ class Literal::Array
 		@__value__[index] = value
 	end
 
+	def ==(other)
+		Literal::Array === other && @__value__ == other.__value__
+	end
+
+	alias_method :eql?, :==
+
 	def all?(...)
 		@__value__.all?(...)
 	end
@@ -183,6 +189,18 @@ class Literal::Array
 		@__value__.count(...)
 	end
 
+	def dig(...)
+				@__value__.dig(...)
+	end
+
+	def drop(...)
+				__with__(@__value__.drop(...))
+	end
+
+	def drop_while(...)
+				__with__(@__value__.drop_while(...))
+	end
+
 	def each(...)
 		@__value__.each(...)
 	end
@@ -207,6 +225,15 @@ class Literal::Array
 	def freeze
 		@__value__.freeze
 		super
+	end
+
+	def insert(index, *value)
+		Literal.check(actual: value, expected: @__collection_type__) do |c|
+			c.fill_receiver(receiver: self, method: "#insert")
+		end
+
+		@__value__.insert(index, *value)
+		self
 	end
 
 	def last(...)
@@ -286,6 +313,27 @@ class Literal::Array
 		self
 	end
 
+	def replace(value)
+		case value
+		when Array
+			Literal.check(actual: value, expected: @__collection_type__) do |c|
+				c.fill_receiver(receiver: self, method: "#replace")
+			end
+
+			@__value__.replace(value)
+		when Literal::Array(@__type__)
+			@__value__.replace(value.__value__)
+		when Literal::Array
+			raise Literal::TypeError.new(
+				context: Literal::TypeError::Context.new(expected: @__type__, actual: value.__type__)
+			)
+		else
+			raise ArgumentError.new("#replace expects Array argument")
+		end
+
+		self
+	end
+
 	def sample(...)
 		@__value__.sample(...)
 	end
@@ -313,6 +361,15 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
+
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
+  end
+  
+	def uniq
+		__with__(@__value__.uniq)
+	end
+
 	def unshift(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#unshift")
@@ -320,5 +377,33 @@ class Literal::Array
 
 		@__value__.unshift(value)
 		self
+	end
+
+	alias_method :prepend, :unshift
+
+	def values_at(*indexes)
+		unless @__type__ === nil
+			max_value = length - 1
+			min_value = -length
+
+			indexes.each do |index|
+				case index
+				when Integer
+					if index < min_value || index > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				when Range
+					if index.begin < min_value || index.end > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				else
+					raise ArgumentError.new("Invalid index: #{index.inspect}")
+				end
+			end
+		end
+
+		__with__(
+			@__value__.values_at(*indexes)
+		)
 	end
 end
