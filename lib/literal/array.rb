@@ -303,4 +303,28 @@ class Literal::Array
 	end
 
 	alias_method :prepend, :unshift
+
+	def values_at(*indexes)
+		unless @__type__ === nil
+			max_value = length - 1
+			min_value = -length
+
+			indexes.each do |index|
+				case index
+				when Integer
+					if index < min_value || index > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				when Range
+					if index.begin < min_value || index.end > max_value
+						raise IndexError.new("index #{index} out of range")
+					end
+				end
+			end
+		end
+
+		__with__(
+			@__value__.values_at(*indexes)
+		)
+	end
 end
