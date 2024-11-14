@@ -202,6 +202,24 @@ test "#replace raises with non-array argument" do
 	expect { array.replace("not an array") }.to_raise(ArgumentError)
 end
 
+test "#values_at returns the values at the given indexes" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.values_at(0).to_a) == [1]
+	expect(array.values_at(1).to_a) == [2]
+	expect(array.values_at(2).to_a) == [3]
+	expect(array.values_at(1..2).to_a) == [2, 3]
+
+	expect { array.values_at(3) }.to_raise(IndexError)
+	expect { array.values_at(-4) }.to_raise(IndexError)
+	expect { array.values_at(-4..2) }.to_raise(IndexError)
+	expect { array.values_at(1..3) }.to_raise(IndexError)
+
+	nilable_array = Literal::Array(_Nilable(Integer)).new(1, 2, 3)
+
+	expect(nilable_array.values_at(-4).to_a) == [nil]
+	expect(nilable_array.values_at(3).to_a) == [nil]
+end
 
 test "#uniq! removes duplicates" do
 	array = Literal::Array(Integer).new(1, 2, 3, 2, 1)
