@@ -239,6 +239,19 @@ class Literal::Array
 		self
 	end
 
+	def intersection(*values)
+		values.map! do |value|
+			case value
+			when Literal::Array
+				value.__value__
+			else
+				value
+			end
+		end
+
+		__with__(@__value__.intersection(*values))
+	end
+
 	def last(...)
 		@__value__.last(...)
 	end
