@@ -6,8 +6,13 @@ module Literal::Properties
 
 	include Literal::Types
 
+	module DocString
+		# @!method initialize(...)
+	end
+
 	def self.extended(base)
 		super
+		base.include(DocString)
 		base.include(base.__send__(:__literal_extension__))
 	end
 
