@@ -20,6 +20,9 @@ class Literal::Types::ConstraintType
 
 		@property_constraints.each do |a, t|
 			return false unless t === value.public_send(a)
+		rescue NoMethodError => e
+			raise unless e.name == a && e.receiver == value
+			return false
 		end
 
 		true
@@ -33,6 +36,7 @@ class Literal::Types::ConstraintType
 		end
 
 		@property_constraints.each do |property, constraint|
+			next unless context.actual.respond_to?(property)
 			actual = context.actual.public_send(property)
 			next if constraint === actual
 

@@ -76,10 +76,10 @@ test "#[]= works as expected" do
 end
 
 test "#== compares the Literal::Arrays" do
-		array = Literal::Array(Integer).new(1, 2, 3)
-		other = Literal::Array(Integer).new(1, 2, 3)
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(1, 2, 3)
 
-		expect(array == other) == true
+	expect(array == other) == true
 end
 
 test "#<< inserts a new item" do
@@ -135,6 +135,51 @@ test "#push raises if any type is wrong" do
 
 	expect { array.push("4") }.to_raise(Literal::TypeError)
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
+end
+
+test "#insert inserts single element at index offset" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.insert(1, 4)).to_a) == [1, 4, 2, 3]
+end
+
+test "#insert inserts multiple elements at index offset" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.insert(1, 4, 5, 6)).to_a) == [1, 4, 5, 6, 2, 3]
+end
+
+test "#insert raises if any type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.insert(1, "4") }.to_raise(Literal::TypeError)
+	expect { array.insert(1, 4, "5", 6) }.to_raise(Literal::TypeError)
+end
+
+test "#replace replaces with passed in array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.replace([4, 5, 6])).to_a) == [4, 5, 6]
+end
+
+test "#replace replaces with passed in Literal::Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(4, 5, 6)
+
+	expect((array.replace(other)).to_a) == [4, 5, 6]
+end
+
+test "#replace raises if type of any element in array is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.replace([1, "4"]) }.to_raise(Literal::TypeError)
+	expect { array.replace(Literal::Array(String).new("4", "5")) }.to_raise(Literal::TypeError)
+end
+
+test "#replace raises with non-array argument" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.replace("not an array") }.to_raise(ArgumentError)
 end
 
 test "#drop returns a new array with the first n elements removed" do
