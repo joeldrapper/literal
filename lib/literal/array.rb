@@ -44,13 +44,11 @@ class Literal::Array
 
 		@__type__ = type
 		@__value__ = value
-		@__generic__ = Literal::Array(type)
 	end
 
 	def __initialize_without_check__(value, type:)
 		@__type__ = type
 		@__value__ = value
-		@__generic__ = Literal::Array(type)
 		self
 	end
 
@@ -85,16 +83,18 @@ class Literal::Array
 	end
 
 	def +(other)
+		type = @__type__
+
 		case other
 		when ::Array
-			values = @__value__ + @__generic__.new(*other).__value__
+			values = @__value__ + Literal::Array(type).new(*other).__value__
 		when Literal::Array
 			values = @__value__ + other.__value__
 		else
 			raise ArgumentError.new("Cannot perform `+` with #{other.class.name}.")
 		end
 
-		Literal::Array.new(values, type: @__type__)
+		Literal::Array.new(values, type:)
 	end
 
 	def -(other)
