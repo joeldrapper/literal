@@ -144,6 +144,10 @@ class Literal::Array
 		end
 	end
 
+	def ==(other)
+		Literal::Array === other && @__value__ == other.__value__
+	end
+
 	def [](index)
 		@__value__[index]
 	end
@@ -155,12 +159,6 @@ class Literal::Array
 
 		@__value__[index] = value
 	end
-
-	def ==(other)
-		Literal::Array === other && @__value__ == other.__value__
-	end
-
-	alias_method :eql?, :==
 
 	def all?(...)
 		@__value__.all?(...)
@@ -202,15 +200,15 @@ class Literal::Array
 	end
 
 	def dig(...)
-				@__value__.dig(...)
+		@__value__.dig(...)
 	end
 
 	def drop(...)
-				__with__(@__value__.drop(...))
+		__with__(@__value__.drop(...))
 	end
 
 	def drop_while(...)
-				__with__(@__value__.drop_while(...))
+		__with__(@__value__.drop_while(...))
 	end
 
 	def each(...)
@@ -220,6 +218,8 @@ class Literal::Array
 	def empty?
 		@__value__.empty?
 	end
+
+	alias_method :eql?, :==
 
 	def filter(...)
 		__with__(@__value__.filter(...))
@@ -283,6 +283,7 @@ class Literal::Array
 		end
 	end
 
+	# TODO: we can make this faster
 	def map!(&)
 		new_array = map(@__type__, &)
 		@__value__ = new_array.__value__
@@ -385,12 +386,12 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
-	def uniq!(...)
-		@__value__.uniq!(...) ? self : nil
-	end
-
 	def uniq
 		__with__(@__value__.uniq)
+	end
+
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
 	end
 
 	def unshift(value)
