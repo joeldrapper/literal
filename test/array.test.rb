@@ -201,3 +201,16 @@ test "#replace raises with non-array argument" do
 
 	expect { array.replace("not an array") }.to_raise(ArgumentError)
 end
+
+test "#transpose raises if type is not Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect { array.transpose }.to_raise(ArgumentError)
+end
+
+test "#transpose returns a new array with rows and columns transposed" do
+	array = Literal::Array(Array).new([1, 2], [3, 4], [5, 6])
+
+	transposed = array.transpose
+	expect(transposed.to_a) == [[1, 3, 5], [2, 4, 6]]
+end

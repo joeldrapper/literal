@@ -293,6 +293,18 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
+	def transpose
+		unless @__type__ == Array
+			raise ArgumentError.new("#transpose expects Array type")
+		end
+
+		if @__type__ == Array
+			__with__(@__value__.transpose)
+		elsif @__type__ == Literal::Array
+			# TODO: Implement transpose for Literal::Array
+		end
+	end
+
 	def unshift(value)
 		Literal.check(actual: value, expected: @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#unshift")
