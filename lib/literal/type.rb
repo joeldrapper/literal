@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
 module Literal::Type
-	include Comparable
+	def >=(other)
+		self > other || self == other
+	end
 end
