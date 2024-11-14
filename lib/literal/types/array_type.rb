@@ -6,10 +6,30 @@ class Literal::Types::ArrayType
 		@type = type
 	end
 
+	attr_reader :type
+
 	def inspect = "_Array(#{@type.inspect})"
 
 	def ===(value)
 		Array === value && value.all?(@type)
+	end
+
+	def >(other)
+		case other
+		when Literal::Types::ArrayType
+			@type > other.type
+		else
+			false
+		end
+	end
+
+	def ==(other)
+		case other
+		when Literal::Types::ArrayType
+			@type == other.type
+		else
+			false
+		end
 	end
 
 	def record_literal_type_errors(context)
