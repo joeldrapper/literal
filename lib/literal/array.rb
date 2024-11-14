@@ -295,6 +295,11 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
+
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
+  end
+  
 	def uniq
 		__with__(@__value__.uniq)
 	end
