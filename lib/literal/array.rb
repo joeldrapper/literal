@@ -149,6 +149,15 @@ class Literal::Array
 		super
 	end
 
+	def insert(index, *value)
+		Literal.check(actual: value, expected: @__collection_type__) do |c|
+			c.fill_receiver(receiver: self, method: "#insert")
+		end
+
+		@__value__.insert(index, *value)
+		self
+	end
+
 	def last(...)
 		@__value__.last(...)
 	end
@@ -220,6 +229,27 @@ class Literal::Array
 		self
 	end
 
+	def replace(value)
+		case value
+		when Array
+			Literal.check(actual: value, expected: @__collection_type__) do |c|
+				c.fill_receiver(receiver: self, method: "#replace")
+			end
+
+			@__value__.replace(value)
+		when Literal::Array(@__type__)
+			@__value__.replace(value.__value__)
+		when Literal::Array
+			raise Literal::TypeError.new(
+				context: Literal::TypeError::Context.new(expected: @__type__, actual: value.__type__)
+			)
+		else
+			raise ArgumentError.new("#replace expects Array argument")
+		end
+
+		self
+	end
+
 	def sample(...)
 		@__value__.sample(...)
 	end
@@ -255,4 +285,6 @@ class Literal::Array
 		@__value__.unshift(value)
 		self
 	end
+
+	alias_method :prepend, :unshift
 end
