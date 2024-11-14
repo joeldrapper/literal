@@ -319,6 +319,8 @@ class Literal::Array
 					if index.begin < min_value || index.end > max_value
 						raise IndexError.new("index #{index} out of range")
 					end
+				else
+					raise ArgumentError.new("Invalid index: #{index.inspect}")
 				end
 			end
 		end
