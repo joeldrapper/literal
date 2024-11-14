@@ -98,6 +98,10 @@ class Literal::Array
 		@__value__[index] = value
 	end
 
+	def ==(other)
+				Literal::Array === other && @__value__ == other.__value__
+	end
+
 	def all?(...)
 		@__value__.all?(...)
 	end
@@ -121,6 +125,18 @@ class Literal::Array
 
 	def count(...)
 		@__value__.count(...)
+	end
+
+	def dig(...)
+				@__value__.dig(...)
+	end
+
+	def drop(...)
+				__with__(@__value__.drop(...))
+	end
+
+	def drop_while(...)
+				__with__(@__value__.drop_while(...))
 	end
 
 	def each(...)

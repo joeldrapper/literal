@@ -75,6 +75,13 @@ test "#[]= works as expected" do
 	expect(array[3]) == 6
 end
 
+test "#== compares the Literal::Arrays" do
+		array = Literal::Array(Integer).new(1, 2, 3)
+		other = Literal::Array(Integer).new(1, 2, 3)
+
+		expect(array == other) == true
+end
+
 test "#<< inserts a new item" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
@@ -128,4 +135,24 @@ test "#push raises if any type is wrong" do
 
 	expect { array.push("4") }.to_raise(Literal::TypeError)
 	expect { array.push(4, "5") }.to_raise(Literal::TypeError)
+end
+
+test "#drop returns a new array with the first n elements removed" do
+		array = Literal::Array(Integer).new(1, 2, 3)
+		dropped = array.drop(1)
+
+		expect(dropped.to_a) == [2, 3]
+		expect(dropped) == Literal::Array(Integer).new(2, 3)
+
+		dropped = array.drop(2)
+		expect(dropped.to_a) == [3]
+		expect(dropped) == Literal::Array(Integer).new(3)
+end
+
+test "#drop_while returns a new array with the first n elements removed" do
+		array = Literal::Array(Integer).new(1, 2, 3)
+		dropped = array.drop_while { |i| i < 2 }
+
+		expect(dropped.to_a) == [2, 3]
+		expect(dropped) == Literal::Array(Integer).new(2, 3)
 end
