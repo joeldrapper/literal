@@ -99,8 +99,10 @@ class Literal::Array
 	end
 
 	def ==(other)
-				Literal::Array === other && @__value__ == other.__value__
+		Literal::Array === other && @__value__ == other.__value__
 	end
+
+	alias_method :eql?, :==
 
 	def all?(...)
 		@__value__.all?(...)
