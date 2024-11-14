@@ -35,24 +35,21 @@ class Literal::Array
 	end
 
 	include Enumerable
+	include Literal::Types
 
 	def initialize(value, type:)
-		collection_type = Literal::Types::ArrayType.new(type)
-
-		Literal.check(actual: value, expected: collection_type) do |c|
+		Literal.check(actual: value, expected: _Array(type)) do |c|
 			c.fill_receiver(receiver: self, method: "#initialize")
 		end
 
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = collection_type
 		@__generic__ = Literal::Array(type)
 	end
 
-	def __initialize_without_check__(value, type:, collection_type:)
+	def __initialize_without_check__(value, type:)
 		@__type__ = type
 		@__value__ = value
-		@__collection_type__ = collection_type
 		@__generic__ = Literal::Array(type)
 		self
 	end
@@ -62,7 +59,6 @@ class Literal::Array
 		Literal::Array.allocate.__initialize_without_check__(
 			value,
 			type: @__type__,
-			collection_type: @__collection_type__
 		)
 	end
 
@@ -228,7 +224,7 @@ class Literal::Array
 	end
 
 	def insert(index, *value)
-		Literal.check(actual: value, expected: @__collection_type__) do |c|
+		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#insert")
 		end
 
@@ -252,7 +248,6 @@ class Literal::Array
 			Literal::Array.allocate.__initialize_without_check__(
 				@__value__.map(&block),
 				type:,
-				collection_type: Literal::Types::ArrayType.new(type),
 			)
 		else
 			Literal::Array.new(@__value__.map(&block), type:)
@@ -294,7 +289,7 @@ class Literal::Array
 	end
 
 	def push(*value)
-		Literal.check(actual: value, expected: @__collection_type__) do |c|
+		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#push")
 		end
 
@@ -316,7 +311,7 @@ class Literal::Array
 	def replace(value)
 		case value
 		when Array
-			Literal.check(actual: value, expected: @__collection_type__) do |c|
+			Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 				c.fill_receiver(receiver: self, method: "#replace")
 			end
 
