@@ -166,9 +166,9 @@ module Literal::Types
 	end
 
 	# Nilable version of `_Hash`
-	def _Hash?
+	def _Hash?(...)
 		NilableType.new(
-			HashType.new,
+			HashType.new(...),
 		)
 	end
 
@@ -184,7 +184,7 @@ module Literal::Types
 	# Nilable version of `_Integer`
 	def _Integer?(...)
 		NilableType.new(
-			IntegerType(...),
+			IntegerType.new(...),
 		)
 	end
 

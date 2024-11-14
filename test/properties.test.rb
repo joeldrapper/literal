@@ -261,8 +261,9 @@ ERROR
 		Type mismatch
 
 		#{WithWriters}#a=(value) (from #{error.backtrace[1]})
-		  Expected: _Nilable(_Array(String))
-		  Actual (Array): [1]
+		    [0]
+		      Expected: String
+		      Actual (Integer): 1
 	ERROR
 	}
 end
@@ -307,8 +308,11 @@ test "nested properties raise in initializer" do
 			        Actual (String): "Father"
 			    [2]
 			      []
-			        Expected: [:person, :role]
-			        Actual (Integer): 1
+			        Expected: :person
+			        Actual (NilClass): nil
+			      []
+			        Expected: :role
+			        Actual (NilClass): nil
 		ERROR
 	end
 
