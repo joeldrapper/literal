@@ -99,8 +99,10 @@ class Literal::Array
 	end
 
 	def ==(other)
-				Literal::Array === other && @__value__ == other.__value__
+		Literal::Array === other && @__value__ == other.__value__
 	end
+
+	alias_method :eql?, :==
 
 	def all?(...)
 		@__value__.all?(...)
@@ -292,6 +294,15 @@ class Literal::Array
 	end
 
 	alias_method :to_ary, :to_a
+
+
+	def uniq!(...)
+		@__value__.uniq!(...) ? self : nil
+  end
+  
+	def uniq
+		__with__(@__value__.uniq)
+	end
 
 	def unshift(value)
 		Literal.check(actual: value, expected: @__type__) do |c|

@@ -220,3 +220,22 @@ test "#values_at returns the values at the given indexes" do
 	expect(nilable_array.values_at(-4).to_a) == [nil]
 	expect(nilable_array.values_at(3).to_a) == [nil]
 end
+
+test "#uniq! removes duplicates" do
+	array = Literal::Array(Integer).new(1, 2, 3, 2, 1)
+
+	expect((array.uniq!).to_a) == [1, 2, 3]
+end
+
+test "#uniq! returns nil if no duplicates" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.uniq!) == nil
+end
+
+test "#uniq returns a new array with duplicates removed" do
+	array = Literal::Array(Integer).new(1, 2, 2, 3, 3, 3)
+
+	expect((array.uniq).to_a) == [1, 2, 3]
+	expect(array.uniq) == Literal::Array(Integer).new(1, 2, 3)
+end
