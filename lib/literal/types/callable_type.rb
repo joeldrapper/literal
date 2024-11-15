@@ -15,9 +15,9 @@ class Literal::Types::CallableType
 	def >=(other)
 		(self == other) || (Proc == other) || (Method == other) || case other
 		when Literal::Types::IntersectionType
-			other.types.any? { |type| self >= type }
+			other.types.any? { |type| Literal.subtype?(type, of: self) }
 		when Literal::Types::ConstraintType
-			other.object_constraints.any? { |type| self >= type }
+			other.object_constraints.any? { |type| Literal.subtype?(type, of: self) }
 		when Literal::Types::InterfaceType
 			other.methods.include?(:call)
 		else

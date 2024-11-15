@@ -21,9 +21,9 @@ class Literal::Types::ClassType
 	def >=(other)
 		case other
 		when Literal::Types::ClassType
-			@type >= other.type
+			Literal.subtype?(other.type, of: @type)
 		when Literal::Types::DescendantType
-			(Class === other.type) && (@type >= other.type)
+			(Class === other.type) && Literal.subtype?(other.type, of: @type)
 		else
 			false
 		end

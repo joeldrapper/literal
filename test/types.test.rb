@@ -137,6 +137,15 @@ test "_Constraint with property constraints" do
 		  Expected: _Constraint(String, foo: 1, size: Integer)
 		  Actual (String): "string"
 	MSG
+
+	assert _Constraint(String) >= _Constraint(String)
+	assert _Constraint(_Array(Enumerable)) >= _Constraint(_Array(Array))
+	assert _Constraint(Array, size: 1..5) >= _Constraint(Array, size: 1..5)
+
+	assert _Constraint(Array, size: 1..3) >= _Constraint(Array, size: 1..2)
+	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
+
+	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
 end
 
 test "_Descendant" do

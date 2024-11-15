@@ -125,6 +125,8 @@ module Literal
 			case of
 			when Literal::Type, Module
 				of >= type
+			when Range
+				of.cover?(type)
 			else
 				false
 			end
