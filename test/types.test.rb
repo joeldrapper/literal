@@ -12,10 +12,20 @@ end
 
 test "_Any" do
 	Fixtures::Objects.each do |object|
-		assert AnyType === object
+		assert _Any === object
 	end
 
-	refute AnyType === nil
+	refute _Any === nil
+
+	assert _Any >= _Any
+	assert _Any >= String
+	assert _Any >= "Hello"
+	assert _Any >= 1
+
+	refute _Any >= nil
+	refute _Any >= Object
+	refute _Any >= _Nilable(_Any)
+	refute _Any >= _Nilable(String)
 end
 
 test "_Array" do
@@ -42,6 +52,16 @@ test "_Callable" do
 	assert _Callable === method(:puts)
 
 	refute _Callable === nil
+
+	assert _Callable >= Proc
+	assert _Callable >= Method
+	assert _Callable >= _Callable
+
+	assert _Callable >= _Intersection(Object, _Callable)
+	assert _Callable >= _String(_Callable)
+
+	refute _Callable >= String
+	refute _Callable >= Object
 end
 
 test "_Class" do

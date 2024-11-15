@@ -7,6 +7,8 @@ class Literal::Types::ConstraintType
 		@property_constraints = property_constraints
 	end
 
+	attr_reader :object_constraints
+
 	def inspect = "_Constraint(#{inspect_constraints})"
 
 	def ===(value)

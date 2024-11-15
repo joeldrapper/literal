@@ -15,4 +15,6 @@ class Literal::Types::NilableType
 	def record_literal_type_errors(ctx)
 		@type.record_literal_type_errors(ctx) if @type.respond_to?(:record_literal_type_errors)
 	end
+
+	freeze
 end
