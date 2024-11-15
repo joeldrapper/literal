@@ -60,6 +60,8 @@ test "_Callable" do
 	assert _Callable >= _Intersection(Object, _Callable)
 	assert _Callable >= _String(_Callable)
 
+	assert _Callable >= _Interface(:call, :to_s)
+
 	refute _Callable >= String
 	refute _Callable >= Object
 end

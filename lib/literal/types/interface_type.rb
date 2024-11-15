@@ -7,6 +7,8 @@ class Literal::Types::InterfaceType
 		@methods = methods
 	end
 
+	attr_reader :methods
+
 	def inspect = "_Interface(#{@methods.map(&:inspect).join(', ')})"
 
 	def ===(value)

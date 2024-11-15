@@ -18,6 +18,10 @@ class Literal::Types::CallableType
 			other.types.any? { |type| self >= type }
 		when Literal::Types::ConstraintType
 			other.object_constraints.any? { |type| self >= type }
+		when Literal::Types::InterfaceType
+			other.methods.include?(:call)
+		else
+			false
 		end
 	end
 
