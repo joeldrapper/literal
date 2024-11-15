@@ -31,10 +31,10 @@ test "_Boolean" do
 
 	refute _Boolean === nil
 
-	assert _Boolean > true
-	assert _Boolean > false
-	refute _Boolean > nil
-	assert _Boolean == _Boolean
+	assert _Boolean >= true
+	assert _Boolean >= false
+	refute _Boolean >= nil
+	assert _Boolean >= _Boolean
 end
 
 test "_Callable" do

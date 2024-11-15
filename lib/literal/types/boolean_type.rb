@@ -12,9 +12,9 @@ class Literal::Types::BooleanType
 		true == value || false == value
 	end
 
-	def >(other)
+	def >=(other)
 		case other
-		when true, false
+		when true, false, Literal::Types::BooleanType
 			true
 		else
 			false
