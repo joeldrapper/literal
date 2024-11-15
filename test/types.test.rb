@@ -12,10 +12,20 @@ end
 
 test "_Any" do
 	Fixtures::Objects.each do |object|
-		assert AnyType === object
+		assert _Any === object
 	end
 
-	refute AnyType === nil
+	refute _Any === nil
+
+	assert _Any >= _Any
+	assert _Any >= String
+	assert _Any >= "Hello"
+	assert _Any >= 1
+
+	refute _Any >= nil
+	refute _Any >= Object
+	refute _Any >= _Nilable(_Any)
+	refute _Any >= _Nilable(String)
 end
 
 test "_Array" do
@@ -42,6 +52,18 @@ test "_Callable" do
 	assert _Callable === method(:puts)
 
 	refute _Callable === nil
+
+	assert _Callable >= Proc
+	assert _Callable >= Method
+	assert _Callable >= _Callable
+
+	assert _Callable >= _Intersection(Object, _Callable)
+	assert _Callable >= _String(_Callable)
+
+	assert _Callable >= _Interface(:call, :to_s)
+
+	refute _Callable >= String
+	refute _Callable >= Object
 end
 
 test "_Class" do
@@ -50,6 +72,15 @@ test "_Class" do
 	refute _Class(Enumerable) === []
 	refute _Class(Enumerable) === String
 	refute _Class(Enumerable) === Enumerable
+
+	assert _Class(Enumerable) >= _Class(Array)
+	assert _Class(Enumerable) >= _Class(Enumerable)
+	assert _Class(Enumerable) >= _Descendant(Array)
+	assert _Class(Array) >= _Descendant(Array)
+
+	refute _Class(Enumerable) >= _Descendant(Enumerable)
+	refute _Class(Enumerable) >= Enumerable
+	refute _Class(Enumerable) >= Class
 end
 
 test "_Constraint with object constraints" do
@@ -106,6 +137,15 @@ test "_Constraint with property constraints" do
 		  Expected: _Constraint(String, foo: 1, size: Integer)
 		  Actual (String): "string"
 	MSG
+
+	assert _Constraint(String) >= _Constraint(String)
+	assert _Constraint(_Array(Enumerable)) >= _Constraint(_Array(Array))
+	assert _Constraint(Array, size: 1..5) >= _Constraint(Array, size: 1..5)
+
+	assert _Constraint(Array, size: 1..3) >= _Constraint(Array, size: 1..2)
+	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
+
+	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
 end
 
 test "_Descendant" do

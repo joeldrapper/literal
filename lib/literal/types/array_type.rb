@@ -2,31 +2,26 @@
 
 # @api private
 class Literal::Types::ArrayType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
 	attr_reader :type
 
-	def inspect = "_Array(#{@type.inspect})"
+	def inspect
+		"_Array(#{@type.inspect})"
+	end
 
 	def ===(value)
 		Array === value && value.all?(@type)
 	end
 
-	def >(other)
+	def >=(other)
 		case other
 		when Literal::Types::ArrayType
-			@type > other.type
-		else
-			false
-		end
-	end
-
-	def ==(other)
-		case other
-		when Literal::Types::ArrayType
-			@type == other.type
+			@type >= other.type
 		else
 			false
 		end
@@ -43,4 +38,6 @@ class Literal::Types::ArrayType
 			end
 		end
 	end
+
+	freeze
 end

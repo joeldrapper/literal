@@ -1,12 +1,31 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::CallableType
-	def self.inspect = "_Callable"
+class Literal::Types::CallableType
+	include Literal::Type
 
-	def self.===(value)
+	def inspect
+		"_Callable"
+	end
+
+	def ===(value)
 		value.respond_to?(:call)
 	end
+
+	def >=(other)
+		(self == other) || (Proc == other) || (Method == other) || case other
+		when Literal::Types::IntersectionType
+			other.types.any? { |type| Literal.subtype?(type, of: self) }
+		when Literal::Types::ConstraintType
+			other.object_constraints.any? { |type| Literal.subtype?(type, of: self) }
+		when Literal::Types::InterfaceType
+			other.methods.include?(:call)
+		else
+			false
+		end
+	end
+
+	Instance = new.freeze
 
 	freeze
 end

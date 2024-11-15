@@ -8,6 +8,8 @@ class Literal::Types::IntersectionType
 		@types = types
 	end
 
+	attr_reader :types
+
 	def inspect = "_Intersection(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)

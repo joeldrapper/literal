@@ -2,12 +2,19 @@
 
 # @api private
 class Literal::Types::ConstraintType
+	include Literal::Type
+
 	def initialize(*object_constraints, **property_constraints)
 		@object_constraints = object_constraints
 		@property_constraints = property_constraints
 	end
 
-	def inspect = "_Constraint(#{inspect_constraints})"
+	attr_reader :object_constraints
+	attr_reader :property_constraints
+
+	def inspect
+		"_Constraint(#{inspect_constraints})"
+	end
 
 	def ===(value)
 		object_constraints = @object_constraints
@@ -26,6 +33,24 @@ class Literal::Types::ConstraintType
 		end
 
 		true
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::ConstraintType
+			return false unless [@object_constraints.length, other.object_constraints.length].max.times.all? do |i|
+				a, b = @object_constraints[i], other.object_constraints[i]
+				Literal.subtype?(b, of: a)
+			end
+
+			return false unless @property_constraints.all? do |k, v|
+				Literal.subtype?(other.property_constraints[k], of: v)
+			end
+
+			true
+		else
+			false
+		end
 	end
 
 	def record_literal_type_errors(context)
@@ -61,4 +86,6 @@ class Literal::Types::ConstraintType
 			@property_constraints.map { |k, t| "#{k}: #{t.inspect}" }.join(", ")
 		end
 	end
+
+	freeze
 end
