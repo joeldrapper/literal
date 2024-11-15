@@ -72,6 +72,15 @@ test "_Class" do
 	refute _Class(Enumerable) === []
 	refute _Class(Enumerable) === String
 	refute _Class(Enumerable) === Enumerable
+
+	assert _Class(Enumerable) >= _Class(Array)
+	assert _Class(Enumerable) >= _Class(Enumerable)
+	assert _Class(Enumerable) >= _Descendant(Array)
+	assert _Class(Array) >= _Descendant(Array)
+
+	refute _Class(Enumerable) >= _Descendant(Enumerable)
+	refute _Class(Enumerable) >= Enumerable
+	refute _Class(Enumerable) >= Class
 end
 
 test "_Constraint with object constraints" do
