@@ -141,10 +141,11 @@ test "_Constraint with property constraints" do
 	assert _Constraint(String) >= _Constraint(String)
 	assert _Constraint(_Array(Enumerable)) >= _Constraint(_Array(Array))
 	assert _Constraint(Array, size: 1..5) >= _Constraint(Array, size: 1..5)
-
 	assert _Constraint(Array, size: 1..3) >= _Constraint(Array, size: 1..2)
-	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
+	assert _Constraint(Enumerable, Array) >= _Intersection(Array)
+	assert _Constraint(_Array(Enumerable), name: _String(size: 1..5)) >= _Constraint(_Array(Enumerable), name: _String(size: 1..5))
 
+	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
 	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
 end
 
@@ -154,6 +155,10 @@ test "_Descendant" do
 
 	refute _Descendant(Enumerable) === []
 	refute _Descendant(Enumerable) === String
+
+	assert _Descendant(Enumerable) >= _Descendant(Array)
+	assert _Descendant(Enumerable) >= _Descendant(Set)
+	refute _Descendant(Enumerable) >= _Descendant(String)
 end
 
 test "_Enumerable" do
@@ -161,6 +166,11 @@ test "_Enumerable" do
 	assert _Enumerable(Integer) === Set[1, 2, 3]
 
 	refute _Enumerable(String) === [1, "a", :symbol]
+
+	assert _Enumerable(Enumerable) >= _Enumerable(Array)
+	assert _Enumerable(Enumerable) >= _Enumerable(Set)
+
+	refute _Enumerable(Enumerable) >= _Enumerable(String)
 end
 
 test "_Falsy" do
