@@ -184,6 +184,14 @@ test "_Falsy" do
 	truthy_objects.each do |object|
 		refute _Falsy === object
 	end
+
+	assert _Falsy >= _Falsy
+	assert _Falsy >= false
+	assert _Falsy >= nil
+
+	refute _Falsy >= true
+	refute _Falsy >= 0
+	refute _Falsy >= "string"
 end
 
 test "_Float" do

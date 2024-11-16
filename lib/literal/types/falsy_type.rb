@@ -1,12 +1,31 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::FalsyType
-	def self.inspect = "_Falsy"
+class Literal::Types::FalsyType
+	include Literal::Type
 
-	def self.===(value)
+	def initialize
+		freeze
+	end
+
+	def inspect
+		"_Falsy"
+	end
+
+	def ===(value)
 		!value
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::FalsyType, nil, false
+			true
+		else
+			false
+		end
+	end
+
+	Instance = new.freeze
 
 	freeze
 end

@@ -131,7 +131,7 @@ module Literal::Types
 
 	# Matches *"falsy"* values (`nil` and `false`).
 	def _Falsy
-		FalsyType
+		FalsyType::Instance
 	end
 
 	# Matches if the value is a `Float` and matches the given constraint.
