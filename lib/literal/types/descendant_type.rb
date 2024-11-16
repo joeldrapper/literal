@@ -5,6 +5,8 @@ class Literal::Types::DescendantType
 		@type = type
 	end
 
+	attr_reader :type
+
 	def inspect = "_Descendant(#{@type})"
 
 	def ===(value)

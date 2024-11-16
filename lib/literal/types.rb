@@ -32,15 +32,15 @@ module Literal::Types
 	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
 
-	NilableBooleanType = NilableType.new(BooleanType::Instance)
-	NilableCallableType = NilableType.new(CallableType)
-	NilableJSONDataType = NilableType.new(JSONDataType)
-	NilableLambdaType = NilableType.new(LambdaType)
-	NilableProcableType = NilableType.new(ProcableType)
+	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
+	NilableCallableType = NilableType.new(CallableType::Instance).freeze
+	NilableJSONDataType = NilableType.new(JSONDataType).freeze
+	NilableLambdaType = NilableType.new(LambdaType).freeze
+	NilableProcableType = NilableType.new(ProcableType).freeze
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	def _Any
-		AnyType
+		AnyType::Instance
 	end
 
 	def _Any?
@@ -71,7 +71,7 @@ module Literal::Types
 
 	# Matches if the value responds to `#call`.
 	def _Callable
-		CallableType
+		CallableType::Instance
 	end
 
 	# Nilabl version of `_Callable`

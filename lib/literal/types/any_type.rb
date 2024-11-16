@@ -1,12 +1,22 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::AnyType
-	def self.inspect = "_Any"
+class Literal::Types::AnyType
+	include Literal::Type
 
-	def self.===(value)
+	def inspect
+		"_Any"
+	end
+
+	def ===(value)
 		!(nil === value)
 	end
+
+	def >=(other)
+		!(other === nil)
+	end
+
+	Instance = new.freeze
 
 	freeze
 end

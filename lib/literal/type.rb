@@ -2,6 +2,6 @@
 
 module Literal::Type
 	def >=(other)
-		self > other || self == other
+		self == other
 	end
 end

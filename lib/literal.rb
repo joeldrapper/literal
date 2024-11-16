@@ -30,66 +30,68 @@ module Literal
 
 	TRANSFORMS = {
 		Integer => {
-			:abs.to_proc => Integer,
-			:ceil.to_proc => Integer,
-			:chr.to_proc => String,
-			:denominator.to_proc => Integer,
-			:even?.to_proc => Types::BooleanType::Instance,
-			:floor.to_proc => Integer,
-			:hash.to_proc => Integer,
-			:inspect.to_proc => String,
-			:integer?.to_proc => true,
-			:magnitude.to_proc => Integer,
-			:negative?.to_proc => Types::BooleanType::Instance,
-			:next.to_proc => Integer,
-			:nonzero?.to_proc => Types::BooleanType::Instance,
-			:numerator.to_proc => Integer,
-			:odd?.to_proc => Types::BooleanType::Instance,
-			:ord.to_proc => Integer,
-			:positive?.to_proc => Types::BooleanType::Instance,
-			:pred.to_proc => Integer,
-			:round.to_proc => Integer,
-			:size.to_proc => Integer,
-			:succ.to_proc => Integer,
-			:to_f.to_proc => Float,
-			:to_i.to_proc => Integer,
-			:to_int.to_proc => Integer,
-			:to_r.to_proc => Rational,
-			:to_s.to_proc => String,
-			:to_s.to_proc => String,
-			:truncate.to_proc => Integer,
-			:zero?.to_proc => Types::BooleanType::Instance,
+			abs: Integer,
+			ceil: Integer,
+			chr: String,
+			denominator: Integer,
+			even?: Types::BooleanType::Instance,
+			floor: Integer,
+			hash: Integer,
+			inspect: String,
+			integer?: true,
+			magnitude: Integer,
+			negative?: Types::BooleanType::Instance,
+			next: Integer,
+			nonzero?: Types::BooleanType::Instance,
+			numerator: Integer,
+			odd?: Types::BooleanType::Instance,
+			ord: Integer,
+			positive?: Types::BooleanType::Instance,
+			pred: Integer,
+			round: Integer,
+			size: Integer,
+			succ: Integer,
+			to_f: Float,
+			to_i: Integer,
+			to_int: Integer,
+			to_r: Rational,
+			to_s: String,
+			truncate: Integer,
+			zero?: Types::BooleanType::Instance,
 		},
 		String => {
-			:ascii_only?.to_proc => Types::BooleanType::Instance,
-			:bytesize.to_proc => Integer,
-			:capitalize.to_proc => String,
-			:chomp.to_proc => String,
-			:chop.to_proc => String,
-			:downcase.to_proc => String,
-			:dump.to_proc => String,
-			:empty?.to_proc => Types::BooleanType::Instance,
-			:hash.to_proc => Integer,
-			:inspect.to_proc => String,
-			:length.to_proc => Integer,
-			:lstrip.to_proc => String,
-			:ord.to_proc => Integer,
-			:reverse.to_proc => String,
-			:rstrip.to_proc => String,
-			:scrub.to_proc => String,
-			:size.to_proc => Integer,
-			:strip.to_proc => String,
-			:swapcase.to_proc => String,
-			:to_str.to_proc => String,
-			:upcase.to_proc => String,
-			:valid_encoding?.to_proc => Types::BooleanType::Instance,
+			ascii_only?: Types::BooleanType::Instance,
+			bytesize: Integer,
+			capitalize: String,
+			chomp: String,
+			chop: String,
+			downcase: String,
+			dump: String,
+			empty?: Types::BooleanType::Instance,
+			hash: Integer,
+			inspect: String,
+			length: Integer,
+			lstrip: String,
+			ord: Integer,
+			reverse: String,
+			rstrip: String,
+			scrub: String,
+			size: Integer,
+			strip: String,
+			swapcase: String,
+			to_str: String,
+			upcase: String,
+			valid_encoding?: Types::BooleanType::Instance,
 		},
 		Array => {
-			:size.to_proc => Integer,
-			:length.to_proc => Integer,
-			:empty?.to_proc => Types::BooleanType::Instance,
+			size: Integer,
+			length: Integer,
+			empty?: Types::BooleanType::Instance,
+			sort: Array,
+			to_a: Array,
+			to_ary: Array,
 		},
-	}
+	}.transform_values! { |it| it.transform_keys(&:to_proc) }.freeze
 
 	def self.Enum(type)
 		Class.new(Literal::Enum) do
@@ -121,14 +123,14 @@ module Literal
 	end
 
 	def self.subtype?(type, of:)
-		of == type || (
-			case of
-			when Literal::Type, Module
-				of >= type
-			else
-				false
-			end
-		)
+		(of == type) || case of
+		when Literal::Type, Module
+			of >= type
+		when Range
+			of.cover?(type)
+		else
+			false
+		end
 	end
 end
 
