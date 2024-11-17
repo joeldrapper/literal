@@ -361,3 +361,32 @@ test "#uniq returns a new array with duplicates removed" do
 	expect((array.uniq).to_a) == [1, 2, 3]
 	expect(array.uniq) == Literal::Array(Integer).new(1, 2, 3)
 end
+
+test "#| returns a union of two Literal::Arrays" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(Integer).new(2, 3, 4)
+
+	union = array | other
+
+	assert Literal::Array(Integer) === union
+	expect(union.to_a) == [1, 2, 3, 4]
+end
+
+test "#| returns a union of a Literal::Array and an Array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = [2, 3, 4]
+
+	union = array | other
+
+	assert Literal::Array(Integer) === union
+	expect(union.to_a) == [1, 2, 3, 4]
+end
+
+test "#| raises if the type is wrong" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other = Literal::Array(String).new("2", "3")
+	other_primitive = ["2", "3"]
+
+	expect { array | other }.to_raise(Literal::TypeError)
+	expect { array | other_primitive }.to_raise(Literal::TypeError)
+end
