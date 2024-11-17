@@ -274,12 +274,16 @@ class Literal::Array
 		end
 	end
 
+	alias_method :collect, :map
+
 	# TODO: we can make this faster
 	def map!(&)
 		new_array = map(@__type__, &)
 		@__value__ = new_array.__value__
 		self
 	end
+
+	alias_method :collect!, :map!
 
 	def max(n = nil, &)
 		if n
