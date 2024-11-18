@@ -385,10 +385,6 @@ class Literal::Array
 		end
 	end
 
-	def uniq!(...)
-		@__value__.uniq!(...) ? self : nil
-	end
-
 	def uniq
 		__with__(@__value__.uniq)
 	end
