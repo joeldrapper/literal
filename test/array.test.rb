@@ -337,6 +337,12 @@ test "#transpose returns a new array with rows and columns transposed" do
 	expect(transposed.to_a) == [[1, 3, 5], [2, 4, 6]]
 end
 
+test "#transpose raises if the rows are not the same length" do
+	array = Literal::Array(Array).new([1, 2], [3, 4, 5])
+
+	expect { array.transpose }.to_raise(IndexError)
+end
+
 test "#values_at returns the values at the given indexes" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 

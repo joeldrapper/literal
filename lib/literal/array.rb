@@ -378,14 +378,10 @@ class Literal::Array
 	alias_method :to_ary, :to_a
 
 	def transpose
-		unless @__type__ == Array
-			raise ArgumentError.new("#transpose expects Array type")
-		end
-
-		if @__type__ == Array
+		if @__type__ == Array || Literal::Array == @__type__
 			__with__(@__value__.transpose)
-		elsif @__type__ == Literal::Array
-			# TODO: Implement transpose for Literal::Array
+		else
+			raise ArgumentError.new("#transpose expects Array type")
 		end
 	end
 
