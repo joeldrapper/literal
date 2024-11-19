@@ -247,7 +247,7 @@ end
 test "#combination returns self" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
-	expect(array.combination(1) {}) == array
+	expect(array.combination(0) { nil }) == array
 end
 
 test "#compact returns a new Literal::Array" do

@@ -176,8 +176,8 @@ class Literal::Array
 		self
 	end
 
-	def combination(n, &block)
-		@__value__.combination(n, &block)
+	def combination(...)
+		@__value__.combination(...)
 		self
 	end
 
