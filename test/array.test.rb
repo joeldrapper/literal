@@ -236,6 +236,20 @@ test "#assoc returns the correct element" do
 	expect(array.assoc(3)) == [3, 4]
 end
 
+test "#combination yields to the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	results = []
+
+	array.combination(2) { |x| results << x }
+	expect(results) == [[1, 2], [1, 3], [2, 3]]
+end
+
+test "#combination returns self" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.combination(1) {}) == array
+end
+
 test "#compact returns a new Literal::Array" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 

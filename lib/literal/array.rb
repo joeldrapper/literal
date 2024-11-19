@@ -176,6 +176,11 @@ class Literal::Array
 		self
 	end
 
+	def combination(n, &block)
+		@__value__.combination(n, &block)
+		self
+	end
+
 	def compact
 		# @TODO if this is an array of nils, we should return an emtpy array
 		__with__(@__value__)
