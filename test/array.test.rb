@@ -249,6 +249,39 @@ test "#compact! returns nil" do
 	expect(array.compact!) == nil
 end
 
+test "#delete deletes the element" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	array.delete(2)
+	expect(array.to_a) == [1, 3]
+end
+
+test "#delete returns the deleted element" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.delete(2)) == 2
+end
+
+test "#delete_at deletes the element at the index" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	array.delete_at(1)
+	expect(array.to_a) == [1, 3]
+end
+
+test "#delete_at returns the deleted element" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.delete_at(1)) == 2
+end
+
+test "#delete_if deletes elements that match the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	array.delete_if { |i| i < 2 }
+	expect(array.to_a) == [2, 3]
+end
+
 test "#drop returns a new array with the first n elements removed" do
 		array = Literal::Array(Integer).new(1, 2, 3)
 		dropped = array.drop(1)

@@ -190,6 +190,19 @@ class Literal::Array
 		@__value__.count(...)
 	end
 
+	def delete(...)
+		@__value__.delete(...)
+	end
+
+	def delete_at(...)
+		@__value__.delete_at(...)
+	end
+
+	def delete_if(...)
+		@__value__.delete_if(...)
+		self
+	end
+
 	def dig(...)
 		@__value__.dig(...)
 	end
