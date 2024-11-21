@@ -9,7 +9,6 @@ class Literal::Flags
 		end
 
 		@value = value
-
 		freeze
 	end
 
@@ -138,6 +137,15 @@ class Literal::Flags
 		[@value].pack(self.class::PACKER)
 	end
 
+	def with(**attributes)
+		new_val = attributes.reduce(value) do |value, (k, v)|
+			v ? value |= bitmap(k) : value &= ~(bitmap(k))
+			value
+		end
+
+		self.class.allocate.__initialize_from_value__(new_val)
+	end
+
 	# () -> String
 	def inspect
 		to_h.inspect
@@ -156,7 +164,7 @@ class Literal::Flags
 
 	# (Symbol) -> Boolean
 	def [](key)
-		@value & (2 ** self.class::FLAGS.fetch(key)) > 0
+		@value & (bitmap(key)) > 0
 	end
 
 	def |(other)
@@ -197,13 +205,18 @@ class Literal::Flags
 
 	def deconstruct_keys(keys = nil)
 		if keys
-			flags = self.class::FLAGS
 			keys.to_h do |key|
-				[key, @value & (2 ** flags.fetch(key)) > 0]
+				[key, @value & (bitmap(key)) > 0]
 			end
 		else
 			to_h
 		end
+	end
+
+	private
+
+	def bitmap(key)
+		2 ** self.class::FLAGS.fetch(key)
 	end
 end
 

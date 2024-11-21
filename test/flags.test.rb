@@ -8,6 +8,19 @@ class Example < Literal::Flags8
 	)
 end
 
+test "with" do
+	a = Example.new(italic: true, underlined: true)
+	b = a.with(bold: true, underlined: false)
+
+	refute a.bold?
+	assert a.italic?
+	assert a.underlined?
+
+	assert b.bold?
+	assert b.italic?
+	refute b.underlined?
+end
+
 test "from_array" do
 	flags = Example.from_array([false, false, false, false, false, false, false, true])
 

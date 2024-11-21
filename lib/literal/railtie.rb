@@ -6,8 +6,16 @@ class Literal::Railtie < Rails::Railtie
 			Literal::Rails::EnumType.new(type)
 		end
 
+		ActiveRecord::Type.register(:literal_flags) do |name, type:|
+			Literal::Rails::FlagsType.new(type)
+		end
+
 		ActiveModel::Type.register(:literal_enum) do |name, type:|
 			Literal::Rails::EnumType.new(type)
+		end
+
+		ActiveModel::Type.register(:literal_flags) do |name, type:|
+			Literal::Rails::FlagsType.new(type)
 		end
 	end
 end
