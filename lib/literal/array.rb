@@ -425,4 +425,26 @@ class Literal::Array
 			@__value__.values_at(*indexes)
 		)
 	end
+
+	def |(other)
+		case other
+		when ::Array
+			Literal.check(actual: other, expected: _Array(@__type__)) do |c|
+				c.fill_receiver(receiver: self, method: "#|")
+			end
+
+			__with__(@__value__ | other)
+		when Literal::Array(@__type__)
+			__with__(@__value__ | other.__value__)
+		when Literal::Array
+			raise Literal::TypeError.new(
+				context: Literal::TypeError::Context.new(
+					expected: Literal::Array(@__type__),
+					actual: other
+				)
+			)
+		else
+			raise ArgumentError.new("Cannot perform `|` with #{other.class.name}.")
+		end
+	end
 end
