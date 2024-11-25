@@ -307,11 +307,11 @@ test "nested properties raise in initializer" do
 			        Expected: Symbol
 			        Actual (String): "Father"
 			    [2]
-			      []
-			        Expected: :person
+			      [:person]
+			        Expected: #{Person.inspect}
 			        Actual (NilClass): nil
-			      []
-			        Expected: :role
+			      [:role]
+			        Expected: Symbol
 			        Actual (NilClass): nil
 		ERROR
 	end
