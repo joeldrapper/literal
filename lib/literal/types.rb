@@ -24,7 +24,6 @@ module Literal::Types
 	autoload :ProcableType, "literal/types/procable_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
-	autoload :StringType, "literal/types/string_type"
 	autoload :SymbolType, "literal/types/symbol_type"
 	autoload :TruthyType, "literal/types/truthy_type"
 	autoload :TupleType, "literal/types/tuple_type"
@@ -54,7 +53,7 @@ module Literal::Types
 	# Nilable version of `_Array`
 	def _Array?(...)
 		NilableType.new(
-			ArrayType.new(...),
+			ArrayType.new(...)
 		)
 	end
 
@@ -86,7 +85,7 @@ module Literal::Types
 	# Nilable version of `_Class`
 	def _Class?(...)
 		NilableType.new(
-			ClassType.new(...),
+			ClassType.new(...)
 		)
 	end
 
@@ -100,7 +99,7 @@ module Literal::Types
 	# Nilable version of `_Constraint`
 	def _Constraint?(...)
 		NilableType.new(
-			ConstraintType.new(...),
+			ConstraintType.new(...)
 		)
 	end
 
@@ -112,7 +111,7 @@ module Literal::Types
 	# Nilable version of `_Descendant`
 	def _Descendant?(...)
 		NilableType.new(
-			DescendantType.new(...),
+			DescendantType.new(...)
 		)
 	end
 
@@ -124,7 +123,7 @@ module Literal::Types
 	# Nilable version of `_Enumerable`
 	def _Enumerable?(...)
 		NilableType.new(
-			EnumerableType.new(...),
+			EnumerableType.new(...)
 		)
 	end
 
@@ -155,7 +154,7 @@ module Literal::Types
 	# Nilable version of `_Frozen`
 	def _Frozen?(...)
 		NilableType.new(
-			FrozenType.new(...),
+			FrozenType.new(...)
 		)
 	end
 
@@ -167,7 +166,7 @@ module Literal::Types
 	# Nilable version of `_Hash`
 	def _Hash?(...)
 		NilableType.new(
-			HashType.new(...),
+			HashType.new(...)
 		)
 	end
 
@@ -183,7 +182,7 @@ module Literal::Types
 	# Nilable version of `_Integer`
 	def _Integer?(...)
 		NilableType.new(
-			IntegerType.new(...),
+			IntegerType.new(...)
 		)
 	end
 
@@ -195,7 +194,7 @@ module Literal::Types
 	# Nilable version of `_Interface`
 	def _Interface?(...)
 		NilableType.new(
-			InterfaceType.new(...),
+			InterfaceType.new(...)
 		)
 	end
 
@@ -207,7 +206,7 @@ module Literal::Types
 	# Nilable version of `_Intersection`
 	def _Intersection?(...)
 		NilableType.new(
-			IntersectionType.new(...),
+			IntersectionType.new(...)
 		)
 	end
 
@@ -238,7 +237,7 @@ module Literal::Types
 	# Nilable version of `_Map`
 	def _Map?(...)
 		NilableType.new(
-			MapType.new(...),
+			MapType.new(...)
 		)
 	end
 
@@ -275,7 +274,7 @@ module Literal::Types
 	# Nilable version of `_Range`
 	def _Range?(...)
 		NilableType.new(
-			RangeType.new(...),
+			RangeType.new(...)
 		)
 	end
 
@@ -287,20 +286,20 @@ module Literal::Types
 	# Nilable version of `_Set`
 	def _Set?(...)
 		NilableType.new(
-			SetType.new(...),
+			SetType.new(...)
 		)
 	end
 
 	# Matches if the value is a `String` and matches the given constraints.
 	# If you don't need any constraints, use `String` instead of `_String`.
 	def _String(...)
-		StringType.new(...)
+		_Constraint(String, ...)
 	end
 
 	# Nilable version of `_String`
 	def _String?(...)
-		NilableType.new(
-			StringType.new(...),
+		_Nilable(
+			_String(...)
 		)
 	end
 
@@ -312,7 +311,7 @@ module Literal::Types
 	# Nilable version of `_Symbol`
 	def _Symbol?(...)
 		NilableType.new(
-			SymbolType.new(...),
+			SymbolType.new(...)
 		)
 	end
 
@@ -329,7 +328,7 @@ module Literal::Types
 	# Nilable version of `_Typle`
 	def _Tuple?(...)
 		NilableType.new(
-			TupleType.new(...),
+			TupleType.new(...)
 		)
 	end
 
@@ -341,7 +340,7 @@ module Literal::Types
 	# Nilable version of `_Union`
 	def _Union?(...)
 		NilableType.new(
-			UnionType.new(...),
+			UnionType.new(...)
 		)
 	end
 
