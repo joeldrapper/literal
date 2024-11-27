@@ -369,8 +369,8 @@ test "_Map" do
 		    [1]
 		      Expected: Integer
 		      Actual (String): "1"
-		    []
-		      Expected: "2"
+		    ["2"]
+		      Expected: String
 		      Actual (NilClass): nil
 	MSG
 end

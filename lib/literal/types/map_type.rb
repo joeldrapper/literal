@@ -23,7 +23,7 @@ class Literal::Types::MapType
 
 		@shape.each do |key, expected|
 			unless context.actual.key?(key) || expected === nil
-				context.add_child(label: "[]", expected: key, actual: nil)
+				context.add_child(label: "[#{key.inspect}]", expected:, actual: nil)
 				next
 			end
 
