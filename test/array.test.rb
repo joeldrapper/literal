@@ -437,3 +437,8 @@ test "#| raises if the type is wrong" do
 	expect { array | other }.to_raise(Literal::TypeError)
 	expect { array | other_primitive }.to_raise(Literal::TypeError)
 end
+
+test "#sum" do
+	expect(Literal::Array(Integer).new(1, 2, 3).sum) == 6
+	expect(Literal::Array(String).new("1", "2", "3").sum(&:to_i)) == 6
+end

@@ -303,6 +303,10 @@ class Literal::Array
 
 	alias_method :collect!, :map!
 
+	def sum(...)
+		@__value__.sum(...)
+	end
+
 	def max(n = nil, &)
 		if n
 			__with__(@__value__.max(n, &))
