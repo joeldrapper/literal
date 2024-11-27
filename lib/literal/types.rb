@@ -133,7 +133,7 @@ module Literal::Types
 		FalsyType::Instance
 	end
 
-	# Matches if the value is a `Float` and matches the given constraint.
+	# Matches if the value is a `Float` and matches the given constraints.
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Float` instead of `_Float`.
 	def _Float(...)
