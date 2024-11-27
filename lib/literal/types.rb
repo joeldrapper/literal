@@ -12,7 +12,6 @@ module Literal::Types
 	autoload :FalsyType, "literal/types/falsy_type"
 	autoload :FrozenType, "literal/types/frozen_type"
 	autoload :HashType, "literal/types/hash_type"
-	autoload :IntegerType, "literal/types/integer_type"
 	autoload :InterfaceType, "literal/types/interface_type"
 	autoload :IntersectionType, "literal/types/intersection_type"
 	autoload :JSONDataType, "literal/types/json_data_type"
@@ -24,7 +23,6 @@ module Literal::Types
 	autoload :ProcableType, "literal/types/procable_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
-	autoload :SymbolType, "literal/types/symbol_type"
 	autoload :TruthyType, "literal/types/truthy_type"
 	autoload :TupleType, "literal/types/tuple_type"
 	autoload :UnionType, "literal/types/union_type"
@@ -176,13 +174,13 @@ module Literal::Types
 	# @example
 	# 	attribute :age, _Integer(18..127)
 	def _Integer(...)
-		IntegerType.new(...)
+		_Constraint(Integer, ...)
 	end
 
 	# Nilable version of `_Integer`
 	def _Integer?(...)
-		NilableType.new(
-			IntegerType.new(...)
+		_Nilable(
+			_Integer(...)
 		)
 	end
 
@@ -303,15 +301,15 @@ module Literal::Types
 		)
 	end
 
-	# Matches if the value is a `Symbol` and matches the given constraint.
+	# Matches if the value is a `Symbol` and matches the given constraints.
 	def _Symbol(...)
-		SymbolType.new(...)
+		_Constraint(Symbol, ...)
 	end
 
 	# Nilable version of `_Symbol`
 	def _Symbol?(...)
-		NilableType.new(
-			SymbolType.new(...)
+		_Nilable(
+			_Symbol(...)
 		)
 	end
 
