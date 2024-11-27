@@ -303,7 +303,7 @@ class Literal::Array
 
 	alias_method :collect!, :map!
 
-	def sum(...) # + is what we rely on
+	def sum(...)
 		@__value__.sum(...)
 	end
 
