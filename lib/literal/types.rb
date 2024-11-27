@@ -10,7 +10,6 @@ module Literal::Types
 	autoload :DescendantType, "literal/types/descendant_type"
 	autoload :EnumerableType, "literal/types/enumerable_type"
 	autoload :FalsyType, "literal/types/falsy_type"
-	autoload :FloatType, "literal/types/float_type"
 	autoload :FrozenType, "literal/types/frozen_type"
 	autoload :HashType, "literal/types/hash_type"
 	autoload :IntegerType, "literal/types/integer_type"
@@ -138,13 +137,13 @@ module Literal::Types
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Float` instead of `_Float`.
 	def _Float(...)
-		FloatType.new(...)
+		_Constraint(Float, ...)
 	end
 
 	# Nilable version of `_Float`
 	def _Float?(...)
-		NilableType.new(
-			FloatType.new(...),
+		_Nilable(
+			_Float(...)
 		)
 	end
 
