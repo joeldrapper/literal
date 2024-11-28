@@ -472,6 +472,18 @@ test "#narrow with wrong type" do
 	}.to_raise(ArgumentError)
 end
 
+test "#flatten! flattens the array" do
+	array = Literal::Array(Array).new([1, 2], [3, 4])
+
+	expect((array.flatten!).to_a) == [1, 2, 3, 4]
+end
+
+test "#flatten! returns nil if no nested arrays" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.flatten!) == nil
+end
+
 test "#flatten flattens the array" do
 	array = Literal::Array(Array).new([1, 2], [3, 4])
 
@@ -491,4 +503,28 @@ test "#fetch" do
 	expect(array.fetch(1)) == 2
 	expect(array.fetch(2)) == 3
 	expect { array.fetch(3) }.to_raise(IndexError)
+end
+
+test "#inspect returns a string representation of the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.inspect) == "[1, 2, 3]"
+end
+
+test "#to_s returns a string representation of the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.to_s) == "[1, 2, 3]"
+end
+
+test "#fetch returns default value if element is missing at index" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.fetch(4, :missing)) == :missing
+end
+
+test "#fetch returns value of block if element is missing at index" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.fetch(4) { |index| index * 2 }) == 8
 end
