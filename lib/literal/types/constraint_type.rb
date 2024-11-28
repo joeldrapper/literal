@@ -38,16 +38,26 @@ class Literal::Types::ConstraintType
 	def >=(other)
 		case other
 		when Literal::Types::ConstraintType
-			return false unless [@object_constraints.length, other.object_constraints.length].max.times.all? do |i|
-				a, b = @object_constraints[i], other.object_constraints[i]
-				Literal.subtype?(b, of: a)
+			other_object_constraints = other.object_constraints
+			return false unless @object_constraints.all? do |constraint|
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
 			end
 
+			other_property_constraints = other.property_constraints
 			return false unless @property_constraints.all? do |k, v|
-				Literal.subtype?(other.property_constraints[k], of: v)
+				Literal.subtype?(other_property_constraints[k], of: v)
 			end
 
 			true
+		when Literal::Types::IntersectionType
+			other_object_constraints = other.types
+			return false unless @object_constraints.all? do |constraint|
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
+			end
+
+			true
+		when Literal::Types::FrozenType
+			@object_constraints.all? { |constraint| Literal.subtype?(other.type, of: constraint) }
 		else
 			false
 		end

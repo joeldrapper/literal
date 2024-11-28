@@ -28,70 +28,7 @@ module Literal
 	autoload :TypeError, "literal/errors/type_error"
 	autoload :ArgumentError, "literal/errors/argument_error"
 
-	TRANSFORMS = {
-		Integer => {
-			abs: Integer,
-			ceil: Integer,
-			chr: String,
-			denominator: Integer,
-			even?: Types::BooleanType::Instance,
-			floor: Integer,
-			hash: Integer,
-			inspect: String,
-			integer?: true,
-			magnitude: Integer,
-			negative?: Types::BooleanType::Instance,
-			next: Integer,
-			nonzero?: Types::BooleanType::Instance,
-			numerator: Integer,
-			odd?: Types::BooleanType::Instance,
-			ord: Integer,
-			positive?: Types::BooleanType::Instance,
-			pred: Integer,
-			round: Integer,
-			size: Integer,
-			succ: Integer,
-			to_f: Float,
-			to_i: Integer,
-			to_int: Integer,
-			to_r: Rational,
-			to_s: String,
-			truncate: Integer,
-			zero?: Types::BooleanType::Instance,
-		},
-		String => {
-			ascii_only?: Types::BooleanType::Instance,
-			bytesize: Integer,
-			capitalize: String,
-			chomp: String,
-			chop: String,
-			downcase: String,
-			dump: String,
-			empty?: Types::BooleanType::Instance,
-			hash: Integer,
-			inspect: String,
-			length: Integer,
-			lstrip: String,
-			ord: Integer,
-			reverse: String,
-			rstrip: String,
-			scrub: String,
-			size: Integer,
-			strip: String,
-			swapcase: String,
-			to_str: String,
-			upcase: String,
-			valid_encoding?: Types::BooleanType::Instance,
-		},
-		Array => {
-			size: Integer,
-			length: Integer,
-			empty?: Types::BooleanType::Instance,
-			sort: Array,
-			to_a: Array,
-			to_ary: Array,
-		},
-	}.transform_values! { |it| it.transform_keys(&:to_proc) }.freeze
+	autoload :TRANSFORMS, "literal/transforms"
 
 	def self.Enum(type)
 		Class.new(Literal::Enum) do
@@ -124,8 +61,10 @@ module Literal
 
 	def self.subtype?(type, of:)
 		(of == type) || case of
-		when Literal::Type, Module
+		when Literal::Type
 			of >= type
+		when Module
+			(Module === type) ? of >= type : false
 		when Range
 			of.cover?(type)
 		else

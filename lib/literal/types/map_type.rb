@@ -2,9 +2,13 @@
 
 # @api private
 class Literal::Types::MapType
+	include Literal::Type
+
 	def initialize(**shape)
 		@shape = shape
 	end
+
+	attr_reader :shape
 
 	def inspect
 		"_Map(#{@shape.inspect})"
@@ -23,7 +27,7 @@ class Literal::Types::MapType
 
 		@shape.each do |key, expected|
 			unless context.actual.key?(key) || expected === nil
-				context.add_child(label: "[]", expected: key, actual: nil)
+				context.add_child(label: "[#{key.inspect}]", expected:, actual: nil)
 				next
 			end
 
@@ -31,6 +35,19 @@ class Literal::Types::MapType
 			unless expected === actual
 				context.add_child(label: "[#{key.inspect}]", expected:, actual:)
 			end
+		end
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::MapType
+			other_shape = other.shape
+
+			@shape.all? do |k, v|
+				Literal.subtype?(other_shape[k], of: v)
+			end
+		else
+			false
 		end
 	end
 end

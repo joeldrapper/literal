@@ -2,6 +2,8 @@
 
 # @api private
 class Literal::Types::IntersectionType
+	include Literal::Type
+
 	def initialize(*types)
 		raise Literal::ArgumentError.new("_Intersection type must have at least one type.") if types.size < 1
 
@@ -27,4 +29,27 @@ class Literal::Types::IntersectionType
 			context.add_child(label: inspect, expected: type, actual: context.actual)
 		end
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::IntersectionType
+			@types.all? do |type|
+				other.types.any? do |other_type|
+					Literal.subtype?(other_type, of: type)
+				end
+			end
+		when Literal::Types::ConstraintType
+			@types.all? do |type|
+				other.object_constraints.any? do |object_constraint|
+					Literal.subtype?(object_constraint, of: type)
+				end
+			end
+		when Literal::Types::FrozenType
+			@types.all? { |type| Literal.subtype?(other.type, of: type) }
+		else
+			false
+		end
+	end
+
+	freeze
 end

@@ -2,13 +2,19 @@
 
 # @api private
 class Literal::Types::TupleType
+	include Literal::Type
+
 	def initialize(*types)
 		raise Literal::ArgumentError.new("_Tuple type must have at least one type.") if types.size < 1
 
 		@types = types
 	end
 
-	def inspect = "_Tuple(#{@types.map(&:inspect).join(', ')})"
+	attr_reader :types
+
+	def inspect
+		"_Tuple(#{@types.map(&:inspect).join(', ')})"
+	end
 
 	def ===(value)
 		return false unless Array === value
@@ -39,4 +45,15 @@ class Literal::Types::TupleType
 			i += 1
 		end
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::TupleType
+			@types == other.types
+		else
+			false
+		end
+	end
+
+	freeze
 end

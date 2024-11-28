@@ -176,6 +176,11 @@ class Literal::Array
 		self
 	end
 
+	def combination(...)
+		@__value__.combination(...)
+		self
+	end
+
 	def compact
 		# @TODO if this is an array of nils, we should return an emtpy array
 		__with__(@__value__)
@@ -188,6 +193,19 @@ class Literal::Array
 
 	def count(...)
 		@__value__.count(...)
+	end
+
+	def delete(...)
+		@__value__.delete(...)
+	end
+
+	def delete_at(...)
+		@__value__.delete_at(...)
+	end
+
+	def delete_if(...)
+		@__value__.delete_if(...)
+		self
 	end
 
 	def dig(...)
@@ -274,11 +292,19 @@ class Literal::Array
 		end
 	end
 
+	alias_method :collect, :map
+
 	# TODO: we can make this faster
 	def map!(&)
 		new_array = map(@__type__, &)
 		@__value__ = new_array.__value__
 		self
+	end
+
+	alias_method :collect!, :map!
+
+	def sum(...)
+		@__value__.sum(...)
 	end
 
 	def max(n = nil, &)
@@ -299,6 +325,23 @@ class Literal::Array
 
 	def minmax(...)
 		__with__(@__value__.minmax(...))
+	end
+
+	def narrow(type)
+		return self if __type__ == type
+
+		unless Literal.subtype?(type, of: @__type__)
+			raise ArgumentError.new("Cannot narrow #{@__type__} to #{type}")
+		end
+
+		@__value__.each do |item|
+			Literal.check(actual: item, expected: type) do |c|
+				c.fill_receiver(receiver: self, method: "#narrow")
+			end
+		end
+
+		@__type__ = type
+		self
 	end
 
 	def one?(...)
@@ -428,5 +471,27 @@ class Literal::Array
 		__with__(
 			@__value__.values_at(*indexes)
 		)
+	end
+
+	def |(other)
+		case other
+		when ::Array
+			Literal.check(actual: other, expected: _Array(@__type__)) do |c|
+				c.fill_receiver(receiver: self, method: "#|")
+			end
+
+			__with__(@__value__ | other)
+		when Literal::Array(@__type__)
+			__with__(@__value__ | other.__value__)
+		when Literal::Array
+			raise Literal::TypeError.new(
+				context: Literal::TypeError::Context.new(
+					expected: Literal::Array(@__type__),
+					actual: other
+				)
+			)
+		else
+			raise ArgumentError.new("Cannot perform `|` with #{other.class.name}.")
+		end
 	end
 end

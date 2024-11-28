@@ -4,43 +4,40 @@ module Literal::Types
 	autoload :AnyType, "literal/types/any_type"
 	autoload :ArrayType, "literal/types/array_type"
 	autoload :BooleanType, "literal/types/boolean_type"
-	autoload :CallableType, "literal/types/callable_type"
 	autoload :ClassType, "literal/types/class_type"
 	autoload :ConstraintType, "literal/types/constraint_type"
 	autoload :DescendantType, "literal/types/descendant_type"
 	autoload :EnumerableType, "literal/types/enumerable_type"
 	autoload :FalsyType, "literal/types/falsy_type"
-	autoload :FloatType, "literal/types/float_type"
 	autoload :FrozenType, "literal/types/frozen_type"
 	autoload :HashType, "literal/types/hash_type"
-	autoload :IntegerType, "literal/types/integer_type"
 	autoload :InterfaceType, "literal/types/interface_type"
 	autoload :IntersectionType, "literal/types/intersection_type"
 	autoload :JSONDataType, "literal/types/json_data_type"
-	autoload :LambdaType, "literal/types/lambda_type"
 	autoload :MapType, "literal/types/map_type"
 	autoload :NeverType, "literal/types/never_type"
 	autoload :NilableType, "literal/types/nilable_type"
 	autoload :NotType, "literal/types/not_type"
-	autoload :ProcableType, "literal/types/procable_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
-	autoload :StringType, "literal/types/string_type"
-	autoload :SymbolType, "literal/types/symbol_type"
 	autoload :TruthyType, "literal/types/truthy_type"
 	autoload :TupleType, "literal/types/tuple_type"
 	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
 
-	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
-	NilableCallableType = NilableType.new(CallableType::Instance).freeze
+	ProcableType = InterfaceType.new(:to_proc).freeze
+	CallableType = InterfaceType.new(:call).freeze
+	LambdaType = ConstraintType.new(Proc, lambda?: true).freeze
+
+	NilableBooleanType = NilableType.new(BooleanType).freeze
+	NilableCallableType = NilableType.new(CallableType).freeze
 	NilableJSONDataType = NilableType.new(JSONDataType).freeze
 	NilableLambdaType = NilableType.new(LambdaType).freeze
 	NilableProcableType = NilableType.new(ProcableType).freeze
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	def _Any
-		AnyType::Instance
+		AnyType
 	end
 
 	def _Any?
@@ -55,13 +52,13 @@ module Literal::Types
 	# Nilable version of `_Array`
 	def _Array?(...)
 		NilableType.new(
-			ArrayType.new(...),
+			ArrayType.new(...)
 		)
 	end
 
 	# Matches if the value is `true` or `false`.
 	def _Boolean
-		BooleanType::Instance
+		BooleanType
 	end
 
 	# Nilable version of `_Boolean`
@@ -71,7 +68,7 @@ module Literal::Types
 
 	# Matches if the value responds to `#call`.
 	def _Callable
-		CallableType::Instance
+		CallableType
 	end
 
 	# Nilabl version of `_Callable`
@@ -87,7 +84,7 @@ module Literal::Types
 	# Nilable version of `_Class`
 	def _Class?(...)
 		NilableType.new(
-			ClassType.new(...),
+			ClassType.new(...)
 		)
 	end
 
@@ -101,7 +98,7 @@ module Literal::Types
 	# Nilable version of `_Constraint`
 	def _Constraint?(...)
 		NilableType.new(
-			ConstraintType.new(...),
+			ConstraintType.new(...)
 		)
 	end
 
@@ -113,7 +110,7 @@ module Literal::Types
 	# Nilable version of `_Descendant`
 	def _Descendant?(...)
 		NilableType.new(
-			DescendantType.new(...),
+			DescendantType.new(...)
 		)
 	end
 
@@ -125,7 +122,7 @@ module Literal::Types
 	# Nilable version of `_Enumerable`
 	def _Enumerable?(...)
 		NilableType.new(
-			EnumerableType.new(...),
+			EnumerableType.new(...)
 		)
 	end
 
@@ -134,17 +131,17 @@ module Literal::Types
 		FalsyType
 	end
 
-	# Matches if the value is a `Float` and matches the given constraint.
+	# Matches if the value is a `Float` and matches the given constraints.
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Float` instead of `_Float`.
 	def _Float(...)
-		FloatType.new(...)
+		_Constraint(Float, ...)
 	end
 
 	# Nilable version of `_Float`
 	def _Float?(...)
-		NilableType.new(
-			FloatType.new(...),
+		_Nilable(
+			_Float(...)
 		)
 	end
 
@@ -156,7 +153,7 @@ module Literal::Types
 	# Nilable version of `_Frozen`
 	def _Frozen?(...)
 		NilableType.new(
-			FrozenType.new(...),
+			FrozenType.new(...)
 		)
 	end
 
@@ -168,7 +165,7 @@ module Literal::Types
 	# Nilable version of `_Hash`
 	def _Hash?(...)
 		NilableType.new(
-			HashType.new(...),
+			HashType.new(...)
 		)
 	end
 
@@ -178,13 +175,13 @@ module Literal::Types
 	# @example
 	# 	attribute :age, _Integer(18..127)
 	def _Integer(...)
-		IntegerType.new(...)
+		_Constraint(Integer, ...)
 	end
 
 	# Nilable version of `_Integer`
 	def _Integer?(...)
-		NilableType.new(
-			IntegerType.new(...),
+		_Nilable(
+			_Integer(...)
 		)
 	end
 
@@ -196,7 +193,7 @@ module Literal::Types
 	# Nilable version of `_Interface`
 	def _Interface?(...)
 		NilableType.new(
-			InterfaceType.new(...),
+			InterfaceType.new(...)
 		)
 	end
 
@@ -208,7 +205,7 @@ module Literal::Types
 	# Nilable version of `_Intersection`
 	def _Intersection?(...)
 		NilableType.new(
-			IntersectionType.new(...),
+			IntersectionType.new(...)
 		)
 	end
 
@@ -239,7 +236,7 @@ module Literal::Types
 	# Nilable version of `_Map`
 	def _Map?(...)
 		NilableType.new(
-			MapType.new(...),
+			MapType.new(...)
 		)
 	end
 
@@ -276,7 +273,7 @@ module Literal::Types
 	# Nilable version of `_Range`
 	def _Range?(...)
 		NilableType.new(
-			RangeType.new(...),
+			RangeType.new(...)
 		)
 	end
 
@@ -288,32 +285,32 @@ module Literal::Types
 	# Nilable version of `_Set`
 	def _Set?(...)
 		NilableType.new(
-			SetType.new(...),
+			SetType.new(...)
 		)
 	end
 
 	# Matches if the value is a `String` and matches the given constraints.
 	# If you don't need any constraints, use `String` instead of `_String`.
 	def _String(...)
-		StringType.new(...)
+		_Constraint(String, ...)
 	end
 
 	# Nilable version of `_String`
 	def _String?(...)
-		NilableType.new(
-			StringType.new(...),
+		_Nilable(
+			_String(...)
 		)
 	end
 
-	# Matches if the value is a `Symbol` and matches the given constraint.
+	# Matches if the value is a `Symbol` and matches the given constraints.
 	def _Symbol(...)
-		SymbolType.new(...)
+		_Constraint(Symbol, ...)
 	end
 
 	# Nilable version of `_Symbol`
 	def _Symbol?(...)
-		NilableType.new(
-			SymbolType.new(...),
+		_Nilable(
+			_Symbol(...)
 		)
 	end
 
@@ -330,7 +327,7 @@ module Literal::Types
 	# Nilable version of `_Typle`
 	def _Tuple?(...)
 		NilableType.new(
-			TupleType.new(...),
+			TupleType.new(...)
 		)
 	end
 
@@ -342,7 +339,7 @@ module Literal::Types
 	# Nilable version of `_Union`
 	def _Union?(...)
 		NilableType.new(
-			UnionType.new(...),
+			UnionType.new(...)
 		)
 	end
 

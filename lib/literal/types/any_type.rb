@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::AnyType
+class Literal::Types::AnyTypeClass
 	include Literal::Type
 
 	def inspect
@@ -16,7 +16,7 @@ class Literal::Types::AnyType
 		!(other === nil)
 	end
 
-	Instance = new.freeze
-
 	freeze
 end
+
+Literal::Types::AnyType = Literal::Types::AnyTypeClass.new.freeze

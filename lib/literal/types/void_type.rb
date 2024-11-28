@@ -1,12 +1,22 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::VoidType
-	def self.inspect = "_Void"
+class Literal::Types::VoidTypeClass
+	include Literal::Type
 
-	def self.===(_)
+	def inspect
+		"_Void"
+	end
+
+	def ===(_)
+		true
+	end
+
+	def >=(_)
 		true
 	end
 
 	freeze
 end
+
+Literal::Types::VoidType = Literal::Types::VoidTypeClass.new.freeze

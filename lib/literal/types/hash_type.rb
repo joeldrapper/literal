@@ -2,12 +2,18 @@
 
 # @api private
 class Literal::Types::HashType
+	include Literal::Type
+
 	def initialize(key_type, value_type)
 		@key_type = key_type
 		@value_type = value_type
 	end
 
-	def inspect = "_Hash(#{@key_type.inspect}, #{@value_type.inspect})"
+	attr_reader :key_type, :value_type
+
+	def inspect
+		"_Hash(#{@key_type.inspect}, #{@value_type.inspect})"
+	end
 
 	def ===(value)
 		return false unless Hash === value
@@ -17,6 +23,19 @@ class Literal::Types::HashType
 		end
 
 		true
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::HashType
+			(
+				Literal.subtype?(other.key_type, of: @key_type)
+			) && (
+				Literal.subtype?(other.value_type, of: @value_type)
+			)
+		else
+			false
+		end
 	end
 
 	def record_literal_type_errors(context)
@@ -35,4 +54,6 @@ class Literal::Types::HashType
 			end
 		end
 	end
+
+	freeze
 end

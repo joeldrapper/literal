@@ -2,11 +2,17 @@
 
 # @api private
 class Literal::Types::RangeType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect = "_Range(#{@type.inspect})"
+	attr_reader :type
+
+	def inspect
+		"_Range(#{@type.inspect})"
+	end
 
 	def ===(value)
 		Range === value && (
@@ -17,4 +23,15 @@ class Literal::Types::RangeType
 			)
 		)
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::RangeType
+			Literal.subtype?(other.type, of: @type)
+		else
+			false
+		end
+	end
+
+	freeze
 end

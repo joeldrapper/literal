@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::BooleanType
+class Literal::Types::BooleanTypeClass
 	include Literal::Type
 
 	def inspect
@@ -14,14 +14,14 @@ class Literal::Types::BooleanType
 
 	def >=(other)
 		case other
-		when true, false, Literal::Types::BooleanType
+		when true, false, Literal::Types::BooleanTypeClass
 			true
 		else
 			false
 		end
 	end
 
-	Instance = new.freeze
-
 	freeze
 end
+
+Literal::Types::BooleanType = Literal::Types::BooleanTypeClass.new.freeze

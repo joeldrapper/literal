@@ -141,11 +141,17 @@ test "_Constraint with property constraints" do
 	assert _Constraint(String) >= _Constraint(String)
 	assert _Constraint(_Array(Enumerable)) >= _Constraint(_Array(Array))
 	assert _Constraint(Array, size: 1..5) >= _Constraint(Array, size: 1..5)
-
 	assert _Constraint(Array, size: 1..3) >= _Constraint(Array, size: 1..2)
-	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
+	assert _Constraint(Enumerable, Array) >= _Intersection(Array)
+	assert _Constraint(_Array(Enumerable), name: _String(size: 1..5)) >= _Constraint(_Array(Enumerable), name: _String(size: 1..5))
 
+	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
 	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
+
+	assert _Constraint(Enumerable) >= _Frozen(Array)
+	assert _Constraint(Array) >= _Frozen(Array)
+
+	assert _Constraint(Array) >= _Constraint(Array, Enumerable)
 end
 
 test "_Descendant" do
@@ -154,6 +160,10 @@ test "_Descendant" do
 
 	refute _Descendant(Enumerable) === []
 	refute _Descendant(Enumerable) === String
+
+	assert _Descendant(Enumerable) >= _Descendant(Array)
+	assert _Descendant(Enumerable) >= _Descendant(Set)
+	refute _Descendant(Enumerable) >= _Descendant(String)
 end
 
 test "_Enumerable" do
@@ -161,6 +171,11 @@ test "_Enumerable" do
 	assert _Enumerable(Integer) === Set[1, 2, 3]
 
 	refute _Enumerable(String) === [1, "a", :symbol]
+
+	assert _Enumerable(Enumerable) >= _Enumerable(Array)
+	assert _Enumerable(Enumerable) >= _Enumerable(Set)
+
+	refute _Enumerable(Enumerable) >= _Enumerable(String)
 end
 
 test "_Falsy" do
@@ -174,6 +189,14 @@ test "_Falsy" do
 	truthy_objects.each do |object|
 		refute _Falsy === object
 	end
+
+	assert _Falsy >= _Falsy
+	assert _Falsy >= false
+	assert _Falsy >= nil
+
+	refute _Falsy >= true
+	refute _Falsy >= 0
+	refute _Falsy >= "string"
 end
 
 test "_Float" do
@@ -193,6 +216,7 @@ test "_Frozen" do
 	refute _Frozen(Array) === []
 	refute _Frozen(String) === +"mutable"
 	refute _Frozen(Array) === nil
+	assert _Frozen(Enumerable) >= _Constraint(Array, frozen?: true)
 end
 
 test "_Hash" do
@@ -202,6 +226,11 @@ test "_Hash" do
 	refute _Hash(String, Integer) === { "a" => "1", "b" => 2 }
 	refute _Hash(String, Integer) === { 1 => 2, 3 => 4 }
 	refute _Hash(Symbol, String) === { "foo" => "bar", :baz => "qux" }
+
+	assert _Hash(String, Numeric) >= _Hash(String, Integer)
+	assert _Hash(Numeric, String) >= _Hash(Integer, String)
+	assert _Hash(Symbol, Integer) >= _Hash(Symbol, Integer)
+	refute _Hash(Symbol, Integer) >= _Hash(Symbol, Numeric)
 
 	expect_type_error(expected: _Hash(Symbol, Integer), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
   Type mismatch
@@ -247,6 +276,15 @@ test "_Interface" do
 		  Expected: _Interface(:each, :map, :select)
 		  Actual (NilClass): nil
 	MSG
+
+	assert _Interface(:a) >= _Interface(:a)
+	assert _Interface(:a) >= _Interface(:a, :b)
+	assert _Interface(:a, :b) >= _Interface(:a, :b)
+	refute _Interface(:a, :b) >= _Interface(:a)
+	refute _Interface(:a) >= _Interface(:b)
+	assert _Interface(:call) >= _Callable
+	assert _Interface(:to_proc) >= _Procable
+	refute _Interface(:to_proc, :random_method) >= Proc
 end
 
 test "_Intersection" do
@@ -267,6 +305,11 @@ test "_Intersection" do
         Expected: _Interface(:each)
         Actual (String): "string"
 		MSG
+
+	assert _Intersection(String) >= _Intersection(String)
+	assert _Intersection(String) >= _Constraint(String, size: 1..5)
+
+	refute _Intersection(String) >= _Constraint(Integer, size: 1..2)
 end
 
 test "_JSONData" do
@@ -290,6 +333,22 @@ test "_JSONData" do
 	refute _JSONData === { "nested_array" => [1, :symbol, { "key" => "value" }] }
 	refute _JSONData === { "nested_hash" => { "key1" => "value1", "key2" => [1, :symbol, 3] } }
 	refute _JSONData === [{ "key" => :value }, [1, 2, 3], "string"]
+
+	assert _JSONData >= _JSONData
+	assert _JSONData >= _Array(_JSONData)
+	assert _JSONData >= _Hash(_JSONData, _JSONData)
+	assert _JSONData >= String
+	assert _JSONData >= _String(length: 10)
+	assert _JSONData >= Float
+	assert _JSONData >= _Float(5..10)
+	assert _JSONData >= Integer
+	assert _JSONData >= _Integer(5..10)
+	assert _JSONData >= true
+	assert _JSONData >= false
+	assert _JSONData >= nil
+
+	refute _JSONData >= Array # not compatible since we don’t know what’s inside the array
+	refute _JSONData >= Hash # same as above
 
 	expect_type_error(actual: { :key => "value", "string" => "string", "symbol" => :symbol, "array" => [1, 2, 3, :symbol], "hash" => { "key" => "value", "symbol" => :symbol } }, expected: _JSONData, message: <<~MSG)
 		Type mismatch
@@ -330,6 +389,11 @@ test "_Map" do
 	refute map === { name: "Charlie" }
 	refute map === { age: 30 }
 
+	assert _Map(a: Enumerable, b: Numeric) >= _Map(a: Array, b: Integer, foo: String)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: Array)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: String, b: Integer)
+	refute _Map(a: String) >= nil
+
 	expect_type_error(expected: map, actual: { name: "Alice", age: "42" }, message: <<~MSG)
 		Type mismatch
 
@@ -351,8 +415,8 @@ test "_Map" do
 		    [1]
 		      Expected: Integer
 		      Actual (String): "1"
-		    []
-		      Expected: "2"
+		    ["2"]
+		      Expected: String
 		      Actual (NilClass): nil
 	MSG
 end
@@ -375,6 +439,13 @@ test "_Nilable" do
 	refute type === :symbol
 	refute type === []
 
+	assert _Nilable(String) >= String
+	assert _Nilable(String) >= _Nilable(String)
+	assert _Nilable(String) >= nil
+	assert _Nilable(Enumerable) >= _Nilable(Array)
+	assert _Nilable(Enumerable) >= Array
+	refute _Nilable(Enumerable) >= String
+
 	expect_type_error(expected: _Nilable(_Hash(Symbol, Integer)), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
   Type mismatch
 
@@ -396,6 +467,14 @@ test "_Not" do
 	refute _Not(_Array(Integer)) === []
 	refute _Not(_Array(Integer)) === [2]
 	refute _Array(_Not(Integer)) === [1, "2"]
+
+	assert _Not(Integer) >= _Not(Integer)
+	assert _Not(Numeric) >= _Not(Integer)
+	assert _Not(Integer) >= _Constraint(_Not(Integer), String)
+	assert _Not(Integer) >= _Intersection(_Not(Integer), String)
+
+	refute _Not(Integer) >= _Constraint(Integer, String)
+	refute _Not(Integer) >= _Intersection(Integer, String)
 
 	expect_type_error(expected: _Not(Integer), actual: 18, message: <<~MSG)
 		Type mismatch
@@ -436,6 +515,12 @@ test "_Range" do
 
 	refute _Range(Integer) === (1.0..10.0)
 
+	assert _Range(Numeric) >= _Range(Integer)
+	assert _Range(Integer) >= _Range(Integer)
+	refute _Range(Integer) >= _Range(Float)
+	assert _Range(String) >= _Range(String)
+	refute _Range(String) >= nil
+
 	expect_type_error(expected: _Range(Integer), actual: (1.0..10.0), message: <<~MSG)
 		Type mismatch
 
@@ -451,6 +536,11 @@ test "_Set" do
 	refute _Set(String) === Set[1, "a", :symbol]
 	refute _Set(Integer) === Set["a", "b", "c"]
 	refute _Set(String) === ["a", "b", "c"]
+
+	assert _Set(String) >= _Set(String)
+	refute _Set(String) >= _Set(Integer)
+	assert _Set(Numeric) >= _Set(Integer)
+	refute _Set(Numeric) >= Numeric
 
 	expect_type_error(expected: _Set(String), actual: Set["1", 2, "3", nil], message: <<~MSG)
 		Type mismatch
@@ -502,6 +592,10 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === ["a"]
 	refute _Tuple(String, Integer) === nil
 
+	assert _Tuple(String, Integer) >= _Tuple(String, Integer)
+	refute _Tuple(String, Integer) >= _Tuple(String, Float)
+	refute _Tuple(String, Integer) >= [String, Float]
+
 	expect_type_error(expected: _Tuple(String, Integer), actual: [1, "a"], message: <<~ERROR)
 		Type mismatch
 
@@ -540,6 +634,12 @@ test "_Union matching" do
 	refute type === []
 	refute type === nil
 
+	assert _Union(String, Integer) >= _Union(String, Integer)
+	refute _Union(String, Integer) >= _Union(String, Float)
+	assert _Union(String, Integer) >= String
+	refute _Union(String, Integer) >= Numeric
+	assert _Union(String, Numeric) >= Float
+
 	expect_type_error(expected: type, actual: :symbol, message: <<~ERROR)
 		Type mismatch
 
@@ -574,6 +674,9 @@ test "_Void" do
 	Fixtures::Objects.each do |object|
 		assert _Void === object
 	end
+
+	assert _Void >= nil
+	assert _Void >= Object
 end
 
 test "all methods are callable" do

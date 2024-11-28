@@ -2,11 +2,17 @@
 
 # @api private
 class Literal::Types::SetType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect = "_Set(#{@type.inspect})"
+	attr_reader :type
+
+	def inspect
+		"_Set(#{@type.inspect})"
+	end
 
 	def ===(value)
 		return false unless Set === value
@@ -27,4 +33,15 @@ class Literal::Types::SetType
 			end
 		end
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::SetType
+			Literal.subtype?(other.type, of: @type)
+		else
+			false
+		end
+	end
+
+	freeze
 end
