@@ -103,7 +103,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_initializer_body(buffer = +"")
-		buffer << "properties = self.class.literal_properties.properties_index\n"
+		buffer << "__properties__ = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
 		buffer << "after_initialize if respond_to?(:after_initialize)\n"
 	end
