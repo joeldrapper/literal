@@ -251,8 +251,13 @@ module Literal::Types
 	end
 
 	# Matches if the given type is *not* matched.
-	def _Not(...)
-		NotType.new(...)
+	def _Not(type)
+		case type
+		when NotType
+			type.type
+		else
+			NotType.new(type)
+		end
 	end
 
 	# Matches if the value is a `Proc` or responds to `#to_proc`.
