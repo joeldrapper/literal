@@ -225,6 +225,11 @@ test "_Hash" do
 	refute _Hash(String, Integer) === { 1 => 2, 3 => 4 }
 	refute _Hash(Symbol, String) === { "foo" => "bar", :baz => "qux" }
 
+	assert _Hash(String, Numeric) >= _Hash(String, Integer)
+	assert _Hash(Numeric, String) >= _Hash(Integer, String)
+	assert _Hash(Symbol, Integer) >= _Hash(Symbol, Integer)
+	refute _Hash(Symbol, Integer) >= _Hash(Symbol, Numeric)
+
 	expect_type_error(expected: _Hash(Symbol, Integer), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
   Type mismatch
 
@@ -312,6 +317,22 @@ test "_JSONData" do
 	refute _JSONData === { "nested_array" => [1, :symbol, { "key" => "value" }] }
 	refute _JSONData === { "nested_hash" => { "key1" => "value1", "key2" => [1, :symbol, 3] } }
 	refute _JSONData === [{ "key" => :value }, [1, 2, 3], "string"]
+
+	assert _JSONData >= _JSONData
+	assert _JSONData >= _Array(_JSONData)
+	assert _JSONData >= _Hash(_JSONData, _JSONData)
+	assert _JSONData >= String
+	assert _JSONData >= _String(length: 10)
+	assert _JSONData >= Float
+	assert _JSONData >= _Float(5..10)
+	assert _JSONData >= Integer
+	assert _JSONData >= _Integer(5..10)
+	assert _JSONData >= true
+	assert _JSONData >= false
+	assert _JSONData >= nil
+
+	refute _JSONData >= Array # not compatible since we don’t know what’s inside the array
+	refute _JSONData >= Hash # same as above
 
 	expect_type_error(actual: { :key => "value", "string" => "string", "symbol" => :symbol, "array" => [1, 2, 3, :symbol], "hash" => { "key" => "value", "symbol" => :symbol } }, expected: _JSONData, message: <<~MSG)
 		Type mismatch
