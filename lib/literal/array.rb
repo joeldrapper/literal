@@ -491,7 +491,7 @@ class Literal::Array
 		end
 	end
 
-	def fetch(index)
-		@__value__.fetch(index)
+	def fetch(...)
+		@__value__.fetch(...)
 	end
 end
