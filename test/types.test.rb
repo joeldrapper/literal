@@ -274,6 +274,15 @@ test "_Interface" do
 		  Expected: _Interface(:each, :map, :select)
 		  Actual (NilClass): nil
 	MSG
+
+	assert _Interface(:a) >= _Interface(:a)
+	assert _Interface(:a) >= _Interface(:a, :b)
+	assert _Interface(:a, :b) >= _Interface(:a, :b)
+	refute _Interface(:a, :b) >= _Interface(:a)
+	refute _Interface(:a) >= _Interface(:b)
+	assert _Interface(:call) >= _Callable
+	assert _Interface(:to_proc) >= _Procable
+	refute _Interface(:to_proc, :random_method) >= Proc
 end
 
 test "_Intersection" do

@@ -4,7 +4,6 @@ module Literal::Types
 	autoload :AnyType, "literal/types/any_type"
 	autoload :ArrayType, "literal/types/array_type"
 	autoload :BooleanType, "literal/types/boolean_type"
-	autoload :CallableType, "literal/types/callable_type"
 	autoload :ClassType, "literal/types/class_type"
 	autoload :ConstraintType, "literal/types/constraint_type"
 	autoload :DescendantType, "literal/types/descendant_type"
@@ -20,7 +19,6 @@ module Literal::Types
 	autoload :NeverType, "literal/types/never_type"
 	autoload :NilableType, "literal/types/nilable_type"
 	autoload :NotType, "literal/types/not_type"
-	autoload :ProcableType, "literal/types/procable_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
 	autoload :TruthyType, "literal/types/truthy_type"
@@ -28,8 +26,11 @@ module Literal::Types
 	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
 
+	ProcableType = InterfaceType.new(:to_proc).freeze
+	CallableType = InterfaceType.new(:call).freeze
+
 	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
-	NilableCallableType = NilableType.new(CallableType::Instance).freeze
+	NilableCallableType = NilableType.new(CallableType).freeze
 	NilableJSONDataType = NilableType.new(JSONDataType::Instance).freeze
 	NilableLambdaType = NilableType.new(LambdaType).freeze
 	NilableProcableType = NilableType.new(ProcableType).freeze
@@ -67,7 +68,7 @@ module Literal::Types
 
 	# Matches if the value responds to `#call`.
 	def _Callable
-		CallableType::Instance
+		CallableType
 	end
 
 	# Nilabl version of `_Callable`
