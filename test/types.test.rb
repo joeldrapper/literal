@@ -2,12 +2,30 @@
 
 include Literal::Types
 
+def expect_type_error(expected:, actual:, message:)
+	expect do
+		Literal.check(expected:, actual:)
+	end.to_raise(Literal::TypeError) do |error|
+		expect(error.message) == message
+	end
+end
+
 test "_Any" do
 	Fixtures::Objects.each do |object|
-		assert AnyType === object
+		assert _Any === object
 	end
 
-	refute AnyType === nil
+	refute _Any === nil
+
+	assert _Any >= _Any
+	assert _Any >= String
+	assert _Any >= "Hello"
+	assert _Any >= 1
+
+	refute _Any >= nil
+	refute _Any >= Object
+	refute _Any >= _Nilable(_Any)
+	refute _Any >= _Nilable(String)
 end
 
 test "_Array" do
@@ -22,6 +40,11 @@ test "_Boolean" do
 	assert _Boolean === false
 
 	refute _Boolean === nil
+
+	assert _Boolean >= true
+	assert _Boolean >= false
+	refute _Boolean >= nil
+	assert _Boolean >= _Boolean
 end
 
 test "_Callable" do
@@ -29,6 +52,18 @@ test "_Callable" do
 	assert _Callable === method(:puts)
 
 	refute _Callable === nil
+
+	assert _Callable >= Proc
+	assert _Callable >= Method
+	assert _Callable >= _Callable
+
+	assert _Callable >= _Intersection(Object, _Callable)
+	assert _Callable >= _String(_Callable)
+
+	assert _Callable >= _Interface(:call, :to_s)
+
+	refute _Callable >= String
+	refute _Callable >= Object
 end
 
 test "_Class" do
@@ -37,6 +72,15 @@ test "_Class" do
 	refute _Class(Enumerable) === []
 	refute _Class(Enumerable) === String
 	refute _Class(Enumerable) === Enumerable
+
+	assert _Class(Enumerable) >= _Class(Array)
+	assert _Class(Enumerable) >= _Class(Enumerable)
+	assert _Class(Enumerable) >= _Descendant(Array)
+	assert _Class(Array) >= _Descendant(Array)
+
+	refute _Class(Enumerable) >= _Descendant(Enumerable)
+	refute _Class(Enumerable) >= Enumerable
+	refute _Class(Enumerable) >= Class
 end
 
 test "_Constraint with object constraints" do
@@ -46,6 +90,21 @@ test "_Constraint with object constraints" do
 
 	refute age_constraint === 17
 	refute age_constraint === 17.5
+
+	expect_type_error(expected: age_constraint, actual: 17, message: <<~MSG)
+		Type mismatch
+
+		    _Constraint(Integer, 18..)
+		      Expected: 18..
+		      Actual (Integer): 17
+	MSG
+	expect_type_error(expected: age_constraint, actual: 18.5, message: <<~MSG)
+		Type mismatch
+
+		    _Constraint(Integer, 18..)
+		      Expected: Integer
+		      Actual (Float): 18.5
+	MSG
 end
 
 test "_Constraint with property constraints" do
@@ -57,6 +116,42 @@ test "_Constraint with property constraints" do
 	refute age_constraint === [1]
 	refute age_constraint === [1, 2, 3, 4]
 	refute age_constraint === Set[1, 2]
+
+	expect_type_error(expected: age_constraint, actual: [], message: <<~MSG)
+		Type mismatch
+
+		    .size
+		      Expected: 2..3
+		      Actual (Integer): 0
+	MSG
+	expect_type_error(expected: age_constraint, actual: nil, message: <<~MSG)
+		Type mismatch
+
+		    _Constraint(Array, size: 2..3)
+		      Expected: Array
+		      Actual (NilClass): nil
+	MSG
+	expect_type_error(expected: _Constraint(String, foo: 1, size: Integer), actual: "string", message: <<~MSG)
+		Type mismatch
+
+		  Expected: _Constraint(String, foo: 1, size: Integer)
+		  Actual (String): "string"
+	MSG
+
+	assert _Constraint(String) >= _Constraint(String)
+	assert _Constraint(_Array(Enumerable)) >= _Constraint(_Array(Array))
+	assert _Constraint(Array, size: 1..5) >= _Constraint(Array, size: 1..5)
+	assert _Constraint(Array, size: 1..3) >= _Constraint(Array, size: 1..2)
+	assert _Constraint(Enumerable, Array) >= _Intersection(Array)
+	assert _Constraint(_Array(Enumerable), name: _String(size: 1..5)) >= _Constraint(_Array(Enumerable), name: _String(size: 1..5))
+
+	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
+	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
+
+	assert _Constraint(Enumerable) >= _Frozen(Array)
+	assert _Constraint(Array) >= _Frozen(Array)
+
+	assert _Constraint(Array) >= _Constraint(Array, Enumerable)
 end
 
 test "_Descendant" do
@@ -65,6 +160,10 @@ test "_Descendant" do
 
 	refute _Descendant(Enumerable) === []
 	refute _Descendant(Enumerable) === String
+
+	assert _Descendant(Enumerable) >= _Descendant(Array)
+	assert _Descendant(Enumerable) >= _Descendant(Set)
+	refute _Descendant(Enumerable) >= _Descendant(String)
 end
 
 test "_Enumerable" do
@@ -72,6 +171,11 @@ test "_Enumerable" do
 	assert _Enumerable(Integer) === Set[1, 2, 3]
 
 	refute _Enumerable(String) === [1, "a", :symbol]
+
+	assert _Enumerable(Enumerable) >= _Enumerable(Array)
+	assert _Enumerable(Enumerable) >= _Enumerable(Set)
+
+	refute _Enumerable(Enumerable) >= _Enumerable(String)
 end
 
 test "_Falsy" do
@@ -85,6 +189,14 @@ test "_Falsy" do
 	truthy_objects.each do |object|
 		refute _Falsy === object
 	end
+
+	assert _Falsy >= _Falsy
+	assert _Falsy >= false
+	assert _Falsy >= nil
+
+	refute _Falsy >= true
+	refute _Falsy >= 0
+	refute _Falsy >= "string"
 end
 
 test "_Float" do
@@ -104,6 +216,7 @@ test "_Frozen" do
 	refute _Frozen(Array) === []
 	refute _Frozen(String) === +"mutable"
 	refute _Frozen(Array) === nil
+	assert _Frozen(Enumerable) >= _Constraint(Array, frozen?: true)
 end
 
 test "_Hash" do
@@ -113,6 +226,28 @@ test "_Hash" do
 	refute _Hash(String, Integer) === { "a" => "1", "b" => 2 }
 	refute _Hash(String, Integer) === { 1 => 2, 3 => 4 }
 	refute _Hash(Symbol, String) === { "foo" => "bar", :baz => "qux" }
+
+	assert _Hash(String, Numeric) >= _Hash(String, Integer)
+	assert _Hash(Numeric, String) >= _Hash(Integer, String)
+	assert _Hash(Symbol, Integer) >= _Hash(Symbol, Integer)
+	refute _Hash(Symbol, Integer) >= _Hash(Symbol, Numeric)
+
+	expect_type_error(expected: _Hash(Symbol, Integer), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
+  Type mismatch
+
+      []
+        Expected: Symbol
+        Actual (Integer): 1
+      [:a]
+        Expected: Integer
+        Actual (Symbol): :b
+		MSG
+	expect_type_error(expected: _Hash(Symbol, Integer), actual: nil, message: <<~MSG)
+  Type mismatch
+
+    Expected: _Hash(Symbol, Integer)
+    Actual (NilClass): nil
+	MSG
 end
 
 test "_Integer" do
@@ -134,6 +269,22 @@ test "_Interface" do
 	refute enumerable_interface === 42
 	refute enumerable_interface === "string"
 	refute enumerable_interface === nil
+
+	expect_type_error(expected: enumerable_interface, actual: nil, message: <<~MSG)
+		Type mismatch
+
+		  Expected: _Interface(:each, :map, :select)
+		  Actual (NilClass): nil
+	MSG
+
+	assert _Interface(:a) >= _Interface(:a)
+	assert _Interface(:a) >= _Interface(:a, :b)
+	assert _Interface(:a, :b) >= _Interface(:a, :b)
+	refute _Interface(:a, :b) >= _Interface(:a)
+	refute _Interface(:a) >= _Interface(:b)
+	assert _Interface(:call) >= _Callable
+	assert _Interface(:to_proc) >= _Procable
+	refute _Interface(:to_proc, :random_method) >= Proc
 end
 
 test "_Intersection" do
@@ -146,6 +297,19 @@ test "_Intersection" do
 	assert type === Set.new
 
 	refute type === "string"
+
+	expect_type_error(actual: "string", expected: type, message: <<~MSG)
+  Type mismatch
+
+      _Intersection(_Interface(:size), _Interface(:each))
+        Expected: _Interface(:each)
+        Actual (String): "string"
+		MSG
+
+	assert _Intersection(String) >= _Intersection(String)
+	assert _Intersection(String) >= _Constraint(String, size: 1..5)
+
+	refute _Intersection(String) >= _Constraint(Integer, size: 1..2)
 end
 
 test "_JSONData" do
@@ -169,6 +333,41 @@ test "_JSONData" do
 	refute _JSONData === { "nested_array" => [1, :symbol, { "key" => "value" }] }
 	refute _JSONData === { "nested_hash" => { "key1" => "value1", "key2" => [1, :symbol, 3] } }
 	refute _JSONData === [{ "key" => :value }, [1, 2, 3], "string"]
+
+	assert _JSONData >= _JSONData
+	assert _JSONData >= _Array(_JSONData)
+	assert _JSONData >= _Hash(_JSONData, _JSONData)
+	assert _JSONData >= String
+	assert _JSONData >= _String(length: 10)
+	assert _JSONData >= Float
+	assert _JSONData >= _Float(5..10)
+	assert _JSONData >= Integer
+	assert _JSONData >= _Integer(5..10)
+	assert _JSONData >= true
+	assert _JSONData >= false
+	assert _JSONData >= nil
+
+	refute _JSONData >= Array # not compatible since we don’t know what’s inside the array
+	refute _JSONData >= Hash # same as above
+
+	expect_type_error(actual: { :key => "value", "string" => "string", "symbol" => :symbol, "array" => [1, 2, 3, :symbol], "hash" => { "key" => "value", "symbol" => :symbol } }, expected: _JSONData, message: <<~MSG)
+		Type mismatch
+
+		    []
+		      Expected: String
+		      Actual (Symbol): :key
+		    ["symbol"]
+		      Expected: _JSONData
+		      Actual (Symbol): :symbol
+		    ["array"]
+		      [3]
+		        Expected: _JSONData
+		        Actual (Symbol): :symbol
+		    ["hash"]
+		      ["symbol"]
+		        Expected: _JSONData
+		        Actual (Symbol): :symbol
+	MSG
 end
 
 test "_Lambda" do
@@ -189,6 +388,37 @@ test "_Map" do
 	refute map === { name: "Bob", age: nil }
 	refute map === { name: "Charlie" }
 	refute map === { age: 30 }
+
+	assert _Map(a: Enumerable, b: Numeric) >= _Map(a: Array, b: Integer, foo: String)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: Array)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: String, b: Integer)
+	refute _Map(a: String) >= nil
+
+	expect_type_error(expected: map, actual: { name: "Alice", age: "42" }, message: <<~MSG)
+		Type mismatch
+
+		    [:age]
+		      Expected: Integer
+		      Actual (String): "42"
+	MSG
+
+	object_keys_map = _Map(**{ 1 => Integer, "2" => String, :symbol => _Nilable(Symbol) })
+	expect(object_keys_map.inspect) == "_Map(#{{ 1 => Integer, '2' => String, :symbol => _Nilable(Symbol) }.inspect})"
+	expect(object_keys_map) === { 1 => 2, "2" => "string" }
+	expect(object_keys_map) === { 1 => 2, "2" => "string", :symbol => :foo }
+	refute object_keys_map === {}
+	refute object_keys_map === { 1 => 2 }
+
+	expect_type_error(expected: object_keys_map, actual: { 1 => "1" }, message: <<~MSG)
+		Type mismatch
+
+		    [1]
+		      Expected: Integer
+		      Actual (String): "1"
+		    ["2"]
+		      Expected: String
+		      Actual (NilClass): nil
+	MSG
 end
 
 test "_Never" do
@@ -208,12 +438,49 @@ test "_Nilable" do
 	refute type === 42
 	refute type === :symbol
 	refute type === []
+
+	expect_type_error(expected: _Nilable(_Hash(Symbol, Integer)), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
+  Type mismatch
+
+      []
+        Expected: Symbol
+        Actual (Integer): 1
+      [:a]
+        Expected: Integer
+        Actual (Symbol): :b
+		MSG
 end
 
 test "_Not" do
 	assert _Not(Integer) === "string"
+	assert _Not(_Array(Integer)) === [1, "2", 3]
+	assert _Array(_Not(Integer)) === ["2"]
 
 	refute _Not(Integer) === 18
+	refute _Not(_Array(Integer)) === []
+	refute _Not(_Array(Integer)) === [2]
+	refute _Array(_Not(Integer)) === [1, "2"]
+
+	expect_type_error(expected: _Not(Integer), actual: 18, message: <<~MSG)
+		Type mismatch
+
+		  Expected: _Not(Integer)
+		  Actual (Integer): 18
+	MSG
+	# TODO: can we distribute out the _Not over container types?
+	expect_type_error(expected: _Not(_Array(Integer)), actual: [18], message: <<~MSG)
+		Type mismatch
+
+		  Expected: _Not(_Array(Integer))
+		  Actual (Array): [18]
+	MSG
+	expect_type_error(expected: _Array(_Not(Integer)), actual: [18, "2"], message: <<~MSG)
+		Type mismatch
+
+		    [0]
+		      Expected: _Not(Integer)
+		      Actual (Integer): 18
+	MSG
 end
 
 test "_Procable" do
@@ -232,6 +499,13 @@ test "_Range" do
 	assert _Range(String) === ("a".."z")
 
 	refute _Range(Integer) === (1.0..10.0)
+
+	expect_type_error(expected: _Range(Integer), actual: (1.0..10.0), message: <<~MSG)
+		Type mismatch
+
+		  Expected: _Range(Integer)
+		  Actual (Range): 1.0..10.0
+	MSG
 end
 
 test "_Set" do
@@ -241,6 +515,17 @@ test "_Set" do
 	refute _Set(String) === Set[1, "a", :symbol]
 	refute _Set(Integer) === Set["a", "b", "c"]
 	refute _Set(String) === ["a", "b", "c"]
+
+	expect_type_error(expected: _Set(String), actual: Set["1", 2, "3", nil], message: <<~MSG)
+		Type mismatch
+
+		    []
+		      Expected: String
+		      Actual (Integer): 2
+		    []
+		      Expected: String
+		      Actual (NilClass): nil
+	MSG
 end
 
 test "_String" do
@@ -280,6 +565,33 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === ["a", 1, 2]
 	refute _Tuple(String, Integer) === ["a"]
 	refute _Tuple(String, Integer) === nil
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: [1, "a"], message: <<~ERROR)
+		Type mismatch
+
+		    [0]
+		      Expected: String
+		      Actual (Integer): 1
+		    [1]
+		      Expected: Integer
+		      Actual (String): "a"
+	ERROR
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: ["a", 1, 2], message: <<~ERROR)
+		Type mismatch
+
+		    [2]
+		      Expected: _Never
+		      Actual (Integer): 2
+	ERROR
+
+	expect_type_error(expected: _Tuple(String, Integer), actual: ["a"], message: <<~ERROR)
+  Type mismatch
+
+      [1]
+        Expected: Integer
+        Actual (NilClass): nil
+	ERROR
 end
 
 test "_Union matching" do
@@ -291,6 +603,26 @@ test "_Union matching" do
 	refute type === :symbol
 	refute type === []
 	refute type === nil
+
+	expect_type_error(expected: type, actual: :symbol, message: <<~ERROR)
+		Type mismatch
+
+		  Expected: _Union([String, Integer])
+		  Actual (Symbol): :symbol
+	ERROR
+
+	expect_type_error(expected: _Union(_Array(String), _Array(Integer)), actual: [nil], message: <<~ERROR)
+		Type mismatch
+
+		    _Array(String)
+		      [0]
+		        Expected: String
+		        Actual (NilClass): nil
+		    _Array(Integer)
+		      [0]
+		        Expected: Integer
+		        Actual (NilClass): nil
+	ERROR
 end
 
 test "_Union flattens types" do
@@ -299,11 +631,36 @@ test "_Union flattens types" do
 		_Union(Symbol, Float),
 	)
 
-	expect(type.inspect) == "_Union(#<Set: {String, Integer, Symbol, Float}>)"
+	expect(type.inspect) == "_Union([String, Integer, Symbol, Float])"
 end
 
 test "_Void" do
 	Fixtures::Objects.each do |object|
 		assert _Void === object
+	end
+end
+
+test "all methods are callable" do
+	# also ensures that args sent to `?` methods match the non-`?` methods
+	args = {
+		_Array: [String],
+		_Class: [Enumerable],
+		_Constraint: [Integer, 1..2],
+		_Descendant: [Enumerable],
+		_Enumerable: [String],
+		_Frozen: [Array],
+		_Hash: [Symbol, Integer],
+		_Interface: [:each, :map, :select],
+		_Intersection: [1, 2],
+		_Nilable: [String],
+		_Not: [Integer],
+		_Range: [Integer],
+		_Set: [String],
+		_Tuple: [String, Integer],
+		_Union: [String, Integer],
+	}
+	Literal::Types.instance_methods(false).each do |method|
+		args_for_method = args[method] || args[method.name.chomp("?").to_sym]
+		assert public_send(method, *args_for_method)
 	end
 end

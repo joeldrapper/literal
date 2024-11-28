@@ -57,13 +57,13 @@ class Literal::Property
 	def param
 		case @kind
 		when :*
-			"*#{@escaped_name}"
+			"*#{escaped_name}"
 		when :**
-			"**#{@escaped_name}"
+			"**#{escaped_name}"
 		when :&
-			"&#{@escaped_name}"
+			"&#{escaped_name}"
 		when :positional
-			@escaped_name
+			escaped_name
 		when :keyword
 			"#{@name.name}:"
 		else
@@ -95,17 +95,27 @@ class Literal::Property
 	end
 
 	def check(value, &)
-		Literal.check(value, @type, &)
+		raise ArgumentError.new("Cannot check type without a block") unless block_given?
+
+		Literal.check(actual: value, expected: @type, &)
+	end
+
+	def check_writer(receiver, value)
+		Literal.check(actual: value, expected: @type) { |c| c.fill_receiver(receiver:, method: "##{@name.name}=(value)") }
+	end
+
+	def check_initializer(receiver, value)
+		Literal.check(actual: value, expected: @type) { |c| c.fill_receiver(receiver:, method: "#initialize", label: param) }
 	end
 
 	def generate_reader_method(buffer = +"")
 		buffer <<
 			(@reader ? @reader.name : "public") <<
-			" def " <<
+			"\ndef " <<
 			@name.name <<
-			"\nvalue = @" <<
+			"\n  value = @" <<
 			@name.name <<
-			"\nvalue\nend\n"
+			"\n  value\nend\n"
 	end
 
 	if Literal::TYPE_CHECKS_DISABLED
@@ -115,7 +125,7 @@ class Literal::Property
 				" def " <<
 				@name.name <<
 				"=(value)\n" <<
-				"@#{@name.name} = value\nend\n"
+				"  @#{@name.name} = value\nend\n"
 		end
 	else # type checks are enabled
 		def generate_writer_method(buffer = +"")
@@ -124,10 +134,12 @@ class Literal::Property
 				" def " <<
 				@name.name <<
 				"=(value)\n" <<
-				"self.class.literal_properties[:" <<
+				"  self.class.literal_properties[:" <<
 				@name.name <<
-				"].check(value) { ['##{@name}='] }\n" <<
-				"@#{@name.name} = value\nend\n"
+				"].check_writer(self, value)\n" <<
+				"  @" << @name.name << " = value\n" <<
+				"rescue Literal::TypeError => error\n  error.set_backtrace(caller(1))\n  raise\n" <<
+				"end\n"
 		end
 	end
 
@@ -137,7 +149,7 @@ class Literal::Property
 			" def " <<
 			@name.name <<
 			"?\n" <<
-			"!!@" <<
+			"  !!@" <<
 			@name.name <<
 			"\n" <<
 			"end\n"
@@ -145,7 +157,7 @@ class Literal::Property
 
 	def generate_initializer_handle_property(buffer = +"")
 		buffer << "# " << @name.name << "\n" <<
-			"property = __properties__[:" << @name.name << "]\n"
+			"  property = __properties__[:" << @name.name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
 			generate_initializer_escape_keyword(buffer)
@@ -186,23 +198,23 @@ class Literal::Property
 
 	def generate_initializer_assign_default(buffer = +"")
 		buffer <<
-			"if " <<
+			"  if " <<
 			((@kind == :&) ? "nil" : "Literal::Null") <<
 			" == " <<
 			escaped_name <<
-			"\n" <<
+			"\n    " <<
 			escaped_name <<
-			" = property.default_value\nend\n"
+			" = property.default_value\n  end\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"property.check(#{escaped_name}) { [self.class.name, '#initialize', '(#{param})'] }\n"
+			"  property.check_initializer(self, " << escaped_name << ")\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")
 		buffer <<
-			"@" <<
+			"  @" <<
 			@name.name <<
 			" = " <<
 			escaped_name <<

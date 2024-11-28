@@ -2,16 +2,14 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in strict_attributes.gemspec
 gemspec
 
 gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git"
-gem "rubocop"
 gem "benchmark-ips"
-gem "solargraph"
 
-gem "ruby-lsp"
-
-gem "dry-initializer"
-gem "dry-types"
-gem "dry-struct"
+group :development do
+	gem "solargraph", platform: :ruby
+	gem "rubocop", platform: :ruby
+	gem "ruby-lsp", platform: :ruby
+	gem "simplecov", platform: :ruby
+end

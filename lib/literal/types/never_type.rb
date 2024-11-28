@@ -1,11 +1,26 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::NeverType
-	def self.inspect = "_Never"
+class Literal::Types::NeverType
+	Instance = new.freeze
 
-	def self.===(value)
+	include Literal::Type
+
+	def inspect
+		"_Never"
+	end
+
+	def ===(value)
 		false
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::NeverType
+			true
+		else
+			false
+		end
 	end
 
 	freeze

@@ -2,13 +2,30 @@
 
 # @api private
 class Literal::Types::EnumerableType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect = "_Enumerable(#{@type.inspect})"
+	attr_reader :type
+
+	def inspect
+		"_Enumerable(#{@type.inspect})"
+	end
 
 	def ===(value)
-		Enumerable === value && value.all? { |item| @type === item }
+		Enumerable === value && value.all?(@type)
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::EnumerableType
+			Literal.subtype?(other.type, of: @type)
+		else
+			false
+		end
+	end
+
+	freeze
 end

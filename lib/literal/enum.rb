@@ -21,6 +21,15 @@ class Literal::Enum
 				@indexes = {}
 				@index = {}
 			end
+
+			if RUBY_ENGINE != "truffleruby"
+				TracePoint.trace(:end) do |tp|
+					if tp.self == subclass
+						tp.self.__after_defined__
+						tp.disable
+					end
+				end
+			end
 		end
 
 		def index(name, type, unique: true, &block)
@@ -34,9 +43,9 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			unless (type = @indexes.fetch(key)[0]) === value
-				raise Literal::TypeError.expected(value, to_be_a: type)
-			end
+			types = @indexes.fetch(key)
+			type = types.first
+			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
 
 			@index.fetch(key)[value]
 		end
@@ -90,6 +99,10 @@ class Literal::Enum
 		def __after_defined__
 			raise ArgumentError if frozen?
 
+			if RUBY_VERSION < "3.2"
+				constants(false).each { |name| const_added(name) }
+			end
+
 			@indexes.each do |name, (type, unique, block)|
 				index = @members.group_by(&block).freeze
 
@@ -112,7 +125,7 @@ class Literal::Enum
 		end
 
 		def each
-			@members.each { |member| yield(member, member.value) }
+			@members.each { |member| yield(member) }
 		end
 
 		def each_value(&)
@@ -129,8 +142,17 @@ class Literal::Enum
 			@values.fetch(...)
 		end
 
+		def coerce(value)
+			case value
+			when self
+				value
+			else
+				self[value]
+			end
+		end
+
 		def to_proc
-			method(:cast).to_proc
+			method(:coerce).to_proc
 		end
 
 		def to_h(*args)
@@ -164,13 +186,5 @@ class Literal::Enum
 
 	def _dump(level)
 		Marshal.dump(@value)
-	end
-end
-
-TracePoint.trace(:end) do |tp|
-	it = tp.self
-
-	if Class === it && it < Literal::Enum
-		it.__after_defined__
 	end
 end

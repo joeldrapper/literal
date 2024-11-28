@@ -11,6 +11,32 @@ class Literal::Types::TupleType
 	def inspect = "_Tuple(#{@types.map(&:inspect).join(', ')})"
 
 	def ===(value)
-		Array === value && value.size == @types.size && @types.each_with_index.all? { |t, i| t === value[i] }
+		return false unless Array === value
+		types = @types
+		return false unless value.size == types.size
+
+		i, len = 0, types.size
+		while i < len
+			return false unless types[i] === value[i]
+			i += 1
+		end
+
+		true
+	end
+
+	def record_literal_type_errors(context)
+		return unless Array === context.actual
+
+		len = [@types.size, context.actual.size].max
+		i = 0
+		while i < len
+			actual = context.actual[i]
+			if !(expected = @types[i])
+				context.add_child(label: "[#{i}]", expected: Literal::Types::NeverType::Instance, actual:)
+			elsif !(expected === actual)
+				context.add_child(label: "[#{i}]", expected:, actual:)
+			end
+			i += 1
+		end
 	end
 end

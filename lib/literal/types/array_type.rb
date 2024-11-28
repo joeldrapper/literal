@@ -2,13 +2,42 @@
 
 # @api private
 class Literal::Types::ArrayType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect = "_Array(#{@type.inspect})"
+	attr_reader :type
+
+	def inspect
+		"_Array(#{@type.inspect})"
+	end
 
 	def ===(value)
-		Array === value && value.all? { |item| @type === item }
+		Array === value && value.all?(@type)
 	end
+
+	def >=(other)
+		case other
+		when Literal::Types::ArrayType
+			@type >= other.type
+		else
+			false
+		end
+	end
+
+	def record_literal_type_errors(context)
+		unless Array === context.actual
+			return
+		end
+
+		context.actual.each_with_index do |item, index|
+			unless @type === item
+				context.add_child(label: "[#{index}]", expected: @type, actual: item)
+			end
+		end
+	end
+
+	freeze
 end

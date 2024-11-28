@@ -2,16 +2,81 @@
 
 # @api private
 class Literal::Types::ConstraintType
+	include Literal::Type
+
 	def initialize(*object_constraints, **property_constraints)
 		@object_constraints = object_constraints
 		@property_constraints = property_constraints
 	end
 
-	def inspect = "_Constraint(#{inspect_constraints})"
+	attr_reader :object_constraints
+	attr_reader :property_constraints
+
+	def inspect
+		"_Constraint(#{inspect_constraints})"
+	end
 
 	def ===(value)
-		@object_constraints.all? { |t| t === value } &&
-			@property_constraints.all? { |a, t| t === value.public_send(a) }
+		object_constraints = @object_constraints
+
+		i, len = 0, object_constraints.size
+		while i < len
+			return false unless object_constraints[i] === value
+			i += 1
+		end
+
+		@property_constraints.each do |a, t|
+			return false unless t === value.public_send(a)
+		rescue NoMethodError => e
+			raise unless e.name == a && e.receiver == value
+			return false
+		end
+
+		true
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::ConstraintType
+			other_object_constraints = other.object_constraints
+			return false unless @object_constraints.all? do |constraint|
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
+			end
+
+			other_property_constraints = other.property_constraints
+			return false unless @property_constraints.all? do |k, v|
+				Literal.subtype?(other_property_constraints[k], of: v)
+			end
+
+			true
+		when Literal::Types::IntersectionType
+			other_object_constraints = other.types
+			return false unless @object_constraints.all? do |constraint|
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
+			end
+
+			true
+		when Literal::Types::FrozenType
+			@object_constraints.all? { |constraint| Literal.subtype?(other.type, of: constraint) }
+		else
+			false
+		end
+	end
+
+	def record_literal_type_errors(context)
+		@object_constraints.each do |constraint|
+			next if constraint === context.actual
+
+			context.add_child(label: inspect, expected: constraint, actual: context.actual)
+		end
+
+		@property_constraints.each do |property, constraint|
+			next unless context.actual.respond_to?(property)
+			actual = context.actual.public_send(property)
+			next if constraint === actual
+
+			context.add_child(label: ".#{property}", expected: constraint, actual:)
+		end
 	end
 
 	private
@@ -31,4 +96,6 @@ class Literal::Types::ConstraintType
 			@property_constraints.map { |k, t| "#{k}: #{t.inspect}" }.join(", ")
 		end
 	end
+
+	freeze
 end

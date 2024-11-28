@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+set_temporary_name("Quickdraw::Context(in #{__FILE__})") if respond_to?(:set_temporary_name)
+
 Example = Literal::Object
 
 test "positional params are required by default" do
@@ -98,6 +100,14 @@ class WithNilableType
 	prop :name, Literal::Types::NilableType.new(String), :positional
 end
 
+class Empty
+	extend Literal::Properties
+end
+
+test "empty initializer" do
+	expect { Empty.new }.not_to_raise
+end
+
 test do
 	person = Person.new("John", age: 30)
 
@@ -106,7 +116,16 @@ test do
 end
 
 test "initializer type check" do
-	expect { Person.new(1, age: "Joel") }.to_raise(Literal::TypeError)
+	expect { Person.new(1, age: "Joel") }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+   Type mismatch
+
+   #{Person}#initialize (from #{error.backtrace[1]})
+     name
+       Expected: String
+       Actual (Integer): 1
+ERROR
+	}
 end
 
 test "initializer keyword check" do
@@ -127,6 +146,9 @@ test "properties are enumerable" do
 	props = Person.literal_properties
 	expect(props.size) == 2
 	expect(props.map(&:name)) == [:name, :age]
+
+	props = Empty.literal_properties
+	expect(props.size) == 0
 end
 
 test "introspection" do
@@ -173,6 +195,20 @@ test "after initialize callback" do
 	example.new(name: "John")
 
 	assert callback_called
+
+	callback_called = false
+
+	empty = Class.new do
+		extend Literal::Properties
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+	end
+
+	empty.new
+
+	assert callback_called
 end
 
 class Friend < Person
@@ -198,4 +234,135 @@ test "predicates" do
 
 	expect(enabled.enabled?) == true
 	expect(disabled.enabled?) == false
+end
+
+class WithWriters < Example
+	extend Literal::Properties
+
+	prop :example, _Nilable(String), writer: :public
+	prop :a, _Nilable(_Array(String)), writer: :public
+end
+
+test "writer type error" do
+	instance = WithWriters.new
+
+	expect { instance.example = 0 }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+			Type mismatch
+
+			#{WithWriters}#example=(value) (from #{error.backtrace[1]})
+			  Expected: _Nilable(String)
+			  Actual (Integer): 0
+ERROR
+	}
+
+	expect { instance.a = [1] }.to_raise(Literal::TypeError) { |error|
+	expect(error.message) == <<~ERROR
+		Type mismatch
+
+		#{WithWriters}#a=(value) (from #{error.backtrace[1]})
+		    [0]
+		      Expected: String
+		      Actual (Integer): 1
+	ERROR
+	}
+end
+
+class Family
+	extend Literal::Properties
+
+	prop :members, _Array(_Map(person: Person, role: Symbol)), :positional, reader: :public
+	prop :last_reunion_year, _Nilable(Integer)
+end
+
+test "nested properties raise in initializer" do
+	expect do
+		Family.new(
+			[
+				{
+					person: Person.new("Json", age: 1),
+					role: 1,
+				},
+				{
+					person: Person.new("John", age: 30),
+					role: "Father",
+				},
+				{
+					1 => 2,
+				},
+			],
+		)
+	end.to_raise(Literal::TypeError) do |error|
+		expect(error.message) == <<~ERROR
+			Type mismatch
+
+			#{Family}#initialize (from #{error.backtrace[1]})
+			  members
+			    [0]
+			      [:role]
+			        Expected: Symbol
+			        Actual (Integer): 1
+			    [1]
+			      [:role]
+			        Expected: Symbol
+			        Actual (String): "Father"
+			    [2]
+			      [:person]
+			        Expected: #{Person.inspect}
+			        Actual (NilClass): nil
+			      [:role]
+			        Expected: Symbol
+			        Actual (NilClass): nil
+		ERROR
+	end
+
+	expect { Family.new([1]) }.to_raise(Literal::TypeError) { |error|
+			expect(error.message) == <<~ERROR
+    Type mismatch
+
+    #{Family}#initialize (from #{error.backtrace[1]})
+      members
+        [0]
+          Expected: _Map(#{{ person: Person, role: Symbol }})
+          Actual (Integer): 1
+ERROR
+	}
+
+	expect { Family.new([], last_reunion_year: :two_thousand) }.to_raise(Literal::TypeError) { |error|
+		expect(error.message) == <<~ERROR
+   Type mismatch
+
+   #{Family}#initialize (from #{error.backtrace[1]})
+     last_reunion_year:
+       Expected: _Nilable(Integer)
+       Actual (Symbol): :two_thousand
+ERROR
+	}
+end
+
+test "nested properties succeed in initializer" do
+	expect do
+		Family.new(
+			[
+				{
+					person: Person.new("Json", age: 1),
+					role: :son,
+				},
+				{
+					person: Person.new("John", age: 30),
+					role: :brother,
+				},
+			],
+		)
+	end.not_to_raise
+	expect { Family.new([]) }.not_to_raise
+	expect { Family.new([], last_reunion_year: 0) }.not_to_raise
+end
+
+test "#to_h" do
+		person = Person.new("John", age: 30)
+		expect(person.to_h) == { name: "John", age: 30 }
+
+		empty = Empty.new
+		expect(empty.to_h) == {}
 end

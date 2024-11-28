@@ -1,18 +1,27 @@
 # frozen_string_literal: true
 
 # @api private
-module Literal::Types::BooleanType
-	COERCION = proc { |value| !!value }
+class Literal::Types::BooleanType
+	include Literal::Type
 
-	def self.inspect = "_Boolean"
+	def inspect
+		"_Boolean"
+	end
 
-	def self.===(value)
+	def ===(value)
 		true == value || false == value
 	end
 
-	def to_proc
-		COERCION
+	def >=(other)
+		case other
+		when true, false, Literal::Types::BooleanType
+			true
+		else
+			false
+		end
 	end
+
+	Instance = new.freeze
 
 	freeze
 end
