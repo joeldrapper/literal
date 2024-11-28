@@ -491,5 +491,5 @@ test "#fetch" do
 	expect(array.fetch(0)) == 1
 	expect(array.fetch(1)) == 2
 	expect(array.fetch(2)) == 3
-  expect { array.fetch(3) }.to_raise(IndexError)
+	expect { array.fetch(3) }.to_raise(IndexError)
 end
