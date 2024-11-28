@@ -443,6 +443,24 @@ test "#sum" do
 	expect(Literal::Array(String).new("1", "2", "3").sum(&:to_i)) == 6
 end
 
+test "#select returns a new array with elements that match the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.select { |i| i > 1 }).to_a) == [2, 3]
+end
+
+test "#select! removes elements that do not match the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.select! { |i| i > 1 }).to_a) == [2, 3]
+end
+
+test "#select! returns [] if no elements match the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.select! { |i| i > 4 }) == []
+end
+
 test "#narrow" do
 	array = Literal::Array(Numeric).new(1, 2, 3)
 

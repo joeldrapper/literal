@@ -409,6 +409,14 @@ class Literal::Array
 		@__value__.sample(...)
 	end
 
+	def select(...)
+		__with__(@__value__.select(...))
+	end
+
+	def select!(...)
+		@__value__.select!(...)
+	end
+
 	def shift(...)
 		@__value__.shift(...)
 	end
