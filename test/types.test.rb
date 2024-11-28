@@ -150,6 +150,8 @@ test "_Constraint with property constraints" do
 
 	assert _Constraint(Enumerable) >= _Frozen(Array)
 	assert _Constraint(Array) >= _Frozen(Array)
+
+	assert _Constraint(Array) >= _Constraint(Array, Enumerable)
 end
 
 test "_Descendant" do
@@ -303,6 +305,11 @@ test "_Intersection" do
         Expected: _Interface(:each)
         Actual (String): "string"
 		MSG
+
+	assert _Intersection(String) >= _Intersection(String)
+	assert _Intersection(String) >= _Constraint(String, size: 1..5)
+
+	refute _Intersection(String) >= _Constraint(Integer, size: 1..2)
 end
 
 test "_JSONData" do
@@ -381,6 +388,11 @@ test "_Map" do
 	refute map === { name: "Bob", age: nil }
 	refute map === { name: "Charlie" }
 	refute map === { age: 30 }
+
+	assert _Map(a: Enumerable, b: Numeric) >= _Map(a: Array, b: Integer, foo: String)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: Array)
+	refute _Map(a: Enumerable, b: Numeric) >= _Map(a: String, b: Integer)
+	refute _Map(a: String) >= nil
 
 	expect_type_error(expected: map, actual: { name: "Alice", age: "42" }, message: <<~MSG)
 		Type mismatch

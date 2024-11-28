@@ -242,7 +242,7 @@ module Literal::Types
 
 	# Never matches any value.
 	def _Never
-		NeverType
+		NeverType::Instance
 	end
 
 	# Matches if the value is either `nil` or the given type.

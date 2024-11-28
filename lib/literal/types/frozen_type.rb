@@ -43,4 +43,6 @@ class Literal::Types::FrozenType
 			false
 		end
 	end
+
+	freeze
 end

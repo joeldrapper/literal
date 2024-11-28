@@ -61,8 +61,10 @@ module Literal
 
 	def self.subtype?(type, of:)
 		(of == type) || case of
-		when Literal::Type, Module
+		when Literal::Type
 			of >= type
+		when Module
+			(Module === type) ? of >= type : false
 		when Range
 			of.cover?(type)
 		else

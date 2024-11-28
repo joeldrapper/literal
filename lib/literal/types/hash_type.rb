@@ -54,4 +54,6 @@ class Literal::Types::HashType
 			end
 		end
 	end
+
+	freeze
 end

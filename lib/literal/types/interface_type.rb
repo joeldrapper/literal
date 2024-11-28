@@ -40,4 +40,6 @@ class Literal::Types::InterfaceType
 			false
 		end
 	end
+
+	freeze
 end

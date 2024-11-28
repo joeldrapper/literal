@@ -32,7 +32,7 @@ class Literal::Types::TupleType
 		while i < len
 			actual = context.actual[i]
 			if !(expected = @types[i])
-				context.add_child(label: "[#{i}]", expected: Literal::Types::NeverType, actual:)
+				context.add_child(label: "[#{i}]", expected: Literal::Types::NeverType::Instance, actual:)
 			elsif !(expected === actual)
 				context.add_child(label: "[#{i}]", expected:, actual:)
 			end

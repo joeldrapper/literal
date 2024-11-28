@@ -40,7 +40,7 @@ class Literal::Types::ConstraintType
 		when Literal::Types::ConstraintType
 			other_object_constraints = other.object_constraints
 			return false unless @object_constraints.all? do |constraint|
-				other_object_constraints.all? { |c| Literal.subtype?(c, of: constraint) }
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
 			end
 
 			other_property_constraints = other.property_constraints
@@ -52,7 +52,7 @@ class Literal::Types::ConstraintType
 		when Literal::Types::IntersectionType
 			other_object_constraints = other.types
 			return false unless @object_constraints.all? do |constraint|
-				other_object_constraints.all? { |c| Literal.subtype?(c, of: constraint) }
+				other_object_constraints.any? { |c| Literal.subtype?(c, of: constraint) }
 			end
 
 			true
