@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::TruthyTypeClass
+class Literal::Types::TruthyType
+	Instance = new.freeze
 	include Literal::Type
 
 	def inspect
@@ -13,15 +14,15 @@ class Literal::Types::TruthyTypeClass
 	end
 
 	def >=(other)
+		return false if other == Literal::Types::FalseyType
+
 		case other
-		when Literal::Types::TruthyType, true
-			true
-		else
+		when false, nil
 			false
+		else
+			true
 		end
 	end
 
 	freeze
 end
-
-Literal::Types::TruthyType = Literal::Types::TruthyTypeClass.new.freeze

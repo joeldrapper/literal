@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::FalsyTypeClass
+class Literal::Types::FalsyType
+	Instance = new.freeze
+
 	include Literal::Type
 
 	def initialize
@@ -18,7 +20,7 @@ class Literal::Types::FalsyTypeClass
 
 	def >=(other)
 		case other
-		when Literal::Types::FalsyTypeClass, nil, false
+		when Literal::Types::FalsyType, nil, false
 			true
 		else
 			false
@@ -27,5 +29,3 @@ class Literal::Types::FalsyTypeClass
 
 	freeze
 end
-
-Literal::Types::FalsyType = Literal::Types::FalsyTypeClass.new.freeze
