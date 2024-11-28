@@ -14,13 +14,11 @@ class Literal::Types::TruthyType
 	end
 
 	def >=(other)
-		return false if other == Literal::Types::FalseyType
-
 		case other
-		when false, nil
-			false
-		else
+		when _Truthy
 			true
+		else
+			false
 		end
 	end
 
