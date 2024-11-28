@@ -428,6 +428,14 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
+	def transpose
+		if @__type__ == Array || Literal::Array == @__type__
+			__with__(@__value__.transpose)
+		else
+			raise ArgumentError.new("#transpose expects Array type")
+		end
+	end
+
 	def uniq
 		__with__(@__value__.uniq)
 	end
