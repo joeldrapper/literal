@@ -30,7 +30,7 @@ module Literal::Types
 
 	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
 	NilableCallableType = NilableType.new(CallableType::Instance).freeze
-	NilableJSONDataType = NilableType.new(JSONDataType).freeze
+	NilableJSONDataType = NilableType.new(JSONDataType::Instance).freeze
 	NilableLambdaType = NilableType.new(LambdaType).freeze
 	NilableProcableType = NilableType.new(ProcableType).freeze
 
@@ -210,7 +210,7 @@ module Literal::Types
 
 	# Ensures the value is valid JSON data (i.e. it came from JSON.parse).
 	def _JSONData
-		JSONDataType
+		JSONDataType::Instance
 	end
 
 	# Nilable version of `_JSONData`
