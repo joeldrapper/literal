@@ -472,3 +472,12 @@ test "#narrow with wrong type" do
 		array.narrow(Numeric)
 	}.to_raise(ArgumentError)
 end
+
+test "#fetch" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.fetch(0)) == 1
+	expect(array.fetch(1)) == 2
+	expect(array.fetch(2)) == 3
+  expect { array.fetch(3) }.to_raise(IndexError)
+end
