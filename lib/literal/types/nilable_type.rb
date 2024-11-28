@@ -2,11 +2,17 @@
 
 # @api private
 class Literal::Types::NilableType
+	include Literal::Type
+
 	def initialize(type)
 		@type = type
 	end
 
-	def inspect = "_Nilable(#{@type.inspect})"
+	attr_reader :type
+
+	def inspect
+		"_Nilable(#{@type.inspect})"
+	end
 
 	def ===(value)
 		nil === value || @type === value
@@ -14,6 +20,17 @@ class Literal::Types::NilableType
 
 	def record_literal_type_errors(ctx)
 		@type.record_literal_type_errors(ctx) if @type.respond_to?(:record_literal_type_errors)
+	end
+
+	def >=(other)
+		case other
+		when Literal::Types::NilableType
+			Literal.subtype?(other.type, of: @type)
+		when nil
+			true
+		else
+			Literal.subtype?(other, of: @type)
+		end
 	end
 
 	freeze

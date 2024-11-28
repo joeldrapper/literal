@@ -29,15 +29,15 @@ module Literal::Types
 	CallableType = InterfaceType.new(:call).freeze
 	LambdaType = ConstraintType.new(Proc, lambda?: true).freeze
 
-	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
+	NilableBooleanType = NilableType.new(BooleanType).freeze
 	NilableCallableType = NilableType.new(CallableType).freeze
-	NilableJSONDataType = NilableType.new(JSONDataType::Instance).freeze
+	NilableJSONDataType = NilableType.new(JSONDataType).freeze
 	NilableLambdaType = NilableType.new(LambdaType).freeze
 	NilableProcableType = NilableType.new(ProcableType).freeze
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	def _Any
-		AnyType::Instance
+		AnyType
 	end
 
 	def _Any?
@@ -58,7 +58,7 @@ module Literal::Types
 
 	# Matches if the value is `true` or `false`.
 	def _Boolean
-		BooleanType::Instance
+		BooleanType
 	end
 
 	# Nilable version of `_Boolean`
@@ -128,7 +128,7 @@ module Literal::Types
 
 	# Matches *"falsy"* values (`nil` and `false`).
 	def _Falsy
-		FalsyType::Instance
+		FalsyType
 	end
 
 	# Matches if the value is a `Float` and matches the given constraints.
@@ -211,7 +211,7 @@ module Literal::Types
 
 	# Ensures the value is valid JSON data (i.e. it came from JSON.parse).
 	def _JSONData
-		JSONDataType::Instance
+		JSONDataType
 	end
 
 	# Nilable version of `_JSONData`
@@ -242,7 +242,7 @@ module Literal::Types
 
 	# Never matches any value.
 	def _Never
-		NeverType::Instance
+		NeverType
 	end
 
 	# Matches if the value is either `nil` or the given type.

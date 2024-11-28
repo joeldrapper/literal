@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::JSONDataType
-	Instance = new.freeze
-
+class Literal::Types::JSONDataTypeClass
 	include Literal::Type
+
+	# This needs to be defined here so it can be referenced in the COMPATIBLE_TYPES constant.
+	Literal::Types::JSONDataType = Literal::Types::JSONDataTypeClass.new.freeze
 
 	COMPATIBLE_TYPES = Set[
 		Integer,
@@ -13,8 +14,8 @@ class Literal::Types::JSONDataType
 		true,
 		false,
 		nil,
-		Literal::Types::BooleanType::Instance,
-		Instance
+		Literal::Types::BooleanType,
+		Literal::Types::JSONDataType
 	].freeze
 
 	def inspect = "_JSONData"

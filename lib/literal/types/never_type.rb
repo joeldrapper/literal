@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 # @api private
-class Literal::Types::NeverType
-	Instance = new.freeze
-
+class Literal::Types::NeverTypeClass
 	include Literal::Type
 
 	def inspect
@@ -16,7 +14,7 @@ class Literal::Types::NeverType
 
 	def >=(other)
 		case other
-		when Literal::Types::NeverType
+		when Literal::Types::NeverTypeClass
 			true
 		else
 			false
@@ -25,3 +23,5 @@ class Literal::Types::NeverType
 
 	freeze
 end
+
+Literal::Types::NeverType = Literal::Types::NeverTypeClass.new.freeze

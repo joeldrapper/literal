@@ -439,6 +439,13 @@ test "_Nilable" do
 	refute type === :symbol
 	refute type === []
 
+	assert _Nilable(String) >= String
+	assert _Nilable(String) >= _Nilable(String)
+	assert _Nilable(String) >= nil
+	assert _Nilable(Enumerable) >= _Nilable(Array)
+	assert _Nilable(Enumerable) >= Array
+	refute _Nilable(Enumerable) >= String
+
 	expect_type_error(expected: _Nilable(_Hash(Symbol, Integer)), actual: { 1 => 2, :a => :b, :d => 2 }, message: <<~MSG)
   Type mismatch
 
@@ -460,6 +467,14 @@ test "_Not" do
 	refute _Not(_Array(Integer)) === []
 	refute _Not(_Array(Integer)) === [2]
 	refute _Array(_Not(Integer)) === [1, "2"]
+
+	assert _Not(Integer) >= _Not(Integer)
+	assert _Not(Numeric) >= _Not(Integer)
+	assert _Not(Integer) >= _Constraint(_Not(Integer), String)
+	assert _Not(Integer) >= _Intersection(_Not(Integer), String)
+
+	refute _Not(Integer) >= _Constraint(Integer, String)
+	refute _Not(Integer) >= _Intersection(Integer, String)
 
 	expect_type_error(expected: _Not(Integer), actual: 18, message: <<~MSG)
 		Type mismatch
@@ -500,6 +515,12 @@ test "_Range" do
 
 	refute _Range(Integer) === (1.0..10.0)
 
+	assert _Range(Numeric) >= _Range(Integer)
+	assert _Range(Integer) >= _Range(Integer)
+	refute _Range(Integer) >= _Range(Float)
+	assert _Range(String) >= _Range(String)
+	refute _Range(String) >= nil
+
 	expect_type_error(expected: _Range(Integer), actual: (1.0..10.0), message: <<~MSG)
 		Type mismatch
 
@@ -515,6 +536,11 @@ test "_Set" do
 	refute _Set(String) === Set[1, "a", :symbol]
 	refute _Set(Integer) === Set["a", "b", "c"]
 	refute _Set(String) === ["a", "b", "c"]
+
+	assert _Set(String) >= _Set(String)
+	refute _Set(String) >= _Set(Integer)
+	assert _Set(Numeric) >= _Set(Integer)
+	refute _Set(Numeric) >= Numeric
 
 	expect_type_error(expected: _Set(String), actual: Set["1", 2, "3", nil], message: <<~MSG)
 		Type mismatch
@@ -638,6 +664,9 @@ test "_Void" do
 	Fixtures::Objects.each do |object|
 		assert _Void === object
 	end
+
+	assert _Void >= nil
+	assert _Void >= Object
 end
 
 test "all methods are callable" do
