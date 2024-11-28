@@ -72,4 +72,6 @@ class Literal::Types::UnionType
 			(Literal::Types::UnionType === type) ? load_types(type.types) : @types << type
 		end
 	end
+
+	freeze
 end
