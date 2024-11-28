@@ -261,6 +261,10 @@ class Literal::Array
 		self
 	end
 
+	def inspect
+		@__value__.inspect
+	end
+
 	def intersection(*values)
 		values.map! do |value|
 			case value
@@ -423,6 +427,8 @@ class Literal::Array
 	end
 
 	alias_method :to_ary, :to_a
+
+	alias_method :to_s, :inspect
 
 	def uniq
 		__with__(@__value__.uniq)

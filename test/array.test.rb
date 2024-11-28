@@ -493,3 +493,15 @@ test "#fetch" do
 	expect(array.fetch(2)) == 3
 	expect { array.fetch(3) }.to_raise(IndexError)
 end
+
+test "#inspect returns a string representation of the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.inspect) == "[1, 2, 3]"
+end
+
+test "#to_s returns a string representation of the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.to_s) == "[1, 2, 3]"
+end
