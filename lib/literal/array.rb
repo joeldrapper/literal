@@ -284,6 +284,10 @@ class Literal::Array
 		__with__(@__value__.intersection(*values))
 	end
 
+	def	join(...)
+		@__value__.join(...)
+	end
+
 	def last(...)
 		@__value__.last(...)
 	end

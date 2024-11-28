@@ -345,6 +345,13 @@ test "#intersection returns an array of the intersection of two arrays" do
 	expect(intersection.to_a) == [2]
 end
 
+test "#join joins the elements into a string" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.join(", ")) == "1, 2, 3"
+	expect(array.join) == "123"
+end
+
 test "#replace replaces with passed in array" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
