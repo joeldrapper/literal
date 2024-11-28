@@ -239,6 +239,10 @@ class Literal::Array
 		self
 	end
 
+	def flatten(...)
+		__with__(@__value__.flatten(...))
+	end
+
 	def first(...)
 		@__value__.first(...)
 	end
