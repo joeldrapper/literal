@@ -490,4 +490,8 @@ class Literal::Array
 			raise ArgumentError.new("Cannot perform `|` with #{other.class.name}.")
 		end
 	end
+
+	def fetch(index)
+		@__value__.fetch(index)
+	end
 end

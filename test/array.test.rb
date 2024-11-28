@@ -484,3 +484,12 @@ test "#flatten with level flattens the array" do
 
 	expect(array.flatten(1).to_a) == [1, 2, 3, 4]
 end
+
+test "#fetch" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.fetch(0)) == 1
+	expect(array.fetch(1)) == 2
+	expect(array.fetch(2)) == 3
+  expect { array.fetch(3) }.to_raise(IndexError)
+end
