@@ -592,6 +592,10 @@ test "_Tuple" do
 	refute _Tuple(String, Integer) === ["a"]
 	refute _Tuple(String, Integer) === nil
 
+	assert _Tuple(String, Integer) >= _Tuple(String, Integer)
+	refute _Tuple(String, Integer) >= _Tuple(String, Float)
+	refute _Tuple(String, Integer) >= [String, Float]
+
 	expect_type_error(expected: _Tuple(String, Integer), actual: [1, "a"], message: <<~ERROR)
 		Type mismatch
 
@@ -629,6 +633,12 @@ test "_Union matching" do
 	refute type === :symbol
 	refute type === []
 	refute type === nil
+
+	assert _Union(String, Integer) >= _Union(String, Integer)
+	refute _Union(String, Integer) >= _Union(String, Float)
+	assert _Union(String, Integer) >= String
+	refute _Union(String, Integer) >= Numeric
+	assert _Union(String, Numeric) >= Float
 
 	expect_type_error(expected: type, actual: :symbol, message: <<~ERROR)
 		Type mismatch

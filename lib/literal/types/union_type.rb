@@ -12,7 +12,11 @@ class Literal::Types::UnionType
 		@types.freeze
 	end
 
-	def inspect = "_Union(#{@types.inspect})"
+	attr_reader :types
+
+	def inspect
+		"_Union(#{@types.inspect})"
+	end
 
 	def ===(value)
 		types = @types
@@ -46,9 +50,20 @@ class Literal::Types::UnionType
 		ctx.children.clear if ctx.children.none? { |c| c.children.any? }
 	end
 
-	protected
-
-	attr_reader :types
+	def >=(other)
+		case other
+		when Literal::Types::UnionType
+			other.types.all? do |other_type|
+				@types.any? do |type|
+					Literal.subtype?(type, of: other_type)
+				end
+			end
+		else
+			@types.any? do |type|
+				Literal.subtype?(other, of: type)
+			end
+		end
+	end
 
 	private
 
