@@ -147,6 +147,9 @@ test "_Constraint with property constraints" do
 
 	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
 	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
+
+	assert _Constraint(Enumerable) >= _Frozen(Array)
+	assert _Constraint(Array) >= _Frozen(Array)
 end
 
 test "_Descendant" do
@@ -211,6 +214,7 @@ test "_Frozen" do
 	refute _Frozen(Array) === []
 	refute _Frozen(String) === +"mutable"
 	refute _Frozen(Array) === nil
+	assert _Frozen(Enumerable) >= _Constraint(Array, frozen?: true)
 end
 
 test "_Hash" do

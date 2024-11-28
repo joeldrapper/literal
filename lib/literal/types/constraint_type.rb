@@ -56,6 +56,8 @@ class Literal::Types::ConstraintType
 			end
 
 			true
+		when Literal::Types::FrozenType
+			@object_constraints.all? { |constraint| Literal.subtype?(other.type, of: constraint) }
 		else
 			false
 		end
