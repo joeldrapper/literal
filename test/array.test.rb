@@ -340,7 +340,6 @@ test "#intersect? returns true if the arrays intersect" do
 	other_true = Literal::Array(Integer).new(2, 3, 4)
 	other_false = Literal::Array(Integer).new(4, 5, 6)
 
-
 	assert array.intersect?(other_true)
 	refute array.intersect?(other_false)
 end
