@@ -442,3 +442,33 @@ test "#sum" do
 	expect(Literal::Array(Integer).new(1, 2, 3).sum) == 6
 	expect(Literal::Array(String).new("1", "2", "3").sum(&:to_i)) == 6
 end
+
+test "#narrow" do
+	array = Literal::Array(Numeric).new(1, 2, 3)
+
+	refute Literal::Array(Integer) === array
+	array.narrow(Integer)
+	assert Literal::Array(Integer) === array
+end
+
+test "#narrow with same type" do
+	array = Literal::Array(Numeric).new(1, 2, 3)
+
+	assert Literal::Array(Numeric) === array
+end
+
+test "#narrow with wrong value" do
+	array = Literal::Array(Numeric).new(1, 2, 3.456)
+
+	expect {
+		array.narrow(Integer)
+	}.to_raise(Literal::TypeError)
+end
+
+test "#narrow with wrong type" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect {
+		array.narrow(Numeric)
+	}.to_raise(ArgumentError)
+end
