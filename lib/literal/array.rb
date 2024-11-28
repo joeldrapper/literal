@@ -332,20 +332,22 @@ class Literal::Array
 	end
 
 	def narrow(type)
-		return self if __type__ == type
-
 		unless Literal.subtype?(type, of: @__type__)
 			raise ArgumentError.new("Cannot narrow #{@__type__} to #{type}")
 		end
 
-		@__value__.each do |item|
-			Literal.check(actual: item, expected: type) do |c|
-				c.fill_receiver(receiver: self, method: "#narrow")
+		if __type__ != type
+			@__value__.each do |item|
+				Literal.check(actual: item, expected: type) do |c|
+					c.fill_receiver(receiver: self, method: "#narrow")
+				end
 			end
 		end
 
-		@__type__ = type
-		self
+		Literal::Array.allocate.__initialize_without_check__(
+			@__value__,
+			type:,
+		)
 	end
 
 	def one?(...)

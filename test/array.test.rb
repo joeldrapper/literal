@@ -446,9 +446,8 @@ end
 test "#narrow" do
 	array = Literal::Array(Numeric).new(1, 2, 3)
 
-	refute Literal::Array(Integer) === array
-	array.narrow(Integer)
-	assert Literal::Array(Integer) === array
+	result = array.narrow(Integer)
+	assert Literal::Array(Integer) === result
 end
 
 test "#narrow with same type" do
