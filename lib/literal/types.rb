@@ -14,7 +14,6 @@ module Literal::Types
 	autoload :InterfaceType, "literal/types/interface_type"
 	autoload :IntersectionType, "literal/types/intersection_type"
 	autoload :JSONDataType, "literal/types/json_data_type"
-	autoload :LambdaType, "literal/types/lambda_type"
 	autoload :MapType, "literal/types/map_type"
 	autoload :NeverType, "literal/types/never_type"
 	autoload :NilableType, "literal/types/nilable_type"
@@ -28,6 +27,7 @@ module Literal::Types
 
 	ProcableType = InterfaceType.new(:to_proc).freeze
 	CallableType = InterfaceType.new(:call).freeze
+	LambdaType = ConstraintType.new(Proc, lambda?: true).freeze
 
 	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
 	NilableCallableType = NilableType.new(CallableType).freeze
