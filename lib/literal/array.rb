@@ -271,6 +271,17 @@ class Literal::Array
 		@__value__.inspect
 	end
 
+	def intersect?(other)
+		case other
+		when ::Array
+			@__value__.intersect?(other)
+		when Literal::Array
+			@__value__.intersect?(other.__value__)
+		else
+			raise ArgumentError.new("Cannot perform `intersect?` with #{other.class.name}.")
+		end
+	end
+
 	def intersection(*values)
 		values.map! do |value|
 			case value

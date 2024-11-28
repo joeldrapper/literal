@@ -335,6 +335,15 @@ test "#insert raises if any type is wrong" do
 	expect { array.insert(1, 4, "5", 6) }.to_raise(Literal::TypeError)
 end
 
+test "#intersect? returns true if the arrays intersect" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+	other_true = Literal::Array(Integer).new(2, 3, 4)
+	other_false = Literal::Array(Integer).new(4, 5, 6)
+
+	assert array.intersect?(other_true)
+	refute array.intersect?(other_false)
+end
+
 test "#intersection returns an array of the intersection of two arrays" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 	other = Literal::Array(Integer).new(2, 3, 4)
