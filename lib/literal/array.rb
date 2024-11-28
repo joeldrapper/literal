@@ -256,6 +256,8 @@ class Literal::Array
 		super
 	end
 
+	alias_method :index, :find_index
+
 	def insert(index, *value)
 		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#insert")
