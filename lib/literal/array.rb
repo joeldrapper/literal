@@ -295,6 +295,20 @@ class Literal::Array
 		__with__(@__value__.intersection(*values))
 	end
 
+	def	join(...)
+		@__value__.join(...)
+	end
+
+	def keep_if(...)
+		return_value = @__value__.keep_if(...)
+		case return_value
+		when Array
+			self
+		else
+			return_value
+		end
+	end
+
 	def last(...)
 		@__value__.last(...)
 	end
