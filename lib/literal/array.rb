@@ -247,6 +247,10 @@ class Literal::Array
 		@__value__.first(...)
 	end
 
+	def flatten!(...)
+		@__value__.flatten!(...) ? self : nil
+	end
+
 	def freeze
 		@__value__.freeze
 		super
@@ -497,7 +501,7 @@ class Literal::Array
 		end
 	end
 
-	def fetch(index)
-		@__value__.fetch(index)
+	def fetch(...)
+		@__value__.fetch(...)
 	end
 end
