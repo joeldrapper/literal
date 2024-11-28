@@ -156,7 +156,7 @@ class Literal::Property
 	end
 
 	def generate_initializer_handle_property(buffer = +"")
-		buffer << "# " << @name.name << "\n" <<
+		buffer << "  # " << @name.name << "\n" <<
 			"  property = __properties__[:" << @name.name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
