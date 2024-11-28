@@ -289,7 +289,7 @@ class Literal::Array
 	end
 
 	def keep_if(...)
-		return_value = @__value__.keep_if(...) 
+		return_value = @__value__.keep_if(...)
 		case return_value
 		when Array
 			self
