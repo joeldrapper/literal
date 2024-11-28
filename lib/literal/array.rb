@@ -243,6 +243,10 @@ class Literal::Array
 		@__value__.first(...)
 	end
 
+	def flatten!(...)
+		@__value__.flatten!(...) ? self : nil
+	end
+
 	def freeze
 		@__value__.freeze
 		super
