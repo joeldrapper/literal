@@ -352,6 +352,18 @@ test "#join joins the elements into a string" do
 	expect(array.join) == "123"
 end
 
+test "#keep_if keeps elements that match the block" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect((array.keep_if { |i| i > 1 }).to_a) == [2, 3]
+end
+
+test "#keep_if returns an enumerator if no block is given" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	expect(array.keep_if.class.name) == "Enumerator"
+end
+
 test "#replace replaces with passed in array" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
