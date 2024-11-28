@@ -472,3 +472,15 @@ test "#narrow with wrong type" do
 		array.narrow(Numeric)
 	}.to_raise(ArgumentError)
 end
+
+test "#flatten flattens the array" do
+	array = Literal::Array(Array).new([1, 2], [3, 4])
+
+	expect(array.flatten.to_a) == [1, 2, 3, 4]
+end
+
+test "#flatten with level flattens the array" do
+	array = Literal::Array(Array).new([1, 2], [3, 4])
+
+	expect(array.flatten(1).to_a) == [1, 2, 3, 4]
+end
