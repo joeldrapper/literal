@@ -327,6 +327,23 @@ class Literal::Array
 		__with__(@__value__.minmax(...))
 	end
 
+	def narrow(type)
+		return self if __type__ == type
+
+		unless Literal.subtype?(type, of: @__type__)
+			raise ArgumentError.new("Cannot narrow #{@__type__} to #{type}")
+		end
+
+		@__value__.each do |item|
+			Literal.check(actual: item, expected: type) do |c|
+				c.fill_receiver(receiver: self, method: "#narrow")
+			end
+		end
+
+		@__type__ = type
+		self
+	end
+
 	def one?(...)
 		@__value__.one?(...)
 	end
