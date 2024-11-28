@@ -581,6 +581,14 @@ test "_Truthy" do
 	falsy_objects.each do |object|
 		refute _Truthy === object
 	end
+
+	assert _Truthy >= true
+	assert _Truthy >= _Truthy
+	refute _Truthy >= false
+	refute _Truthy >= _Not(true)
+	refute _Truthy >= _Not(_Truthy)
+	assert _Truthy >= _Not(_Not(true))
+	assert _Truthy >= _Not(_Not(_Truthy))
 end
 
 test "_Tuple" do

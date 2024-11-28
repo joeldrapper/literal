@@ -15,7 +15,7 @@ class Literal::Types::TruthyType
 
 	def >=(other)
 		case other
-		when _Truthy
+		when Literal::Types::TruthyType, true
 			true
 		else
 			false
