@@ -60,6 +60,8 @@ module Literal
 	end
 
 	def self.subtype?(type, of:)
+		type = type.block.call if Types::DeferredType === type
+
 		(of == type) || case of
 		when Literal::Type
 			of >= type

@@ -6,6 +6,7 @@ module Literal::Types
 	autoload :BooleanType, "literal/types/boolean_type"
 	autoload :ClassType, "literal/types/class_type"
 	autoload :ConstraintType, "literal/types/constraint_type"
+	autoload :DeferredType, "literal/deferred_type"
 	autoload :DescendantType, "literal/types/descendant_type"
 	autoload :EnumerableType, "literal/types/enumerable_type"
 	autoload :FalsyType, "literal/types/falsy_type"
@@ -100,6 +101,10 @@ module Literal::Types
 		NilableType.new(
 			ConstraintType.new(...)
 		)
+	end
+
+	def _Deferred(...)
+		DeferredType.new(...)
 	end
 
 	# Matches if the value is a descendant of the given class.
