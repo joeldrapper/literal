@@ -10,6 +10,38 @@ def expect_type_error(expected:, actual:, message:)
 	end
 end
 
+test "_Deferred" do
+	recursive = _Hash(
+		String,
+		_Deferred { recursive }
+	)
+
+	assert recursive === {
+		"a" => {
+			"b" => {
+				"c" => {
+					"d" => {
+						"e" => {
+							"f" => {
+								"g" => {},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	refute recursive === {
+		"a" => {
+			"b" => { 1 => {} },
+		},
+	}
+
+	assert _Deferred { Numeric } >= Integer
+	assert _Deferred { Numeric } >= _Deferred { Integer }
+end
+
 test "_Any" do
 	Fixtures::Objects.each do |object|
 		assert _Any === object
