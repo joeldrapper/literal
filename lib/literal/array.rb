@@ -256,6 +256,10 @@ class Literal::Array
 		super
 	end
 
+	def hash
+		[self.class, @__value__].hash
+	end
+
 	alias_method :index, :find_index
 
 	def insert(index, *value)
