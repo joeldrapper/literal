@@ -599,3 +599,12 @@ test "#rotate rotates the array" do
 	expect(result.to_a) == [2, 3, 1]
 	expect(array.to_a) == [1, 2, 3]
 end
+
+test "#take takes the first n elements" do
+	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
+
+	result = array.take(2)
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [1, 2]
+	expect(array.to_a) == [1, 2, 3, 4, 5]
+end

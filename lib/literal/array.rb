@@ -484,6 +484,10 @@ class Literal::Array
 		self
 	end
 
+	def take(...)
+		__with__(@__value__.take(...))
+	end
+
 	def to_a
 		@__value__.dup
 	end
