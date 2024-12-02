@@ -475,6 +475,11 @@ class Literal::Array
 		__with__(@__value__.shuffle(...))
 	end
 
+	def shuffle!(...)
+		@__value__.shuffle!(...)
+		self
+	end
+
 	def size(...)
 		@__value__.size(...)
 	end

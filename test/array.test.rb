@@ -618,3 +618,11 @@ test "#shuffle returns a new shuffled array" do
 	expect(result.to_a) == [2, 5, 3, 1, 4]
 end
 
+test "#shuffle! shuffles the array" do
+	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
+	random = Random.new(42)
+
+	result = array.shuffle!(random:)
+	assert array.equal?(result)
+	expect(result.to_a) == [2, 5, 3, 1, 4]
+end
