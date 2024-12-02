@@ -393,6 +393,10 @@ class Literal::Array
 		@__value__.one?(...)
 	end
 
+	def pack(...)
+		@__value__.pack(...)
+	end
+
 	def pop(...)
 		@__value__.pop(...)
 	end
