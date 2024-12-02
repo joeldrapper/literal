@@ -608,3 +608,13 @@ test "#take takes the first n elements" do
 	expect(result.to_a) == [1, 2]
 	expect(array.to_a) == [1, 2, 3, 4, 5]
 end
+
+test "#shuffle returns a new shuffled array" do
+	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
+	random = Random.new(42)
+
+	result = array.shuffle(random:)
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [2, 5, 3, 1, 4]
+end
+

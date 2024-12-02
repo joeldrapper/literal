@@ -471,6 +471,10 @@ class Literal::Array
 		@__value__.shift(...)
 	end
 
+	def shuffle(...)
+		__with__(@__value__.shuffle(...))
+	end
+
 	def size(...)
 		@__value__.size(...)
 	end
