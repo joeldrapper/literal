@@ -446,6 +446,11 @@ class Literal::Array
 		self
 	end
 
+	def rotate!(...)
+		@__value__.rotate!(...)
+		self
+	end
+
 	def sample(...)
 		@__value__.sample(...)
 	end

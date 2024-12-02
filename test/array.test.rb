@@ -581,3 +581,13 @@ test "#include? returns true if array contains value" do
 	assert array.include?(2)
 	refute array.include?(4)
 end
+
+test "#rotate! rotates the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	result = array.rotate!
+
+	assert result.equal?(array)
+	expect(result.to_a) == [2, 3, 1]
+end
+
