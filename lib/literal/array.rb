@@ -260,6 +260,10 @@ class Literal::Array
 		[self.class, @__value__].hash
 	end
 
+	def include?(...)
+		@__value__.include?(...)
+	end
+
 	alias_method :index, :find_index
 
 	def insert(index, *value)

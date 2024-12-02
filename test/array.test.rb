@@ -574,3 +574,10 @@ test "#fetch returns value of block if element is missing at index" do
 
 	expect(array.fetch(4) { |index| index * 2 }) == 8
 end
+
+test "#include? returns true if array contains value" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	assert array.include?(2)
+	refute array.include?(4)
+end
