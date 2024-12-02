@@ -591,3 +591,11 @@ test "#rotate! rotates the array" do
 	expect(result.to_a) == [2, 3, 1]
 end
 
+test "#rotate rotates the array" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	result = array.rotate
+	assert Literal::Array(Integer) === result
+	expect(result.to_a) == [2, 3, 1]
+	expect(array.to_a) == [1, 2, 3]
+end

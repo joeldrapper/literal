@@ -446,6 +446,10 @@ class Literal::Array
 		self
 	end
 
+	def rotate(...)
+		__with__(@__value__.rotate(...))
+	end
+
 	def rotate!(...)
 		@__value__.rotate!(...)
 		self
