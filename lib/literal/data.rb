@@ -9,7 +9,7 @@ class Literal::Data < Literal::DataStructure
 		def literal_properties
 			return @literal_properties if defined?(@literal_properties)
 
-			if superclass.is_a?(Literal::Data)
+			if superclass < Literal::Data
 				@literal_properties = superclass.literal_properties.dup
 			else
 				@literal_properties = Literal::Properties::DataSchema.new
