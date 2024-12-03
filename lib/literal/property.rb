@@ -157,7 +157,7 @@ class Literal::Property
 
 	def generate_initializer_handle_property(buffer = +"")
 		buffer << "  # " << @name.name << "\n" <<
-			"  property = __properties__[:" << @name.name << "]\n"
+			"  __property__ = __properties__[:" << @name.name << "]\n"
 
 		if @kind == :keyword && ruby_keyword?
 			generate_initializer_escape_keyword(buffer)
@@ -191,7 +191,7 @@ class Literal::Property
 	def generate_initializer_coerce_property(buffer = +"")
 		buffer <<
 			escaped_name <<
-			"= property.coerce(" <<
+			"= __property__.coerce(" <<
 			escaped_name <<
 			", context: self)\n"
 	end
@@ -204,12 +204,12 @@ class Literal::Property
 			escaped_name <<
 			"\n    " <<
 			escaped_name <<
-			" = property.default_value\n  end\n"
+			" = __property__.default_value\n  end\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")
 		buffer <<
-			"  property.check_initializer(self, " << escaped_name << ")\n"
+			"  __property__.check_initializer(self, " << escaped_name << ")\n"
 	end
 
 	def generate_initializer_assign_value(buffer = +"")
