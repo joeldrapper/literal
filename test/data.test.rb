@@ -22,7 +22,6 @@ test "mutable attributes are duplicated and frozen" do
 	person = Person.new(name:)
 
 	expect(person.name).to_be(:frozen?)
-	expect(person.name).not_to_equal?(name)
 end
 
 test "immutable attributes are not duplicated" do

@@ -11,6 +11,6 @@ class Literal::DataProperty < Literal::Property
 			escaped_name <<
 			" : " <<
 			escaped_name <<
-			".dup.freeze\n"
+			".freeze\n"
 	end
 end
