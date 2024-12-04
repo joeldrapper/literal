@@ -17,6 +17,13 @@ test "data objects are frozen" do
 	expect(person).to_be(:frozen?)
 end
 
+test "mutable attributes are duplicated and frozen" do
+	name = +"John"
+	person = Person.new(name:)
+
+	expect(person.name).to_be(:frozen?)
+end
+
 test "immutable attributes are not duplicated" do
 	name = "John"
 	person = Person.new(name:)
