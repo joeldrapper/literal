@@ -77,11 +77,14 @@ class Literal::Enum
 			object = const_get(name)
 
 			if self === object
-				object.instance_variable_set(:@name, name)
-				@values[object.value] = object
-				@members << object
-				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
-				object.freeze
+					if @values.key?(object.value)
+						raise ArgumentError.new("The value #{object.value} is already used by #{@values[object.value].name}.")
+					end
+					object.instance_variable_set(:@name, name)
+					@values[object.value] = object
+					@members << object
+					define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
+					object.freeze
 			end
 		end
 
