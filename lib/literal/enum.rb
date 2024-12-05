@@ -77,6 +77,9 @@ class Literal::Enum
 			object = const_get(name)
 
 			if self === object
+				if @values.key?(object.value)
+					raise ArgumentError.new("The value #{object.value} is already used by #{@values[object.value].name}.")
+				end
 				object.instance_variable_set(:@name, name)
 				@values[object.value] = object
 				@members << object
