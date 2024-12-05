@@ -156,7 +156,7 @@ class Literal::Enum
 		end
 
 		def to_h(...)
-			@values.dup.to_h(...)
+			@values.to_h(...)
 		end
 	end
 
