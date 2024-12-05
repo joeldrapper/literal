@@ -155,8 +155,8 @@ class Literal::Enum
 			method(:coerce).to_proc
 		end
 
-		def to_h(*args)
-			@values.dup
+		def to_h(...)
+			@values.dup.to_h(...)
 		end
 	end
 
