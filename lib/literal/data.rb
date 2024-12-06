@@ -15,11 +15,5 @@ class Literal::Data < Literal::DataStructure
 				@literal_properties = Literal::Properties::DataSchema.new
 			end
 		end
-
-		private
-
-		def __literal_property_class__
-			Literal::DataProperty
-		end
 	end
 end
