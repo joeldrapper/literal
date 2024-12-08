@@ -626,3 +626,26 @@ test "#shuffle! shuffles the array" do
 	assert array.equal?(result)
 	expect(result.to_a) == [2, 5, 3, 1, 4]
 end
+
+test "#product with block" do
+	a = Literal::Array(Integer).new(1, 2)
+	b = Literal::Array(String).new("a", "b")
+
+	yielded = []
+
+	result = a.product(b) { |x, y| yielded << [x, y] }
+
+	assert result.equal?(a)
+	expect(yielded) == [[1, "a"], [1, "b"], [2, "a"], [2, "b"]]
+end
+
+test "#product with another Literal::Array" do
+	a = Literal::Array(Integer).new(1, 2)
+	b = Literal::Array(String).new("a", "b")
+
+	result = a.product(b)
+
+	assert Literal::Array(Literal::Tuple(Integer, String)) === result
+	expect(result.size) == 4
+	expect(result.first.__values__) == [1, "a"]
+end

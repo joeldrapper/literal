@@ -22,6 +22,7 @@ module Literal
 	autoload :Struct, "literal/struct"
 	autoload :Type, "literal/type"
 	autoload :Types, "literal/types"
+	autoload :Tuple, "literal/tuple"
 
 	# Errors
 	autoload :Error, "literal/errors/error"
@@ -46,6 +47,10 @@ module Literal
 
 	def self.Hash(key_type, value_type)
 		Literal::Hash::Generic.new(key_type, value_type)
+	end
+
+	def self.Tuple(*types)
+		Literal::Tuple::Generic.new(*types)
 	end
 
 	def self.check(actual:, expected:)

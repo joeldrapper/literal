@@ -23,7 +23,7 @@ class Literal::Array
 		def >=(other)
 			case other
 			when Literal::Array::Generic
-				@type >= other.type
+				Literal.subtype?(other.type, of: @type)
 			else
 				false
 			end
@@ -403,6 +403,36 @@ class Literal::Array
 
 	def pop(...)
 		@__value__.pop(...)
+	end
+
+	def product(*others, &)
+		if block_given?
+			@__value__.product(
+				*others.map do |other|
+					case other
+					when Array
+						other
+					when Literal::Array
+						other.__value__
+					end
+				end, &
+			)
+
+			self
+		elsif others.all?(Literal::Array)
+			tuple_type = Literal::Tuple(
+				@__type__,
+				*others.map(&:__type__)
+			)
+
+			values = @__value__.product(*others.map(&:__value__)).map do |tuple_values|
+				tuple_type.new(*tuple_values)
+			end
+
+			Literal::Array(tuple_type).new(*values)
+		else
+			@__value__.product(*others)
+		end
 	end
 
 	def push(*value)
