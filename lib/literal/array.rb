@@ -446,6 +446,8 @@ class Literal::Array
 		self
 	end
 
+	alias_method :initialize_copy, :replace
+
 	def rotate(...)
 		__with__(@__value__.rotate(...))
 	end
