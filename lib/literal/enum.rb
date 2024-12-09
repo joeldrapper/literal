@@ -158,8 +158,12 @@ class Literal::Enum
 			method(:coerce).to_proc
 		end
 
-		def to_h(...)
-			@values.to_h(...)
+		def to_h(&)
+			if block_given?
+				@members.to_h(&)
+			else
+				@members.to_h { |it| [it, it.value] }
+			end
 		end
 	end
 
