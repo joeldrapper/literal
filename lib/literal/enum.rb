@@ -10,8 +10,8 @@ class Literal::Enum
 
 		def values = @values.keys
 
-		def prop(name, type, kind = :keyword, reader: :public, default: nil)
-			super(name, type, kind, reader:, writer: false, default:)
+		def prop(name, type, kind = :keyword, reader: :public, predicate: false, default: nil)
+			super(name, type, kind, reader:, writer: false, predicate:, default:)
 		end
 
 		def inherited(subclass)
