@@ -9,14 +9,14 @@ Gem::Specification.new do |spec|
 	spec.email = ["joel@drapper.me"]
 
 	spec.summary = "Enums, properties, generics, structured objects and runtime type checking."
-	spec.description = "A literal Ruby gem."
+	spec.description = "Enums, properties, generics, structured objects and runtime type checking."
 	spec.homepage = "https://literal.fun"
 	spec.license = "MIT"
 	spec.required_ruby_version = ">= 3.1"
 
 	spec.metadata["homepage_uri"] = spec.homepage
 	spec.metadata["source_code_uri"] = "https://github.com/joeldrapper/literal"
-	spec.metadata["changelog_uri"] = "https://github.com/joeldrapper/literal/blob/main/CHANGELOG.md"
+	spec.metadata["changelog_uri"] = "https://github.com/joeldrapper/literal/releases"
 	spec.metadata["funding_uri"] = "https://github.com/sponsors/joeldrapper"
 
 	spec.files = Dir[
