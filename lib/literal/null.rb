@@ -5,5 +5,9 @@ module Literal::Null
 		"Literal::Null"
 	end
 
+	def self.===(value)
+		self == value
+	end
+
 	freeze
 end
