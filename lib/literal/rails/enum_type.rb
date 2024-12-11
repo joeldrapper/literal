@@ -22,9 +22,13 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		when @enum
 			value.value
 		else
-			raise Literal::ArgumentError.new(
-				"Invalid value: #{value.inspect}. Expected an #{@enum.inspect}.",
-			)
+			if @enum[value]
+				value
+			else
+				raise Literal::ArgumentError.new(
+					"Invalid value: #{value.inspect}. Expected an #{@enum.inspect}.",
+				)
+			end
 		end
 	end
 
