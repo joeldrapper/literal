@@ -181,6 +181,7 @@ class Literal::Enum
 	end
 
 	alias_method :inspect, :name
+	alias_method :to_s, :name
 
 	def deconstruct
 		[@value]
