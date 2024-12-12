@@ -1,3 +1,3 @@
 # A Literal Ruby Gem
 
-See the website for [documentation](https://literal.fun/docs).
+See the website for [documentation](https://literal.fun/docs/).
