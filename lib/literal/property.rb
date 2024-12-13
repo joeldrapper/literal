@@ -118,29 +118,18 @@ class Literal::Property
 			"\n  value\nend\n"
 	end
 
-	if Literal::TYPE_CHECKS_DISABLED
-		def generate_writer_method(buffer = +"")
-			buffer <<
-				(@writer ? @writer.name : "public") <<
-				" def " <<
-				@name.name <<
-				"=(value)\n" <<
-				"  @#{@name.name} = value\nend\n"
-		end
-	else # type checks are enabled
-		def generate_writer_method(buffer = +"")
-			buffer <<
-				(@writer ? @writer.name : "public") <<
-				" def " <<
-				@name.name <<
-				"=(value)\n" <<
-				"  self.class.literal_properties[:" <<
-				@name.name <<
-				"].check_writer(self, value)\n" <<
-				"  @" << @name.name << " = value\n" <<
-				"rescue Literal::TypeError => error\n  error.set_backtrace(caller(1))\n  raise\n" <<
-				"end\n"
-		end
+	def generate_writer_method(buffer = +"")
+		buffer <<
+			(@writer ? @writer.name : "public") <<
+			" def " <<
+			@name.name <<
+			"=(value)\n" <<
+			"  self.class.literal_properties[:" <<
+			@name.name <<
+			"].check_writer(self, value)\n" <<
+			"  @" << @name.name << " = value\n" <<
+			"rescue Literal::TypeError => error\n  error.set_backtrace(caller(1))\n  raise\n" <<
+			"end\n"
 	end
 
 	def generate_predicate_method(buffer = +"")
@@ -171,10 +160,7 @@ class Literal::Property
 			generate_initializer_coerce_property(buffer)
 		end
 
-		unless Literal::TYPE_CHECKS_DISABLED
-			generate_initializer_check_type(buffer)
-		end
-
+		generate_initializer_check_type(buffer)
 		generate_initializer_assign_value(buffer)
 	end
 
