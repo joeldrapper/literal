@@ -276,7 +276,7 @@ class Literal::Array
 	end
 
 	def inspect
-		@__value__.inspect
+		"Literal::Array(#{@__type__.inspect})#{@__value__.inspect}"
 	end
 
 	def intersect?(other)
@@ -497,6 +497,7 @@ class Literal::Array
 
 	def select!(...)
 		@__value__.select!(...)
+		self
 	end
 
 	def shift(...)
@@ -535,7 +536,9 @@ class Literal::Array
 
 	alias_method :to_ary, :to_a
 
-	alias_method :to_s, :inspect
+	def to_s
+		@__value__.to_s
+	end
 
 	def uniq
 		__with__(@__value__.uniq)

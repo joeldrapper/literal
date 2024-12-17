@@ -31,38 +31,33 @@ class Switch < Literal::Enum(_Boolean)
 end
 
 test do
-	expect(Color::Red.name) =~ /Color::Red\z/
-	expect(Color.where(hex: "#FF0000")) == [Color::Red]
-	expect(Color.find_by(hex: "#FF0000")) == Color::Red
-	expect { Color.find_by(lower_hex: "#ff0000") }.to_raise(ArgumentError)
-	expect(Color.where(lower_hex: "#ff0000")) == [Color::Red]
-	expect(Color::Red.value) == 1
-	expect(Color::Red.hex) == "#FF0000"
-	expect(Color::Red.red?) == true
-	expect(Color::Red.green?) == false
-	expect(Color).to_be(:frozen?)
-	expect(Color::Red).to_be(:frozen?)
-	expect(Color[1]) == Color::Red
-	expect(Color.cast(1)) == Color::Red
-	expect(Color.coerce(1)) == Color::Red
-	expect(Color.coerce(Color::Red)) == Color::Red
-	expect(Color.to_set) == Set[Color::Red, Color::Green, Color::Blue]
-	expect(Color.to_h) == { Color::Red => 1, Color::Green => 2, Color::Blue => 3 }
-	expect(Color.to_a) == [Color::Red, Color::Green, Color::Blue] if RUBY_VERSION >= "3.2"
-	expect(Color.values) == [1, 2, 3] if RUBY_VERSION >= "3.2"
-	expect([3, 2, 1].map(&Color)) == [Color::Blue, Color::Green, Color::Red]
-	expect([Color::Red, 2].map(&Color)) == [Color::Red, Color::Green]
+	assert_equal([Color::Red], Color.where(hex: "#FF0000"))
+	assert_equal(Color::Red, Color.find_by(hex: "#FF0000"))
+	assert_raises(ArgumentError) { Color.find_by(lower_hex: "#ff0000") }
+	assert_equal([Color::Red], Color.where(lower_hex: "#ff0000"))
+	assert_equal(1, Color::Red.value)
+	assert_equal("#FF0000", Color::Red.hex)
+	assert_equal(true, Color::Red.red?)
+	assert_equal(false, Color::Red.green?)
+	assert_equal(true, Color.frozen?)
+	assert_equal(true, Color::Red.frozen?)
+	assert_equal(Color::Red, Color[1])
+	assert_equal(Color::Red, Color.cast(1))
+	assert_equal(Color::Red, Color.coerce(1))
+	assert_equal(Color::Red, Color.coerce(Color::Red))
+	assert_equal(Set[Color::Red, Color::Green, Color::Blue], Color.to_set)
+	assert_equal({ Color::Red => 1, Color::Green => 2, Color::Blue => 3 }, Color.to_h)
+	assert_equal([Color::Red, Color::Green, Color::Blue], Color.to_a) if RUBY_VERSION >= "3.2"
+	assert_equal([1, 2, 3], Color.values) if RUBY_VERSION >= "3.2"
+	assert_equal([Color::Blue, Color::Green, Color::Red], [3, 2, 1].map(&Color))
+	assert_equal([Color::Red, Color::Green], [Color::Red, 2].map(&Color))
 
-	expect(Switch::Off.toggle) == Switch::On
-	expect(Switch::On.toggle) == Switch::Off
+	assert_equal(Switch::On, Switch::Off.toggle)
+	assert_equal(Switch::Off, Switch::On.toggle)
 end
 
 test "pattern matching" do
-	Color::Red => Color
-	Color::Red => Color[1]
-	Color::Red => Color[hex: "#FF0000"]
-
-	Color::Red => Color
-	Color::Red => Color[1]
-	Color::Red => Color::Red[hex: "#FF0000"]
+	match { Color::Red => Color }
+	match { Color::Red => Color[1] }
+	match { Color::Red => Color[hex: "#FF0000"] }
 end

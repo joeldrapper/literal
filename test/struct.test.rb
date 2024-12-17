@@ -10,39 +10,40 @@ end
 
 test do
 	person = Person.new(name: "Joel")
-	expect(person.name) == "Joel"
+	assert_equal person.name, "Joel"
 end
 
 test do
 	person = Person.new(name: "Joel")
 	person.name = "Jill"
-	expect(person.name) == "Jill"
+
+	assert_equal person.name, "Jill"
 end
 
 test do
 	person = Person.new(name: "Joel")
-	expect(person.to_h) == { name: "Joel" }
+	assert_equal person.to_h, { name: "Joel" }
 end
 
 test do
 	a = Person.new(name: "Joel")
 	b = Person.new(name: "Joel")
 
-	expect(a) == b
+	assert_equal a, b
 end
 
 test do
 	a = Person.new(name: "Joel")
 	b = Person.new(name: "Jill")
 
-	expect(a) != b
+	refute_equal a, b
 end
 
 test do
 	a = Person.new(name: "Joel")
 	b = Student.new(name: "Joel", final_grade: 90)
 
-	expect(a) != b
+	refute_equal a, b
 end
 
 # Marshal doesn't work with anonymous classes
@@ -54,7 +55,7 @@ test "marshalling" do
 	a = RootStruct.new(name: "Joel")
 	b = Marshal.load(Marshal.dump(a))
 
-	expect(b) == a
+	assert_equal b, a
 end
 
 test "marshalling a frozen struct" do
@@ -63,8 +64,8 @@ test "marshalling a frozen struct" do
 
 	b = Marshal.load(Marshal.dump(a))
 
-	expect(b) == a
-	expect(b).to_be(:frozen?)
+	assert_equal b, a
+	assert b.frozen?
 end
 
 test "as_pack/from_pack" do
@@ -73,31 +74,33 @@ test "as_pack/from_pack" do
 
 	b = RootStruct.from_pack(a.as_pack)
 
-	expect(b) == a
-	expect(b).to_be(:frozen?)
+	assert_equal b, a
+	assert b.frozen?
 end
 
 test "can be deconstructed" do
 	person = Person.new(name: "Joel")
-	expect(person.deconstruct) == ["Joel"]
+	assert_equal person.deconstruct, ["Joel"]
 end
 
 test "can be deconstructed with keys" do
 	person = Person.new(name: "Joel")
-	expect(person.deconstruct_keys([:name])) == { name: "Joel" }
-	expect(person.deconstruct_keys(nil)) == { name: "Joel" }
+
+	assert_equal person.deconstruct_keys([:name]), { name: "Joel" }
+	assert_equal person.deconstruct_keys(nil), { name: "Joel" }
 end
 
 test "can be indexed" do
 	person = Person.new(name: "Joel")
-	expect(person[:name]) == "Joel"
+	assert_equal person[:name], "Joel"
 end
 
 test "returns nil for unknown keys" do
 	person = Person.new(name: "Joel")
-	expect { person[:age] }.to_raise(NameError)
-	expect(person["name"]) == "Joel"
-	expect { person[0] }.to_raise(TypeError)
+
+	assert_raises(NameError) { person[:age] }
+	assert_equal "Joel", person["name"]
+	assert_raises(TypeError) { person[0] }
 end
 
 class WithKeywordPropertyNames < Literal::Struct
@@ -108,20 +111,20 @@ end
 
 test do
 	with_keyword_property_names = WithKeywordPropertyNames.new(begin: "start", end: "finish")
-	expect(with_keyword_property_names.to_h) == { :begin => "start", :end => "finish", :module => nil }
-	expect(with_keyword_property_names) == with_keyword_property_names
-	expect(with_keyword_property_names) == with_keyword_property_names.dup
-	expect(with_keyword_property_names.hash) == with_keyword_property_names.dup.hash
-	expect(with_keyword_property_names[:begin]) == "start"
-	expect(with_keyword_property_names[:end]) == "finish"
-	expect(with_keyword_property_names[:module]) == nil
-	expect(with_keyword_property_names["begin"]) == "start"
-	expect(with_keyword_property_names["end"]) == "finish"
-	expect(with_keyword_property_names["module"]) == nil
-	expect(with_keyword_property_names.begin) == "start"
-	expect(with_keyword_property_names.end) == "finish"
-	expect(with_keyword_property_names.module) == nil
+	assert_equal(with_keyword_property_names.to_h, { :begin => "start", :end => "finish", :module => nil })
+	assert_equal(with_keyword_property_names, with_keyword_property_names)
+	assert_equal(with_keyword_property_names, with_keyword_property_names.dup)
+	assert_equal(with_keyword_property_names.hash, with_keyword_property_names.dup.hash)
+	assert_equal(with_keyword_property_names[:begin], "start")
+	assert_equal(with_keyword_property_names[:end], "finish")
+	assert_equal(with_keyword_property_names[:module], nil)
+	assert_equal(with_keyword_property_names["begin"], "start")
+	assert_equal(with_keyword_property_names["end"], "finish")
+	assert_equal(with_keyword_property_names["module"], nil)
+	assert_equal(with_keyword_property_names.begin, "start")
+	assert_equal(with_keyword_property_names.end, "finish")
+	assert_equal(with_keyword_property_names.module, nil)
 	with_keyword_property_names[:begin] = "start2"
 	with_keyword_property_names.end = "finish2"
-	expect(with_keyword_property_names.to_h) == { :begin => "start2", :end => "finish2", :module => nil }
+	assert_equal(with_keyword_property_names.to_h, { :begin => "start2", :end => "finish2", :module => nil })
 end

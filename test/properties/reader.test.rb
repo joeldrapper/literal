@@ -11,9 +11,9 @@ test "no reader by default" do
 		example: "hello",
 	)
 
-	expect(object.public_methods).not_to_include(:example)
-	expect(object.protected_methods).not_to_include(:example)
-	expect(object.private_methods).not_to_include(:example)
+	refute_includes(object.public_methods, :example)
+	refute_includes(object.protected_methods, :example)
+	refute_includes(object.private_methods, :example)
 end
 
 test "false reader" do
@@ -25,9 +25,9 @@ test "false reader" do
 		example: "hello",
 	)
 
-	expect(object.public_methods).not_to_include(:example)
-	expect(object.protected_methods).not_to_include(:example)
-	expect(object.private_methods).not_to_include(:example)
+	refute_includes(object.public_methods, :example)
+	refute_includes(object.protected_methods, :example)
+	refute_includes(object.private_methods, :example)
 end
 
 test "private reader" do
@@ -39,8 +39,8 @@ test "private reader" do
 		example: "hello",
 	)
 
-	expect(object.private_methods).to_include(:example)
-	expect(object.__send__(:example)) == "hello"
+	assert_includes(object.private_methods, :example)
+	assert_equal(object.__send__(:example), "hello")
 end
 
 test "protected reader" do
@@ -52,8 +52,8 @@ test "protected reader" do
 		example: "hello",
 	)
 
-	expect(object.protected_methods).to_include(:example)
-	expect(object.__send__(:example)) == "hello"
+	assert_includes(object.protected_methods, :example)
+	assert_equal(object.__send__(:example), "hello")
 end
 
 test "public reader" do
@@ -65,6 +65,6 @@ test "public reader" do
 		example: "hello",
 	)
 
-	expect(object.public_methods).to_include(:example)
-	expect(object.example) == ("hello")
+	assert_includes(object.public_methods, :example)
+	assert_equal(object.example, "hello")
 end

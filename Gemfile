@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git"
+gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git", branch: "assert-style"
 gem "benchmark-ips"
 
 group :development do
