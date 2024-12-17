@@ -6,60 +6,59 @@ end
 
 class Empty < Literal::Data
 end
-
 test "properties have readers by default" do
 	person = Person.new(name: "John")
-	expect(person.name) == "John"
+	assert_equal(person.name, "John")
 end
 
 test "data objects are frozen" do
 	person = Person.new(name: "John")
-	expect(person).to_be(:frozen?)
+	assert_equal(person.frozen?, true)
 end
 
 test "immutable attributes are not duplicated" do
 	name = "John"
 	person = Person.new(name:)
 
-	expect(person.name).to_be(:frozen?)
-	expect(person.name).to_equal?(name)
+	assert_equal(person.name.frozen?, true)
+	assert_equal(person.name, name)
 end
 
 test "to_h" do
 	person = Person.new(name: "John")
-	expect(person.to_h) == { name: "John" }
+	assert_equal(person.to_h, { name: "John" })
 end
 
 test "can be deconstructed" do
 	person = Person.new(name: "John")
-	expect(person.deconstruct) == ["John"]
+	assert_equal(person.deconstruct, ["John"])
 end
 
 test "can be deconstructed with keys" do
 	person = Person.new(name: "John")
-	expect(person.deconstruct_keys([:name])) == { name: "John" }
+	assert_equal(person.deconstruct_keys([:name]), { name: "John" })
 end
 
 test "can be used as a hash key" do
 	person = Person.new(name: "John")
 	person2 = Person.new(name: "Bob")
 	hash = { person => "John", person2 => "Bob" }
-	expect(hash[person]) == "John"
-	expect(hash[person2]) == "Bob"
-	expect(hash[Person.new(name: "John")]) == "John"
+	assert_equal(hash[person], "John")
+	assert_equal(hash[person2], "Bob")
+	assert_equal(hash[Person.new(name: "John")], "John")
 end
 
 test "empty" do
 	empty = Empty.new
-	expect(empty.to_h) == {}
+	assert_equal(empty.to_h, {})
 
 	other = Empty.new
-	expect(empty) == other
-	expect(empty).to_eql?(other)
-	expect(empty.hash) == other.hash
+	assert_equal(empty, other)
+	assert_equal(empty.eql?(other), true)
+	assert_equal(empty.hash, other.hash)
 
 	other_empty = Class.new(Literal::Data).new
-	expect(empty) != other_empty
-	expect(empty).not_to_eql?(other_empty)
-	expect(empty.hash) != other_empty.hash
+	assert_equal(empty != other_empty, true)
+	assert_equal(empty.eql?(other_empty), false)
+	assert_equal(empty.hash != other_empty.hash, true)
 end

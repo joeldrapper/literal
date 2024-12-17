@@ -29,7 +29,7 @@ end
 
 test "to bit string" do
 	flags = Example.new(italic: true)
-	expect(flags.to_bit_string) == "00000010"
+	assert_equal("00000010", flags.to_bit_string)
 end
 
 test "from bit string" do
@@ -56,21 +56,21 @@ test "#to_h" do
 		italic: true,
 	)
 
-	expect(flags.to_h) == {
+	assert_equal(flags.to_h, {
 		bold: true,
 		italic: true,
 		underlined: false,
-	}
+	})
 end
 
 test "#map (via Enumerable)" do
 	flags = Example.new(bold: true)
 
-	expect(flags.map.to_a) == [
+	assert_equal(flags.map.to_a, [
 		[:bold, true],
 		[:italic, false],
 		[:underlined, false],
-	]
+	])
 end
 
 test ".from_tokens" do
@@ -83,29 +83,29 @@ end
 
 test "#to_tokens" do
 	flags = Example.new(bold: true, italic: true)
-	expect(flags.to_tokens) == [:bold, :italic]
+	assert_equal([:bold, :italic], flags.to_tokens)
 end
 
 test "#to_a" do
 	flags = Example.new(bold: true)
-	expect(flags.to_a) == [false, false, false, false, false, false, false, true]
+	assert_equal([false, false, false, false, false, false, false, true], flags.to_a)
 end
 
 test "#deconstruct_keys with no filter" do
 	flags = Example.new(bold: true)
 
-	expect(flags.deconstruct_keys) == {
+	assert_equal({
 		bold: true,
 		italic: false,
 		underlined: false,
-	}
+	}, flags.deconstruct_keys)
 end
 
 test "#deconstruct_keys with filter" do
 	flags = Example.new(bold: true)
 
-	expect(flags.deconstruct_keys([:bold, :underlined])) == {
+	assert_equal({
 		bold: true,
 		underlined: false,
-	}
+	}, flags.deconstruct_keys([:bold, :underlined]))
 end

@@ -57,4 +57,8 @@ class Literal::Tuple
 	end
 
 	attr_reader :__values__, :__types__
+
+	def ==(other)
+		Literal::Tuple === other && @__values__ == other.__values__
+	end
 end

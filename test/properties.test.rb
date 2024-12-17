@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-set_temporary_name("Quickdraw::Context(in #{__FILE__})") if respond_to?(:set_temporary_name)
-
 Example = Literal::Object
 
 test "positional params are required by default" do
@@ -9,8 +7,8 @@ test "positional params are required by default" do
 		prop :example, String, :positional
 	end
 
-	expect { example.new }.to_raise(ArgumentError)
-	expect { example.new("Hello") }.not_to_raise
+	assert_raises(ArgumentError) { example.new }
+	refute_raises { example.new("Hello") }
 end
 
 test "keyword params are required by default" do
@@ -18,8 +16,8 @@ test "keyword params are required by default" do
 		prop :example, String
 	end
 
-	expect { example.new }.to_raise(ArgumentError)
-	expect { example.new(example: "Hello") }.not_to_raise
+	assert_raises(ArgumentError) { example.new }
+	refute_raises { example.new(example: "Hello") }
 end
 
 test "nilable positional params are optional" do
@@ -27,8 +25,8 @@ test "nilable positional params are optional" do
 		prop :example, _Nilable(String), :positional
 	end
 
-	expect { example.new }.not_to_raise
-	expect { example.new("Hello") }.not_to_raise
+	refute_raises { example.new }
+	refute_raises { example.new("Hello") }
 end
 
 test "nilable keyword params are optional" do
@@ -36,8 +34,8 @@ test "nilable keyword params are optional" do
 		prop :example, _Nilable(String)
 	end
 
-	expect { example.new }.not_to_raise
-	expect { example.new(example: "Hello") }.not_to_raise
+	refute_raises { example.new }
+	refute_raises { example.new(example: "Hello") }
 end
 
 test "positional splats are optional" do
@@ -45,9 +43,9 @@ test "positional splats are optional" do
 		prop :example, _Array(String), :*
 	end
 
-	expect { example.new }.not_to_raise
-	expect { example.new("Hello") }.not_to_raise
-	expect { example.new("Hello", "World") }.not_to_raise
+	refute_raises { example.new }
+	refute_raises { example.new("Hello") }
+	refute_raises { example.new("Hello", "World") }
 end
 
 test "keyword splats are optional" do
@@ -55,9 +53,9 @@ test "keyword splats are optional" do
 		prop :example, _Hash(Symbol, String), :**
 	end
 
-	expect { example.new }.not_to_raise
-	expect { example.new(example: "Hello") }.not_to_raise
-	expect { example.new(example: "Hello", world: "World") }.not_to_raise
+	refute_raises { example.new }
+	refute_raises { example.new(example: "Hello") }
+	refute_raises { example.new(example: "Hello", world: "World") }
 end
 
 test "block params are required by default" do
@@ -65,8 +63,8 @@ test "block params are required by default" do
 		prop :example, Proc, :&
 	end
 
-	expect { example.new }.to_raise(Literal::TypeError)
-	expect { example.new { "Hello" } }.not_to_raise
+	assert_raises(Literal::TypeError) { example.new }
+	refute_raises { example.new { "Hello" } }
 end
 
 test "nilable block params are optional" do
@@ -74,8 +72,8 @@ test "nilable block params are optional" do
 		prop :example, _Nilable(Proc), :&
 	end
 
-	expect { example.new }.not_to_raise
-	expect { example.new { "Hello" } }.not_to_raise
+	refute_raises { example.new }
+	refute_raises { example.new { "Hello" } }
 end
 
 class Person
@@ -105,57 +103,58 @@ class Empty
 end
 
 test "empty initializer" do
-	expect { Empty.new }.not_to_raise
+	refute_raises { Empty.new }
 end
 
 test do
 	person = Person.new("John", age: 30)
 
-	expect(person.name) == "John"
-	expect(person.age) == 30
+	assert_equal person.name, "John"
+	assert_equal person.age, 30
 end
 
 test "initializer type check" do
-	expect { Person.new(1, age: "Joel") }.to_raise(Literal::TypeError) { |error|
-		expect(error.message) == <<~ERROR
-   Type mismatch
+	error = assert_raises(Literal::TypeError) { Person.new(1, age: "Joel") }
 
-   #{Person}#initialize (from #{error.backtrace[1]})
-     name
-       Expected: String
-       Actual (Integer): 1
+	assert_equal error.message, <<~ERROR
+  Type mismatch
+
+  #{Person}#initialize (from #{error.backtrace[1]})
+    name
+      Expected: String
+      Actual (Integer): 1
 ERROR
-	}
 end
 
 test "initializer keyword check" do
 	random = Random.new(1)
 
-	expect(random.begin) == 1
+	assert_equal random.begin, 1
 end
 
 test "default block" do
 	object = WithDefaultBlock.new
-	expect(object.block.call) == "Hello"
+	assert_equal object.block.call, "Hello"
 
 	object = WithDefaultBlock.new { "World" }
-	expect(object.block.call) == "World"
+	assert_equal object.block.call, "World"
 end
 
 test "properties are enumerable" do
 	props = Person.literal_properties
-	expect(props.size) == 2
-	expect(props.map(&:name)) == [:name, :age]
+	assert_equal props.size, 2
+	assert_equal props.map(&:name), [:name, :age]
 
 	props = Empty.literal_properties
-	expect(props.size) == 0
+	assert_equal props.size, 0
 end
 
 test "introspection" do
 	prop1, prop2 = *Person.literal_properties
 
-	expect(prop1.name) == :name
-	expect(prop1.type) == String
+	assert_equal prop1.name, :name
+	assert_equal prop1.type, String
+
 	assert(prop1.positional?) { "Expected name to be kind :positional" }
 	refute(prop1.keyword?) { "Expected name to not be kind :keyword" }
 	refute(prop1.block?) { "Expected name to not be kind :&" }
@@ -164,8 +163,9 @@ test "introspection" do
 	assert(prop1.required?) { "Expected name to be required" }
 	refute(prop1.optional?) { "Expected name to not be optional" }
 
-	expect(prop2.name) == :age
-	expect(prop2.type) == Integer
+	assert_equal prop2.name, :age
+	assert_equal prop2.type, Integer
+
 	assert(prop2.keyword?) { "Expected age to be kind :keyword" }
 	assert(prop2.required?) { "Expected age to be required" }
 
@@ -218,8 +218,8 @@ end
 test "inheritance" do
 	friend = Friend.new("John", age: 30.5)
 
-	expect(friend.name) == "John"
-	expect(friend.age) > 30
+	assert_equal friend.name, "John"
+	assert_equal friend.age, 30.5
 end
 
 class WithPredicate
@@ -232,8 +232,8 @@ test "predicates" do
 	enabled = WithPredicate.new(enabled: true)
 	disabled = WithPredicate.new(enabled: false)
 
-	expect(enabled.enabled?) == true
-	expect(disabled.enabled?) == false
+	assert_equal enabled.enabled?, true
+	assert_equal disabled.enabled?, false
 end
 
 class WithWriters < Example
@@ -246,26 +246,30 @@ end
 test "writer type error" do
 	instance = WithWriters.new
 
-	expect { instance.example = 0 }.to_raise(Literal::TypeError) { |error|
-		expect(error.message) == <<~ERROR
-			Type mismatch
+	error = assert_raises(Literal::TypeError) do
+		instance.example = 0
+	end
 
-			#{WithWriters}#example=(value) (from #{error.backtrace[1]})
-			  Expected: _Nilable(String)
-			  Actual (Integer): 0
+	assert_equal error.message, <<~ERROR
+  Type mismatch
+
+  #{WithWriters}#example=(value) (from #{error.backtrace[1]})
+    Expected: _Nilable(String)
+    Actual (Integer): 0
 ERROR
-	}
 
-	expect { instance.a = [1] }.to_raise(Literal::TypeError) { |error|
-	expect(error.message) == <<~ERROR
+	error = assert_raises(Literal::TypeError) do
+		instance.a = [1]
+	end
+
+	assert_equal error.message, <<~ERROR
 		Type mismatch
 
 		#{WithWriters}#a=(value) (from #{error.backtrace[1]})
 		    [0]
 		      Expected: String
 		      Actual (Integer): 1
-	ERROR
-	}
+ERROR
 end
 
 class Family
@@ -276,7 +280,7 @@ class Family
 end
 
 test "nested properties raise in initializer" do
-	expect do
+	error = assert_raises(Literal::TypeError) do
 		Family.new(
 			[
 				{
@@ -292,56 +296,58 @@ test "nested properties raise in initializer" do
 				},
 			],
 		)
-	end.to_raise(Literal::TypeError) do |error|
-		expect(error.message) == <<~ERROR
-			Type mismatch
-
-			#{Family}#initialize (from #{error.backtrace[1]})
-			  members
-			    [0]
-			      [:role]
-			        Expected: Symbol
-			        Actual (Integer): 1
-			    [1]
-			      [:role]
-			        Expected: Symbol
-			        Actual (String): "Father"
-			    [2]
-			      [:person]
-			        Expected: #{Person.inspect}
-			        Actual (NilClass): nil
-			      [:role]
-			        Expected: Symbol
-			        Actual (NilClass): nil
-		ERROR
 	end
 
-	expect { Family.new([1]) }.to_raise(Literal::TypeError) { |error|
-			expect(error.message) == <<~ERROR
-    Type mismatch
+	assert_equal error.message, <<~ERROR
+		Type mismatch
 
-    #{Family}#initialize (from #{error.backtrace[1]})
-      members
-        [0]
-          Expected: _Map(#{{ person: Person, role: Symbol }})
-          Actual (Integer): 1
+		#{Family}#initialize (from #{error.backtrace[1]})
+		  members
+		    [0]
+		      [:role]
+		        Expected: Symbol
+		        Actual (Integer): 1
+		    [1]
+		      [:role]
+		        Expected: Symbol
+		        Actual (String): "Father"
+		    [2]
+		      [:person]
+		        Expected: #{Person.inspect}
+		        Actual (NilClass): nil
+		      [:role]
+		        Expected: Symbol
+		        Actual (NilClass): nil
+		ERROR
+
+	error = assert_raises(Literal::TypeError) { Family.new([1]) }
+
+	assert_equal error.message, <<~ERROR
+		Type mismatch
+
+		#{Family}#initialize (from #{error.backtrace[1]})
+		  members
+		    [0]
+		      Expected: _Map(#{{ person: Person, role: Symbol }})
+		      Actual (Integer): 1
 ERROR
-	}
 
-	expect { Family.new([], last_reunion_year: :two_thousand) }.to_raise(Literal::TypeError) { |error|
-		expect(error.message) == <<~ERROR
-   Type mismatch
+	error = assert_raises(Literal::TypeError) do
+		Family.new([], last_reunion_year: :two_thousand)
+	end
 
-   #{Family}#initialize (from #{error.backtrace[1]})
-     last_reunion_year:
-       Expected: _Nilable(Integer)
-       Actual (Symbol): :two_thousand
-ERROR
-	}
+	assert_equal error.message, <<~ERROR
+		Type mismatch
+
+		#{Family}#initialize (from #{error.backtrace[1]})
+		  last_reunion_year:
+		    Expected: _Nilable(Integer)
+		    Actual (Symbol): :two_thousand
+		ERROR
 end
 
 test "nested properties succeed in initializer" do
-	expect do
+	refute_raises do
 		Family.new(
 			[
 				{
@@ -354,15 +360,16 @@ test "nested properties succeed in initializer" do
 				},
 			],
 		)
-	end.not_to_raise
-	expect { Family.new([]) }.not_to_raise
-	expect { Family.new([], last_reunion_year: 0) }.not_to_raise
+	end
+
+	refute_raises { Family.new([]) }
+	refute_raises { Family.new([], last_reunion_year: 0) }
 end
 
 test "#to_h" do
-		person = Person.new("John", age: 30)
-		expect(person.to_h) == { name: "John", age: 30 }
+	person = Person.new("John", age: 30)
+	assert_equal person.to_h, { name: "John", age: 30 }
 
-		empty = Empty.new
-		expect(empty.to_h) == {}
+	empty = Empty.new
+	assert_equal empty.to_h, {}
 end

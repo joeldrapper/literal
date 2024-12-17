@@ -3,11 +3,11 @@
 include Literal::Types
 
 def expect_type_error(expected:, actual:, message:)
-	expect do
+	error = assert_raises(Literal::TypeError) do
 		Literal.check(expected:, actual:)
-	end.to_raise(Literal::TypeError) do |error|
-		expect(error.message) == message
 	end
+
+	assert_equal error.message, message
 end
 
 test "_Deferred" do
@@ -435,9 +435,11 @@ test "_Map" do
 	MSG
 
 	object_keys_map = _Map(**{ 1 => Integer, "2" => String, :symbol => _Nilable(Symbol) })
-	expect(object_keys_map.inspect) == "_Map(#{{ 1 => Integer, '2' => String, :symbol => _Nilable(Symbol) }.inspect})"
-	expect(object_keys_map) === { 1 => 2, "2" => "string" }
-	expect(object_keys_map) === { 1 => 2, "2" => "string", :symbol => :foo }
+
+	assert_equal object_keys_map.inspect, "_Map(#{{ 1 => Integer, '2' => String, :symbol => _Nilable(Symbol) }.inspect})"
+	assert object_keys_map === { 1 => 2, "2" => "string" }
+	assert object_keys_map === { 1 => 2, "2" => "string", :symbol => :foo }
+
 	refute object_keys_map === {}
 	refute object_keys_map === { 1 => 2 }
 
@@ -707,7 +709,7 @@ test "_Union flattens types" do
 		_Union(Symbol, Float),
 	)
 
-	expect(type.inspect) == "_Union([String, Integer, Symbol, Float])"
+	assert_equal type.inspect, "_Union([String, Integer, Symbol, Float])"
 end
 
 test "_Void" do
