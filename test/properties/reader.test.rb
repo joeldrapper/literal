@@ -11,9 +11,9 @@ test "no reader by default" do
 		example: "hello",
 	)
 
-	refute_includes(object.public_methods, :example)
-	refute_includes(object.protected_methods, :example)
-	refute_includes(object.private_methods, :example)
+	refute object.public_methods.include?(:example)
+	refute object.protected_methods.include?(:example)
+	refute object.private_methods.include?(:example)
 end
 
 test "false reader" do
@@ -25,9 +25,9 @@ test "false reader" do
 		example: "hello",
 	)
 
-	refute_includes(object.public_methods, :example)
-	refute_includes(object.protected_methods, :example)
-	refute_includes(object.private_methods, :example)
+	refute object.public_methods.include?(:example)
+	refute object.protected_methods.include?(:example)
+	refute object.private_methods.include?(:example)
 end
 
 test "private reader" do
@@ -39,7 +39,7 @@ test "private reader" do
 		example: "hello",
 	)
 
-	assert_includes(object.private_methods, :example)
+	assert object.private_methods.include?(:example)
 	assert_equal(object.__send__(:example), "hello")
 end
 
@@ -52,7 +52,7 @@ test "protected reader" do
 		example: "hello",
 	)
 
-	assert_includes(object.protected_methods, :example)
+	assert object.protected_methods.include?(:example)
 	assert_equal(object.__send__(:example), "hello")
 end
 
@@ -65,6 +65,6 @@ test "public reader" do
 		example: "hello",
 	)
 
-	assert_includes(object.public_methods, :example)
+	assert object.public_methods.include?(:example)
 	assert_equal(object.example, "hello")
 end

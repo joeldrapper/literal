@@ -11,9 +11,9 @@ test "no writer by default" do
 		example: "hello",
 	)
 
-	refute_includes object.public_methods, :example=
-	refute_includes object.protected_methods, :example=
-	refute_includes object.private_methods, :example=
+	refute object.public_methods.include?(:example=)
+	refute object.protected_methods.include?(:example=)
+	refute object.private_methods.include?(:example=)
 end
 
 test "false writer" do
@@ -25,9 +25,9 @@ test "false writer" do
 		example: "hello",
 	)
 
-	refute_includes object.public_methods, :example
-	refute_includes object.protected_methods, :example
-	refute_includes object.private_methods, :example
+	refute object.public_methods.include?(:example)
+	refute object.protected_methods.include?(:example)
+	refute object.private_methods.include?(:example)
 end
 
 test "private writer" do
@@ -39,7 +39,7 @@ test "private writer" do
 		example: "hello",
 	)
 
-	assert_includes object.public_methods, :example
+	assert object.public_methods.include?(:example)
 	assert_equal object.__send__(:example), "hello"
 end
 
@@ -52,7 +52,7 @@ test "protected writer" do
 		example: "hello",
 	)
 
-	assert_includes object.protected_methods, :example=
+	assert object.protected_methods.include?(:example=)
 	assert_equal object.__send__(:example=, "world"), "world"
 end
 
@@ -65,6 +65,6 @@ test "public writer" do
 		example: "hello",
 	)
 
-	assert_includes object.public_methods, :example=
+	assert object.public_methods.include?(:example=)
 	assert_equal object.example = "world", "world"
 end
