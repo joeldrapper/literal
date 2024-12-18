@@ -150,7 +150,7 @@ class Literal::Enum
 			when self
 				value
 			when Symbol
-				begin
+				self[value] || begin
 					const_get(value)
 				rescue NameError
 					nil

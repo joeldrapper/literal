@@ -30,6 +30,11 @@ class Switch < Literal::Enum(_Boolean)
 	__after_defined__ if RUBY_ENGINE == "truffleruby"
 end
 
+class SymbolTypedEnum < Literal::Enum(Symbol)
+	A = new(:B)
+	B = new(:A)
+end
+
 test ".coerce from value" do
 	assert_equal Color.coerce(1), Color::Red
 end
@@ -60,6 +65,10 @@ end
 
 test ".cast returns nil if the member can't be found" do
 	assert_equal Color.cast(10), nil
+end
+
+test ".cast goes with the value when there are conflicts with the keys" do
+	assert_equal SymbolTypedEnum.coerce(:A), SymbolTypedEnum::B
 end
 
 test ".to_set" do
