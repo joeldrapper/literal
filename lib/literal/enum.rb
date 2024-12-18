@@ -149,6 +149,12 @@ class Literal::Enum
 			case value
 			when self
 				value
+			when Symbol
+				begin
+					const_get(value)
+				rescue NameError
+					nil
+				end
 			else
 				self[value]
 			end
