@@ -766,15 +766,11 @@ test "#transpose with a nested literal tuple" do
 		Literal::Tuple(Integer, String).new(2, "b"),
 	)
 
-	transposed = array.transpose
-
-	expected = Literal::Tuple(
+	assert_equal array.transpose, Literal::Tuple(
 		Literal::Array(Integer),
 		Literal::Array(String)
 	).new(
 		Literal::Array(Integer).new(1, 2),
 		Literal::Array(String).new("a", "b"),
 	)
-
-	assert_equal transposed, expected
 end
