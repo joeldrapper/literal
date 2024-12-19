@@ -543,8 +543,12 @@ class Literal::Array
 					)
 				end
 			)
+		when Literal::Array::Generic
+			__with__(
+				@__value__.map(&:to_a).transpose.map! { |it| @__type__.new(*it) }
+			)
 		else
-			raise ArgumentError.new("Not implemented")
+			@__value__.transpose
 		end
 	end
 

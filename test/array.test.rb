@@ -761,7 +761,9 @@ test "#product with another Literal::Array" do
 end
 
 test "#transpose with a nested literal tuple" do
-	array = Literal::Array(Literal::Tuple(Integer, String)).new(
+	array = Literal::Array(
+		Literal::Tuple(Integer, String)
+	).new(
 		Literal::Tuple(Integer, String).new(1, "a"),
 		Literal::Tuple(Integer, String).new(2, "b"),
 	)
@@ -773,4 +775,41 @@ test "#transpose with a nested literal tuple" do
 		Literal::Array(Integer).new(1, 2),
 		Literal::Array(String).new("a", "b"),
 	)
+end
+
+test "#transpose with a nested literal array" do
+	array = Literal::Array(Literal::Array(Integer)).new(
+		Literal::Array(Integer).new(1, 2),
+		Literal::Array(Integer).new(3, 4),
+	)
+
+	assert_equal array.transpose, Literal::Array(
+		Literal::Array(Integer)
+	).new(
+		Literal::Array(Integer).new(1, 3),
+		Literal::Array(Integer).new(2, 4),
+	)
+end
+
+test "#transpose with a nested literal array with different lengths raises an IndexError" do
+	array = Literal::Array(Literal::Array(Integer)).new(
+		Literal::Array(Integer).new(1, 2),
+		Literal::Array(Integer).new(3, 4, 5),
+	)
+
+	assert_raises(IndexError) do
+		array.transpose
+	end
+end
+
+test "#transpose with a nested regular array" do
+	array = Literal::Array(_Array(Integer)).new(
+		[1, 2],
+		[3, 4],
+	)
+
+	assert_equal array.transpose, [
+		[1, 3],
+		[2, 4],
+	]
 end
