@@ -54,6 +54,7 @@ Literal::TRANSFORMS = {
 		to_str: String,
 		upcase: String,
 		valid_encoding?: Literal::Types::BooleanType::Instance,
+		to_i: Integer,
 	},
 	Numeric => {
 		to_i: Integer,
