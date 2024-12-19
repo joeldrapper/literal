@@ -530,6 +530,24 @@ class Literal::Array
 		__with__(@__value__.take(...))
 	end
 
+	def transpose
+		case @__type__
+		when Literal::Tuple::Generic
+			tuple_types = @__type__.types
+			new_array_types = tuple_types.map { |t| Literal::Array(t) }
+
+			Literal::Tuple(*new_array_types).new(
+				*new_array_types.each_with_index.map do |t, i|
+					t.new(
+						*@__value__.map { |it| it[i] }
+					)
+				end
+			)
+		else
+			raise ArgumentError.new("Not implemented")
+		end
+	end
+
 	def to_a
 		@__value__.dup
 	end

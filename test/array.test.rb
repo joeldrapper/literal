@@ -759,3 +759,22 @@ test "#product with another Literal::Array" do
 	assert_equal result.size, 4
 	assert_equal result.first, Literal::Tuple(Integer, String).new(1, "a")
 end
+
+test "#transpose with a nested literal tuple" do
+	array = Literal::Array(Literal::Tuple(Integer, String)).new(
+		Literal::Tuple(Integer, String).new(1, "a"),
+		Literal::Tuple(Integer, String).new(2, "b"),
+	)
+
+	transposed = array.transpose
+
+	expected = Literal::Tuple(
+		Literal::Array(Integer),
+		Literal::Array(String)
+	).new(
+		Literal::Array(Integer).new(1, 2),
+		Literal::Array(String).new("a", "b"),
+	)
+
+	assert_equal transposed, expected
+end

@@ -56,9 +56,17 @@ class Literal::Tuple
 		@__types__ = types
 	end
 
+	def inspect
+		@__values__.inspect
+	end
+
 	attr_reader :__values__, :__types__
 
 	def ==(other)
-		Literal::Tuple === other && @__values__ == other.__values__
+		(Literal::Tuple === other) && (@__values__ == other.__values__)
+	end
+
+	def [](index)
+		@__values__[index]
 	end
 end
