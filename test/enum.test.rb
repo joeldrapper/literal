@@ -145,6 +145,10 @@ test "#<=>" do
 	assert_equal Color::Green <=> Color::Red, 1
 end
 
+test "#name" do
+	assert Color::Red.name.end_with?("Color::Red")
+end
+
 test "enums are rangeable" do
 	range = (Color::Red..Color::Green)
 

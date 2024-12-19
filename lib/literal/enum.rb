@@ -9,6 +9,7 @@ class Literal::Enum
 		attr_reader :members
 
 		def values = @values.keys
+		def names = @names
 
 		def prop(name, type, kind = :keyword, reader: :public, predicate: false, default: nil)
 			super(name, type, kind, reader:, writer: false, predicate:, default:)
@@ -20,6 +21,7 @@ class Literal::Enum
 				@members = []
 				@indexes_definitions = {}
 				@indexes = {}
+				@names = {}
 			end
 
 			if RUBY_ENGINE != "truffleruby"
@@ -85,12 +87,8 @@ class Literal::Enum
 			object = const_get(name)
 
 			if self === object
-				if @values.key?(object.value)
-					raise ArgumentError.new("The value #{object.value} is already used by #{@values[object.value].name}.")
-				end
-				object.instance_variable_set(:@name, name)
-				@values[object.value] = object
-				@members << object
+				# object.instance_variable_set(:@name, name)
+				@names[object] = name
 				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
 				object.freeze
 			end
@@ -98,8 +96,18 @@ class Literal::Enum
 
 		def new(*args, **kwargs, &block)
 			raise ArgumentError if frozen?
+
 			new_object = super(*args, **kwargs, &nil)
+
+			if @values.key?(new_object.value)
+				raise ArgumentError.new("The value #{new_object.value} is already used by #{@values[new_object.value].name}.")
+			end
+
+			@values[new_object.value] = new_object
+
 			new_object.instance_variable_set(:@__position__, @members.length)
+
+			@members << new_object
 
 			new_object.instance_exec(&block) if block
 
@@ -187,7 +195,8 @@ class Literal::Enum
 	end
 
 	def name
-		"#{self.class.name}::#{@name}"
+		klass = self.class
+		"#{klass.name}::#{klass.names[self]}"
 	end
 
 	alias_method :inspect, :name
