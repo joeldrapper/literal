@@ -153,10 +153,16 @@ class Literal::Enum
 				self[value] || begin
 					const_get(value)
 				rescue NameError
-					nil
+					raise ArgumentError.new(
+						"Can't coerce #{value.inspect} into a #{inspect}."
+					)
 				end
 			else
-				self[value]
+				self[value] || raise(
+					ArgumentError.new(
+						"Can't coerce #{value.inspect} into a #{inspect}."
+					)
+				)
 			end
 		end
 

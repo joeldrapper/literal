@@ -47,8 +47,16 @@ test ".coerce from symbol" do
 	assert_equal Color.coerce(:Red), Color::Red
 end
 
-test ".coerce with invalid symbol returns nil" do
-	assert_equal Color.coerce(:Invalid), nil
+test ".coerce with invalid symbol raises an ArgumentError" do
+	assert_raises ArgumentError do
+		Color.coerce(:Invalid)
+	end
+end
+
+test ".coerce with invalid value raises an ArgumenError" do
+	assert_raises ArgumentError do
+		Color.coerce("invalid value")
+	end
 end
 
 test ".[] looks up the key by value" do
