@@ -914,3 +914,20 @@ test "#zip with others length is not the max length but the types are nilable" d
 		Literal::Tuple(String, _Nilable(Integer), _Any).new("b", nil, nil),
 	)
 end
+
+test "#zip with a block" do
+	a = Literal::Array(String).new("a", "b")
+	b = Literal::Array(Integer).new(1, 2)
+	c = [:a, :b]
+
+	results = []
+
+	return_value = a.zip(b, c) { |it| results << it }
+
+	assert_equal results, [
+		Literal::Tuple(String, Integer, _Any).new("a", 1, :a),
+		Literal::Tuple(String, Integer, _Any).new("b", 2, :b),
+	]
+
+	assert_equal return_value, nil
+end

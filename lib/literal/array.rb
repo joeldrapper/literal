@@ -691,16 +691,29 @@ class Literal::Array
 		end
 
 		i = 0
-		result_value = []
 
-		while i < max_length
-			result_value << tuple.new(
-				@__value__[i],
-				*others.map { |it| it[i] }
-			)
-			i += 1
+		if block_given?
+			while i < max_length
+				yield tuple.new(
+					@__value__[i],
+					*others.map { |it| it[i] }
+				)
+				i += 1
+			end
+
+			nil
+		else
+			result_value = []
+
+			while i < max_length
+				result_value << tuple.new(
+					@__value__[i],
+					*others.map { |it| it[i] }
+				)
+				i += 1
+			end
+
+			__with__(result_value)
 		end
-
-		__with__(result_value)
 	end
 end
