@@ -17,9 +17,9 @@ class Literal::Enum
 		def inherited(subclass)
 			subclass.instance_exec do
 				@values = {}
-				@members = Set[]
+				@members = []
+				@indexes_definitions = {}
 				@indexes = {}
-				@index = {}
 			end
 
 			if RUBY_ENGINE != "truffleruby"
@@ -32,8 +32,16 @@ class Literal::Enum
 			end
 		end
 
+		def index_of(member)
+			member.__index__
+		end
+
+		def at_index(n)
+			@members[n]
+		end
+
 		def index(name, type, unique: true, &block)
-			@indexes[name] = [type, unique, block || name.to_proc]
+			@indexes_definitions[name] = [type, unique, block || name.to_proc]
 		end
 
 		def where(**kwargs)
@@ -43,11 +51,11 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			types = @indexes.fetch(key)
+			types = @indexes_definitions.fetch(key)
 			type = types.first
 			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
 
-			@index.fetch(key)[value]
+			@indexes.fetch(key)[value]
 		end
 
 		def find_by(**kwargs)
@@ -57,15 +65,15 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			unless @indexes.fetch(key)[1]
+			unless @indexes_definitions.fetch(key)[1]
 				raise ArgumentError.new("You can only use `find_by` on unique indexes.")
 			end
 
-			unless (type = @indexes.fetch(key)[0]) === value
+			unless (type = @indexes_definitions.fetch(key)[0]) === value
 				raise Literal::TypeError.expected(value, to_be_a: type)
 			end
 
-			@index.fetch(key)[value]&.first
+			@indexes.fetch(key)[value]&.first
 		end
 
 		def _load(data)
@@ -91,10 +99,9 @@ class Literal::Enum
 		def new(*args, **kwargs, &block)
 			raise ArgumentError if frozen?
 			new_object = super(*args, **kwargs, &nil)
+			new_object.instance_variable_set(:@__index__, @members.size)
 
-			if block
-				new_object.instance_exec(&block)
-			end
+			new_object.instance_exec(&block) if block
 
 			new_object
 		end
@@ -106,7 +113,7 @@ class Literal::Enum
 				constants(false).each { |name| const_added(name) }
 			end
 
-			@indexes.each do |name, (type, unique, block)|
+			@indexes_definitions.each do |name, (type, unique, block)|
 				index = @members.group_by(&block).freeze
 
 				index.each do |key, values|
@@ -119,7 +126,7 @@ class Literal::Enum
 					end
 				end
 
-				@index[name] = index
+				@indexes[name] = index
 			end
 
 			@values.freeze
@@ -179,15 +186,6 @@ class Literal::Enum
 		end
 	end
 
-	def initialize(name, value, &block)
-		@name = name
-		@value = value
-		instance_exec(&block) if block
-		freeze
-	end
-
-	attr_reader :value
-
 	def name
 		"#{self.class.name}::#{@name}"
 	end
@@ -207,4 +205,27 @@ class Literal::Enum
 	def _dump(level)
 		Marshal.dump(@value)
 	end
+
+	def <=>(other)
+		case other
+		when self.class
+			@__index__ <=> other.__index__
+		else
+			raise ArgumentError.new("Can't compare instances of #{other.class} to instances of #{self.class}")
+		end
+	end
+
+	def succ
+		self.class.members[@__index__ + 1]
+	end
+
+	def pred
+		if @__index__ <= 0
+			nil
+		else
+			self.class.members[@__index__ - 1]
+		end
+	end
+
+	attr_reader :__index__
 end
