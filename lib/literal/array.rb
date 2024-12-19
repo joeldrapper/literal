@@ -668,13 +668,25 @@ class Literal::Array
 
 		# Check we match the max length or our type is nilable
 		unless my_length == max_length || @__type__ === nil
-			raise ArgumentError
+			raise ArgumentError.new(<<~MESSAGE)
+				The literal array could not be zipped becuase its type is not nilable and it has fewer items than the maximum number of items in the other arrays.
+
+				You can either make the type of this array nilable, or add more items so its length matches the others.
+
+				#{inspect}
+			MESSAGE
 		end
 
 		# Check others match the max length or their types is nilable
 		others.each_with_index do |other, index|
 			unless other.length == max_length || other_types[index] === nil
-				raise ArgumentError
+				raise ArgumentError.new(<<~MESSAGE)
+					The literal array could not be zipped becuase its type is not nilable and it has fewer items than the maximum number of items in the other arrays.
+
+					You can either make the type of this array nilable, or add more items so its length matches the others.
+
+					#{inspect}
+				MESSAGE
 			end
 		end
 
