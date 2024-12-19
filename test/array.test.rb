@@ -768,7 +768,7 @@ test "#transpose with a nested literal tuple" do
 
 	assert_equal array.transpose, Literal::Tuple(
 		Literal::Array(Integer),
-		Literal::Array(String)
+		Literal::Array(String),
 	).new(
 		Literal::Array(Integer).new(1, 2),
 		Literal::Array(String).new("a", "b"),
