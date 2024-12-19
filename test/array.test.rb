@@ -2,6 +2,35 @@
 
 include Literal::Types
 
+test "coerce" do
+	original = ["Joel", "Stephen"]
+	coerced = Literal::Array(String).coerce(original)
+
+	assert_equal coerced, Literal::Array(String).new(
+		"Joel", "Stephen"
+	)
+end
+
+test "coerce with invalid values" do
+	original = ["Joel", "Stephen"]
+
+	assert_raises(Literal::TypeError) do
+		Literal::Array(Integer).coerce(original)
+	end
+end
+
+test "to_proc" do
+	mapped = [
+		["Joel", "Stephen"],
+	].map(&Literal::Array(String))
+
+	assert_equal mapped, [
+		Literal::Array(String).new(
+			"Joel", "Stephen"
+		),
+	]
+end
+
 test "===" do
 	assert Literal::Array(_Boolean) === Literal::Array(true).new(true)
 	assert Literal::Array(Object) === Literal::Array(Integer).new(1)

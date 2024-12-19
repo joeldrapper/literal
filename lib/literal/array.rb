@@ -32,6 +32,19 @@ class Literal::Array
 		def inspect
 			"Literal::Array(#{@type.inspect})"
 		end
+
+		def coerce(value)
+			case value
+			when self
+				value
+			when Array
+				Literal::Array.new(value, type: @type)
+			end
+		end
+
+		def to_proc
+			method(:coerce).to_proc
+		end
 	end
 
 	include Enumerable
