@@ -842,3 +842,92 @@ test "#transpose with a nested regular array" do
 		[2, 4],
 	]
 end
+
+test "#zip with other literal arrays when all the lengths match" do
+	a = Literal::Array(String).new("a", "b")
+	b = Literal::Array(Integer).new(1, 2)
+	c = Literal::Array(Symbol).new(:a, :b)
+
+	assert_equal a.zip(b, c), Literal::Array(
+		Literal::Tuple(String, Integer, Symbol)
+	).new(
+		Literal::Tuple(String, Integer, Symbol).new("a", 1, :a),
+		Literal::Tuple(String, Integer, Symbol).new("b", 2, :b),
+	)
+end
+
+test "#zip with other regular arrays" do
+	a = Literal::Array(String).new("a", "b")
+	b = [1, 2]
+	c = [:a, :b]
+
+	assert_equal a.zip(b, c), Literal::Array(
+		Literal::Tuple(String, _Any?, _Any?)
+	).new(
+		Literal::Tuple(String, _Any?, _Any?).new("a", 1, :a),
+		Literal::Tuple(String, _Any?, _Any?).new("b", 2, :b),
+	)
+end
+
+test "#zip with other literal arrays where one of the others length is not the max length and the type is not nilable" do
+	a = Literal::Array(String).new("a", "b")
+	b = Literal::Array(Integer).new(1)
+	c = Literal::Array(Symbol).new(:a, :b)
+
+	assert_raises ArgumentError do
+		a.zip(b, c)
+	end
+end
+
+test "#zip with literal arrays where our length is not the max length and the type is not nilable" do
+	a = Literal::Array(String).new("a")
+	b = Literal::Array(Integer).new(1, 2)
+	c = Literal::Array(Symbol).new(:a, :b)
+
+	assert_raises ArgumentError do
+		a.zip(b, c)
+	end
+end
+
+test "#zip when our length is not the max length but the type is nilable" do
+	a = Literal::Array(_Nilable(String)).new("a")
+	b = [1, 2]
+	c = [:a, :b]
+
+	assert_equal a.zip(b, c), Literal::Array(
+		Literal::Tuple(_Nilable(String), _Any, _Any)
+	).new(
+		Literal::Tuple(_Nilable(String), _Any, _Any).new("a", 1, :a),
+		Literal::Tuple(_Nilable(String), _Any, _Any).new(nil, 2, :b),
+	)
+end
+
+test "#zip with others length is not the max length but the types are nilable" do
+	a = Literal::Array(String).new("a", "b")
+	b = Literal::Array(_Nilable(Integer)).new(1)
+	c = [:a]
+
+	assert_equal a.zip(b, c), Literal::Array(
+		Literal::Tuple(String, _Nilable(Integer), _Any)
+	).new(
+		Literal::Tuple(String, _Nilable(Integer), _Any).new("a", 1, :a),
+		Literal::Tuple(String, _Nilable(Integer), _Any).new("b", nil, nil),
+	)
+end
+
+test "#zip with a block" do
+	a = Literal::Array(String).new("a", "b")
+	b = Literal::Array(Integer).new(1, 2)
+	c = [:a, :b]
+
+	results = []
+
+	return_value = a.zip(b, c) { |it| results << it }
+
+	assert_equal results, [
+		Literal::Tuple(String, Integer, _Any).new("a", 1, :a),
+		Literal::Tuple(String, Integer, _Any).new("b", 2, :b),
+	]
+
+	assert_equal return_value, nil
+end
