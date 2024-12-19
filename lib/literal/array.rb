@@ -645,4 +645,50 @@ class Literal::Array
 	def fetch(...)
 		@__value__.fetch(...)
 	end
+
+	def zip(*others)
+		other_types = others.map do |other|
+			case other
+			when Literal::Array
+				other.__type__
+			when Array
+				_Any?
+			else
+				raise ArgumentError
+			end
+		end
+
+		tuple = Literal::Tuple(
+			@__type__,
+			*other_types
+		)
+
+		my_length = length
+		max_length = [my_length, *others.map(&:length)].max
+
+		# Check we match the max length or our type is nilable
+		unless my_length == max_length || @__type__ === nil
+			raise ArgumentError
+		end
+
+		# Check others match the max length or their types is nilable
+		others.each_with_index do |other, index|
+			unless other.length == max_length || other_types[index] === nil
+				raise ArgumentError
+			end
+		end
+
+		i = 0
+		result_value = []
+
+		while i < max_length
+			result_value << tuple.new(
+				@__value__[i],
+				*others.map { |it| it[i] }
+			)
+			i += 1
+		end
+
+		__with__(result_value)
+	end
 end
