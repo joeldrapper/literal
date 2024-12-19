@@ -32,11 +32,11 @@ class Literal::Enum
 			end
 		end
 
-		def index_of(member)
-			coerce(member).__index__
+		def position_of(member)
+			coerce(member).__position__
 		end
 
-		def at_index(n)
+		def at_position(n)
 			@members[n]
 		end
 
@@ -99,7 +99,7 @@ class Literal::Enum
 		def new(*args, **kwargs, &block)
 			raise ArgumentError if frozen?
 			new_object = super(*args, **kwargs, &nil)
-			new_object.instance_variable_set(:@__index__, @members.size)
+			new_object.instance_variable_set(:@__position__, @members.size)
 
 			new_object.instance_exec(&block) if block
 
@@ -209,23 +209,23 @@ class Literal::Enum
 	def <=>(other)
 		case other
 		when self.class
-			@__index__ <=> other.__index__
+			@__position__ <=> other.__position__
 		else
 			raise ArgumentError.new("Can't compare instances of #{other.class} to instances of #{self.class}")
 		end
 	end
 
 	def succ
-		self.class.members[@__index__ + 1]
+		self.class.members[@__position__ + 1]
 	end
 
 	def pred
-		if @__index__ <= 0
+		if @__position__ <= 0
 			nil
 		else
-			self.class.members[@__index__ - 1]
+			self.class.members[@__position__ - 1]
 		end
 	end
 
-	attr_reader :__index__
+	attr_reader :__position__
 end

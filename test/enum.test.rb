@@ -79,28 +79,28 @@ test ".cast goes with the value when there are conflicts with the keys" do
 	assert_equal SymbolTypedEnum.coerce(:A), SymbolTypedEnum::B
 end
 
-test ".index_of with member" do
-	assert_equal Color.index_of(Color::Red), 0
-	assert_equal Color.index_of(Color::Green), 1
-	assert_equal Color.index_of(Color::Blue), 2
+test ".position_of with member" do
+	assert_equal Color.position_of(Color::Red), 0
+	assert_equal Color.position_of(Color::Green), 1
+	assert_equal Color.position_of(Color::Blue), 2
 end
 
-test ".index_of with name" do
-	assert_equal Color.index_of(:Red), 0
-	assert_equal Color.index_of(:Green), 1
-	assert_equal Color.index_of(:Blue), 2
+test ".position_of with name" do
+	assert_equal Color.position_of(:Red), 0
+	assert_equal Color.position_of(:Green), 1
+	assert_equal Color.position_of(:Blue), 2
 end
 
-test ".index_of with value" do
-	assert_equal Color.index_of(1), 0
-	assert_equal Color.index_of(2), 1
-	assert_equal Color.index_of(3), 2
+test ".position_of with value" do
+	assert_equal Color.position_of(1), 0
+	assert_equal Color.position_of(2), 1
+	assert_equal Color.position_of(3), 2
 end
 
-test ".at_index" do
-	assert_equal Color.at_index(0), Color::Red
-	assert_equal Color.at_index(1), Color::Green
-	assert_equal Color.at_index(2), Color::Blue
+test ".at_position" do
+	assert_equal Color.at_position(0), Color::Red
+	assert_equal Color.at_position(1), Color::Green
+	assert_equal Color.at_position(2), Color::Blue
 end
 
 test ".to_set" do
