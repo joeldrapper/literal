@@ -33,7 +33,7 @@ class Literal::Enum
 		end
 
 		def index_of(member)
-			member.__index__
+			coerce(member).__index__
 		end
 
 		def at_index(n)

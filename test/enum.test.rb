@@ -79,10 +79,22 @@ test ".cast goes with the value when there are conflicts with the keys" do
 	assert_equal SymbolTypedEnum.coerce(:A), SymbolTypedEnum::B
 end
 
-test ".index_of" do
+test ".index_of with member" do
 	assert_equal Color.index_of(Color::Red), 0
 	assert_equal Color.index_of(Color::Green), 1
 	assert_equal Color.index_of(Color::Blue), 2
+end
+
+test ".index_of with name" do
+	assert_equal Color.index_of(:Red), 0
+	assert_equal Color.index_of(:Green), 1
+	assert_equal Color.index_of(:Blue), 2
+end
+
+test ".index_of with value" do
+	assert_equal Color.index_of(1), 0
+	assert_equal Color.index_of(2), 1
+	assert_equal Color.index_of(3), 2
 end
 
 test ".at_index" do
