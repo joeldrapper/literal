@@ -57,7 +57,7 @@ class Literal::Tuple
 	end
 
 	def inspect
-		@__values__.inspect
+		"Literal::Tuple(#{@__types__.map(&:inspect).join(', ')})#{@__values__.inspect}"
 	end
 
 	attr_reader :__values__, :__types__
