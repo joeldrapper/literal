@@ -7,13 +7,21 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 	end
 
 	def cast(value)
-		@enum.coerce(value)
+		case value
+		when nil
+			nil
+		else
+			@enum.coerce(value)
+		end
 	end
 
 	def serialize(value)
-		@enum.coerce(value).value || raise(
-			Literal::ArgumentError.new("Invalid value: #{value.inspect}. Expected an #{@enum.inspect}.")
-		)
+		case value
+		when nil
+			nil
+		else
+			@enum.coerce(value).value
+		end
 	end
 
 	def deserialize(value)
@@ -21,9 +29,7 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		when nil
 			nil
 		else
-			@enum[value] || raise(
-				ArgumentError.new("Invalid value: #{value.inspect} for #{@enum}")
-			)
+			@enum.coerce(value)
 		end
 	end
 end
