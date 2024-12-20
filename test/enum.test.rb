@@ -79,6 +79,30 @@ test ".cast goes with the value when there are conflicts with the keys" do
 	assert_equal SymbolTypedEnum.coerce(:A), SymbolTypedEnum::B
 end
 
+test ".position_of with member" do
+	assert_equal Color.position_of(Color::Red), 0
+	assert_equal Color.position_of(Color::Green), 1
+	assert_equal Color.position_of(Color::Blue), 2
+end
+
+test ".position_of with name" do
+	assert_equal Color.position_of(:Red), 0
+	assert_equal Color.position_of(:Green), 1
+	assert_equal Color.position_of(:Blue), 2
+end
+
+test ".position_of with value" do
+	assert_equal Color.position_of(1), 0
+	assert_equal Color.position_of(2), 1
+	assert_equal Color.position_of(3), 2
+end
+
+test ".at_position" do
+	assert_equal Color.at_position(0), Color::Red
+	assert_equal Color.at_position(1), Color::Green
+	assert_equal Color.at_position(2), Color::Blue
+end
+
 test ".to_set" do
 	assert_equal Color.to_set, Set[
 		Color::Red,
@@ -101,6 +125,36 @@ test ".to_proc coerces" do
 		Color::Green,
 		Color::Blue,
 	]
+end
+
+test "#succ" do
+	assert_equal Color::Red.succ, Color::Green
+	assert_equal Color::Green.succ, Color::Blue
+	assert_equal Color::Blue.succ, nil
+end
+
+test "#pred" do
+	assert_equal Color::Red.pred, nil
+	assert_equal Color::Green.pred, Color::Red
+	assert_equal Color::Blue.pred, Color::Green
+end
+
+test "#<=>" do
+	assert_equal Color::Red <=> Color::Green, -1
+	assert_equal Color::Red <=> Color::Red, 0
+	assert_equal Color::Green <=> Color::Red, 1
+end
+
+test "#name" do
+	assert Color::Red.name.end_with?("Color::Red")
+end
+
+test "enums are rangeable" do
+	range = (Color::Red..Color::Green)
+
+	assert Range === range
+	assert_equal Color::Red, range.begin
+	assert_equal Color::Green, range.end
 end
 
 test "#where" do

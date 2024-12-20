@@ -9,6 +9,7 @@ class Literal::Enum
 		attr_reader :members
 
 		def values = @values.keys
+		def names = @names
 
 		def prop(name, type, kind = :keyword, reader: :public, predicate: false, default: nil)
 			super(name, type, kind, reader:, writer: false, predicate:, default:)
@@ -17,9 +18,10 @@ class Literal::Enum
 		def inherited(subclass)
 			subclass.instance_exec do
 				@values = {}
-				@members = Set[]
+				@members = []
+				@indexes_definitions = {}
 				@indexes = {}
-				@index = {}
+				@names = {}
 			end
 
 			if RUBY_ENGINE != "truffleruby"
@@ -32,8 +34,16 @@ class Literal::Enum
 			end
 		end
 
+		def position_of(member)
+			coerce(member).__position__
+		end
+
+		def at_position(n)
+			@members[n]
+		end
+
 		def index(name, type, unique: true, &block)
-			@indexes[name] = [type, unique, block || name.to_proc]
+			@indexes_definitions[name] = [type, unique, block || name.to_proc]
 		end
 
 		def where(**kwargs)
@@ -43,11 +53,11 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			types = @indexes.fetch(key)
+			types = @indexes_definitions.fetch(key)
 			type = types.first
 			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
 
-			@index.fetch(key)[value]
+			@indexes.fetch(key)[value]
 		end
 
 		def find_by(**kwargs)
@@ -57,15 +67,15 @@ class Literal::Enum
 
 			key, value = kwargs.first
 
-			unless @indexes.fetch(key)[1]
+			unless @indexes_definitions.fetch(key)[1]
 				raise ArgumentError.new("You can only use `find_by` on unique indexes.")
 			end
 
-			unless (type = @indexes.fetch(key)[0]) === value
+			unless (type = @indexes_definitions.fetch(key)[0]) === value
 				raise Literal::TypeError.expected(value, to_be_a: type)
 			end
 
-			@index.fetch(key)[value]&.first
+			@indexes.fetch(key)[value]&.first
 		end
 
 		def _load(data)
@@ -77,12 +87,8 @@ class Literal::Enum
 			object = const_get(name)
 
 			if self === object
-				if @values.key?(object.value)
-					raise ArgumentError.new("The value #{object.value} is already used by #{@values[object.value].name}.")
-				end
-				object.instance_variable_set(:@name, name)
-				@values[object.value] = object
-				@members << object
+				# object.instance_variable_set(:@name, name)
+				@names[object] = name
 				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
 				object.freeze
 			end
@@ -90,11 +96,20 @@ class Literal::Enum
 
 		def new(*args, **kwargs, &block)
 			raise ArgumentError if frozen?
+
 			new_object = super(*args, **kwargs, &nil)
 
-			if block
-				new_object.instance_exec(&block)
+			if @values.key?(new_object.value)
+				raise ArgumentError.new("The value #{new_object.value} is already used by #{@values[new_object.value].name}.")
 			end
+
+			@values[new_object.value] = new_object
+
+			new_object.instance_variable_set(:@__position__, @members.length)
+
+			@members << new_object
+
+			new_object.instance_exec(&block) if block
 
 			new_object
 		end
@@ -106,7 +121,7 @@ class Literal::Enum
 				constants(false).each { |name| const_added(name) }
 			end
 
-			@indexes.each do |name, (type, unique, block)|
+			@indexes_definitions.each do |name, (type, unique, block)|
 				index = @members.group_by(&block).freeze
 
 				index.each do |key, values|
@@ -119,7 +134,7 @@ class Literal::Enum
 					end
 				end
 
-				@index[name] = index
+				@indexes[name] = index
 			end
 
 			@values.freeze
@@ -179,17 +194,9 @@ class Literal::Enum
 		end
 	end
 
-	def initialize(name, value, &block)
-		@name = name
-		@value = value
-		instance_exec(&block) if block
-		freeze
-	end
-
-	attr_reader :value
-
 	def name
-		"#{self.class.name}::#{@name}"
+		klass = self.class
+		"#{klass.name}::#{klass.names[self]}"
 	end
 
 	alias_method :inspect, :name
@@ -207,4 +214,27 @@ class Literal::Enum
 	def _dump(level)
 		Marshal.dump(@value)
 	end
+
+	def <=>(other)
+		case other
+		when self.class
+			@__position__ <=> other.__position__
+		else
+			raise ArgumentError.new("Can't compare instances of #{other.class} to instances of #{self.class}")
+		end
+	end
+
+	def succ
+		self.class.members[@__position__ + 1]
+	end
+
+	def pred
+		if @__position__ <= 0
+			nil
+		else
+			self.class.members[@__position__ - 1]
+		end
+	end
+
+	attr_reader :__position__
 end
