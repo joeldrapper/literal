@@ -746,6 +746,15 @@ test "#take takes the first n elements" do
 	assert_equal return_value, Literal::Array(Integer).new(1, 2)
 end
 
+test "#take_while takes elements where the block returns true" do
+		array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
+
+		return_value = array.take_while { |i| i < 3 }
+
+		refute_same return_value, array
+		assert_equal return_value, Literal::Array(Integer).new(1, 2)
+end
+
 test "#shuffle returns a new shuffled array" do
 	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
 	random = Random.new(42)
