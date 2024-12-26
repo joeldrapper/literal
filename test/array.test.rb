@@ -260,17 +260,17 @@ test "#sort returns a new sorted array" do
 end
 
 test "#sort! sorts the array in place" do
-		array = Literal::Array(Integer).new(3, 2, 1)
-		array.sort!
+	array = Literal::Array(Integer).new(3, 2, 1)
+	array.sort!
 
-		assert_equal array.to_a, [1, 2, 3]
+	assert_equal array.to_a, [1, 2, 3]
 end
 
 test "#sort_by! sorts the array given a block" do
-		array = Literal::Array(String).new("Lucy", "Stephen", "Bob")
-		array.sort_by!(&:size)
+	array = Literal::Array(String).new("Lucy", "Stephen", "Bob")
+	array.sort_by!(&:size)
 
-		assert_equal array.to_a, ["Bob", "Lucy", "Stephen"]
+	assert_equal array.to_a, ["Bob", "Lucy", "Stephen"]
 end
 
 test "#push appends single value" do
