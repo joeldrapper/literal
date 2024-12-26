@@ -237,6 +237,10 @@ class Literal::Array
 		@__value__.each(...)
 	end
 
+	def each_index(...)
+		@__value__.each_index(...)
+	end
+
 	def empty?
 		@__value__.empty?
 	end
