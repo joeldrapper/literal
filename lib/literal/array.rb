@@ -539,6 +539,11 @@ class Literal::Array
 		self
 	end
 
+	def sort_by!(...)
+		@__value__.sort_by!(...)
+		self
+	end
+
 	def take(...)
 		__with__(@__value__.take(...))
 	end
