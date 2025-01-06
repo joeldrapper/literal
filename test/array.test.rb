@@ -388,6 +388,15 @@ test "#drop_while returns a new array with the first n elements removed" do
 	assert_equal dropped, Literal::Array(Integer).new(2, 3)
 end
 
+test "#each_index iterates through the indexes" do
+		array = Literal::Array(Integer).new(1, 2, 3)
+		indexes = []
+
+		array.each_index { |i| indexes << i }
+
+		assert_equal indexes, [0, 1, 2]
+end
+
 test "#insert inserts single element at index offset" do
 	array = Literal::Array(Integer).new(1, 2, 3)
 
