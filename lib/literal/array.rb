@@ -552,6 +552,10 @@ class Literal::Array
 		__with__(@__value__.take(...))
 	end
 
+	def take_while(...)
+		__with__(@__value__.take_while(...))
+	end
+
 	def transpose
 		case @__type__
 		when Literal::Tuple::Generic
