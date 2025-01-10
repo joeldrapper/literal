@@ -15,6 +15,7 @@ end
 def count_warm_allocations(&)
 	count_allocations(&)
 	count_allocations(&)
+	count_allocations(&)
 end
 
 def assert_allocations(type, thing)

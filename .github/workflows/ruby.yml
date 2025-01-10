@@ -34,11 +34,13 @@ jobs:
           bundler-args: --without development
       - name: Quickdraw tests
         run: bundle exec qt -t 1 "./test/**/*.test.rb"
+      - name: Test allocations
+        run: bundle exec ./allocations_test.rb
   rubocop:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['3.3']
+        ruby-version: ["3.4"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
