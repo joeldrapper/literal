@@ -8,7 +8,6 @@ gem "quickdraw", git: "https://github.com/joeldrapper/quickdraw.git"
 gem "benchmark-ips"
 
 group :development do
-	gem "solargraph", platform: :ruby
 	gem "rubocop", platform: :ruby
 	gem "ruby-lsp", platform: :ruby
 	gem "simplecov", platform: :ruby

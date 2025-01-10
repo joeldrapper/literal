@@ -4,6 +4,8 @@
 # NOTE: This is not a quickdraw test becuase it needs to be run in a single thread.
 
 require "literal"
+require "set"
+
 include Literal::Types
 
 def count_allocations
@@ -13,6 +15,7 @@ def count_allocations
 end
 
 def count_warm_allocations(&)
+	count_allocations(&)
 	count_allocations(&)
 	count_allocations(&)
 end

@@ -25,14 +25,19 @@ class Literal::Types::ConstraintType
 			i += 1
 		end
 
+		result = true
+
 		@property_constraints.each do |a, t|
-			return false unless t === value.public_send(a)
+			# We intentionally don’t return early here becuase it triggers an allocation.
+			if result && !(t === value.public_send(a))
+				result = false
+			end
 		rescue NoMethodError => e
 			raise unless e.name == a && e.receiver == value
 			return false
 		end
 
-		true
+		result
 	end
 
 	def >=(other)
