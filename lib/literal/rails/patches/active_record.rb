@@ -4,9 +4,10 @@ module ActiveRecord
 	class RelationType
 		def initialize(model_class)
 			unless Class === model_class && model_class < ActiveRecord::Base
-				raise Literal::TypeError.expected(
-					model_class,
-					to_be_a: ActiveRecord::Base,
+				raise Literal::TypeError.new(
+					context: Literal::TypeError::Context.new(
+						expected: ActiveRecord::Base, actual: model_class
+					)
 				)
 			end
 
