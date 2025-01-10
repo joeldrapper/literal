@@ -34,7 +34,6 @@ jobs:
       - name: Quickdraw tests
         run: bundle exec qt -t 1 "./test/**/*.test.rb"
   allocations_test:
-    needs: ruby-versions
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
