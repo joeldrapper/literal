@@ -186,6 +186,24 @@ test "_Constraint with property constraints" do
 	assert _Constraint(Array) >= _Constraint(Array, Enumerable)
 end
 
+test "_Date" do
+	assert _Date(_Interface(:to_date)) === Date.today
+	assert _Date(Date.today) === Date.today
+	assert _Date((Date.today)..) === Date.today + 1
+
+	refute _Date(_Interface(:non_existing_method)) === Date.today
+	refute _Date(Date.today) === "2025-01-13"
+	refute _Date(Date.today) === nil
+	refute _Date((Date.today)..) === Date.today - 1
+
+	assert _Date(year: 2025) === Date.new(2025, 1, 13)
+	refute _Date(year: 2025) === Date.new(2024, 1, 13)
+
+	assert _Date(DateTime, _Interface(:to_datetime)) === DateTime.now
+	assert _Date(DateTime, year: 2025) === DateTime.new(2025, 1, 13)
+	refute _Date(DateTime, year: 2025) === Date.new(2025, 1, 13)
+end
+
 test "_Descendant" do
 	assert _Descendant(Enumerable) === Array
 	assert _Descendant(Enumerable) === Set
@@ -602,6 +620,29 @@ test "_Symbol" do
 
 	refute _Symbol(_Interface(:non_existing_method)) === :symbol
 	refute _Symbol(size: 5) === :symbol
+end
+
+test "_Time" do
+	current_time = Time.now
+
+	assert _Time (_Interface(:to_time)) === current_time
+	assert _Time(current_time) === current_time
+	assert _Time(current_time..) === current_time + 60
+
+	refute _Time(_Interface(:non_existing_method)) === current_time
+	refute _Time(current_time..) === current_time - 60
+
+	assert _Time(zone: "UTC") === Time.new(2025, 1, 13, 20, 0, 0, "UTC")
+
+	fifteen_mins_ago = proc { |t| ((Time.now - (60 * 15))..(Time.now)) === t }
+	assert _Time(fifteen_mins_ago) === Time.now - (60 * 10)
+	refute _Time(fifteen_mins_ago) === Time.now - (60 * 20)
+	occurs_on_monday = proc(&:monday?)
+	assert _Time(occurs_on_monday) === Time.new(2025, 1, 13)
+	refute _Time(occurs_on_monday) === Time.new(2025, 1, 14)
+
+	refute _Time(Time.new(2025, 1, 13, 20, 0, 0, "UTC")) === "2025-01-13 20:00:00 UTC"
+	refute _Time(Time.new(2025, 1, 13, 20, 0, 0, "UTC")) === nil
 end
 
 test "_Truthy" do
