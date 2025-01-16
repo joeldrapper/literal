@@ -103,6 +103,19 @@ module Literal::Types
 		)
 	end
 
+	# Matches if the value is a `Date` and matches the given constraints.
+	# If you don't need any constraints, use `Date` instead of `_Date`.
+	def _Date(...)
+		_Constraint(Date, ...)
+	end
+
+	# Nilable version of `_Date`
+	def _Date?(...)
+		_Nilable(
+			_Date(...)
+		)
+	end
+
 	def _Deferred(...)
 		DeferredType.new(...)
 	end
@@ -321,6 +334,19 @@ module Literal::Types
 	def _Symbol?(...)
 		_Nilable(
 			_Symbol(...)
+		)
+	end
+
+	# Matches if the value is a `Time` and matches the given constraints.
+	# If you don't need any constraints, use `Time` instead of `_Time`.
+	def _Time(...)
+		_Constraint(Time, ...)
+	end
+
+	# Nilable version of `_Time`
+	def _Time?(...)
+		_Nilable(
+			_Time(...)
 		)
 	end
 
