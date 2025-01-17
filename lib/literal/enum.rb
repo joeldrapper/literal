@@ -24,7 +24,7 @@ class Literal::Enum
 				@names = {}
 			end
 
-			if RUBY_ENGINE != "truffleruby"
+			if subclass.name && RUBY_ENGINE != "truffleruby"
 				TracePoint.trace(:end) do |tp|
 					if tp.self == subclass
 						tp.self.__after_defined__
