@@ -632,7 +632,9 @@ test "_Time" do
 	refute _Time(_Interface(:non_existing_method)) === current_time
 	refute _Time(current_time..) === current_time - 60
 
-	assert _Time(zone: "UTC") === Time.new(2025, 1, 13, 20, 0, 0, "UTC")
+	unless RUBY_ENGINE == "jruby"
+		assert _Time(zone: "UTC") === Time.new(2025, 1, 13, 20, 0, 0, "UTC")
+	end
 
 	fifteen_mins_ago = proc { |t| ((Time.now - (60 * 15))..(Time.now)) === t }
 	assert _Time(fifteen_mins_ago) === Time.now - (60 * 10)
