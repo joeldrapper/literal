@@ -37,52 +37,83 @@ module Literal::Types
 	NilableProcableType = NilableType.new(ProcableType).freeze
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
+	# ```ruby
+	# _Any
+	# ```
 	def _Any
 		AnyType::Instance
 	end
 
+	# Matches any value including `nil`. This is the same as `_Void` and the opposite of `_Never`.
+	# ```ruby
+	# _Any?
+	# ```
 	def _Any?
 		VoidType::Instance
 	end
 
-	# Matches if the value is an `Array` and all the elements match the given type.
-	def _Array(...)
-		ArrayType.new(...)
+	# Matches if the value is an `Array` and all the elements of the array match the given type.
+	# ```ruby
+	# _Array(String)
+	# ```
+	def _Array(type)
+		ArrayType.new(type)
 	end
 
-	# Nilable version of `_Array`
-	def _Array?(...)
+	# Nilable version of `_Array`.
+	# ```ruby
+	# _Array?(String)
+	# ```
+	def _Array?(type)
 		NilableType.new(
-			ArrayType.new(...)
+			ArrayType.new(type)
 		)
 	end
 
-	# Matches if the value is `true` or `false`.
+	# Matches if the value is either `true` or `false`. This is equivalent to `_Union(true, false)`.
+	# ```ruby
+	# _Boolean
+	# ```
 	def _Boolean
 		BooleanType::Instance
 	end
 
-	# Nilable version of `_Boolean`
+	# Nilable version of `_Boolean`.
+	# ```ruby
+	# _Boolean?
+	# ```
 	def _Boolean?
 		NilableBooleanType
 	end
 
 	# Matches if the value responds to `#call`.
+	# ```ruby
+	# _Callable
+	# ```
 	def _Callable
 		CallableType
 	end
 
-	# Nilabl version of `_Callable`
+	# Nilable version of `_Callable`.
+	# ```ruby
+	# _Callable?
+	# ```
 	def _Callable?
 		NilableCallableType
 	end
 
 	# Matches if the value either the given class or a subclass of it.
-	def _Class(...)
-		ClassType.new(...)
+	# ```ruby
+	# _Class(ActiveRecord::Base)
+	# ```
+	def _Class(expected_class)
+		ClassType.new(expected_class)
 	end
 
-	# Nilable version of `_Class`
+	# Nilable version of `_Class`.
+	# ```ruby
+	# _Class?(ActiveRecord::Base)
+	# ```
 	def _Class?(...)
 		NilableType.new(
 			ClassType.new(...)
@@ -90,13 +121,17 @@ module Literal::Types
 	end
 
 	# Similar to `_Intersection`, but allows you to specify attribute constraints as keyword arguments.
-	# @example
-	# 	_Constraint(Array, size: 1..3)
+	# ```ruby
+	# _Constraint(Array, size: 1..3)
+	# ```
 	def _Constraint(...)
 		ConstraintType.new(...)
 	end
 
 	# Nilable version of `_Constraint`
+	# ```ruby
+	# _Constraint?(Array, size: 1..3)
+	# ```
 	def _Constraint?(...)
 		NilableType.new(
 			ConstraintType.new(...)
@@ -104,28 +139,44 @@ module Literal::Types
 	end
 
 	# Matches if the value is a `Date` and matches the given constraints.
-	# If you don't need any constraints, use `Date` instead of `_Date`.
+	# If you don't need any constraints, use `Date` instead of `_Date`. See also `_Constraint`.
+	# ```ruby
+	# _Date((Date.today)..)
+	# _Date(year: 2025)
+	# ```
 	def _Date(...)
 		_Constraint(Date, ...)
 	end
 
-	# Nilable version of `_Date`
+	# Nilable version of `_Date`.
 	def _Date?(...)
 		_Nilable(
 			_Date(...)
 		)
 	end
 
-	def _Deferred(...)
-		DeferredType.new(...)
+	# Takes a type as a block so it can be resolved when needed. This is useful if declaring your type now would cause an error because constants haven’t been defined yet.
+	# ```ruby
+	# _Deferred { _Class(SomeFutureConstant) }
+	# ```
+	def _Deferred(&type)
+		DeferredType.new(&type)
+	end
+
+	# Nilable version of `_Deferred`.
+	def _Deferred?(&type)
+		_Nilable(_Deferred(&type))
 	end
 
 	# Matches if the value is a descendant of the given class.
+	# ```ruby
+	# _Descendant(ActiveRecord::Base)
+	# ```
 	def _Descendant(...)
 		DescendantType.new(...)
 	end
 
-	# Nilable version of `_Descendant`
+	# Nilable version of `_Descendant`.
 	def _Descendant?(...)
 		NilableType.new(
 			DescendantType.new(...)
@@ -133,18 +184,21 @@ module Literal::Types
 	end
 
 	#  Matches if the value is an `Enumerable` and all its elements match the given type.
-	def _Enumerable(...)
-		EnumerableType.new(...)
+	# ```ruby
+	# _Enumerable(String)
+	# ```
+	def _Enumerable(type)
+		EnumerableType.new(type)
 	end
 
-	# Nilable version of `_Enumerable`
+	# Nilable version of `_Enumerable`.
 	def _Enumerable?(...)
 		NilableType.new(
 			EnumerableType.new(...)
 		)
 	end
 
-	# Matches *"falsy"* values (`nil` and `false`).
+	# Matches *"falsy"* values (`nil` and `false`). This is equivalent to `_Nilable(false)` or `_Union(nil, false)`.
 	def _Falsy
 		FalsyType::Instance
 	end
@@ -152,11 +206,14 @@ module Literal::Types
 	# Matches if the value is a `Float` and matches the given constraints.
 	# You could use a `Range`, for example, as a constraint.
 	# If you don't need a constraint, use `Float` instead of `_Float`.
+	# ```ruby
+	# _Float(5..10)
+	# ```
 	def _Float(...)
 		_Constraint(Float, ...)
 	end
 
-	# Nilable version of `_Float`
+	# Nilable version of `_Float`.
 	def _Float?(...)
 		_Nilable(
 			_Float(...)
