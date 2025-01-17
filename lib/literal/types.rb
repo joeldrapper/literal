@@ -304,11 +304,17 @@ module Literal::Types
 		NilableLambdaType
 	end
 
+	# ```ruby
+	# _Map(name: String, age: Integer)
+	# ```
 	def _Map(...)
 		MapType.new(...)
 	end
 
 	# Nilable version of `_Map`
+	# ```ruby
+	# _Map?(name: String, age: Integer)
+	# ```
 	def _Map?(...)
 		NilableType.new(
 			MapType.new(...)
@@ -413,11 +419,17 @@ module Literal::Types
 	end
 
 	# Matches if the value is an `Array` and each element matches the given types in order.
+	# ```ruby
+	# _Tuple(String, Integer, Integer)
+	# ```
 	def _Tuple(...)
 		TupleType.new(...)
 	end
 
 	# Nilable version of `_Typle`
+	# ```ruby
+	# _Tuple?(String, Integer, Integer)
+	# ```
 	def _Tuple?(...)
 		NilableType.new(
 			TupleType.new(...)
