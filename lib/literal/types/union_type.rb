@@ -12,7 +12,7 @@ class Literal::Types::UnionType
 			type = queue.shift
 			case type
 			when Literal::Types::UnionType
-				queue.concat(type.types)
+				queue.concat(type.types, type.primitives.to_a)
 			when Array, Hash, String, Symbol, Integer, Float, Complex, Rational, BigDecimal, true, false, nil
 				primitives << type
 			else
@@ -29,7 +29,7 @@ class Literal::Types::UnionType
 		freeze
 	end
 
-	attr_reader :types
+	attr_reader :types, :primitives
 
 	def inspect
 		"_Union(#{@types.inspect})"
