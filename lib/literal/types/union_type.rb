@@ -29,6 +29,7 @@ class Literal::Types::UnionType
 		end
 
 		@types.freeze
+		freeze
 	end
 
 	attr_reader :types
