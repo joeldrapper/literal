@@ -755,6 +755,17 @@ test "_Union flattens types" do
 	assert_equal type.inspect, "_Union([String, Integer, Symbol, Float])"
 end
 
+test "primitive _Union" do
+	position = _Union(:top, :right, :bottom, :left)
+
+	assert position === :top
+	assert position === :right
+	assert position === :bottom
+	assert position === :left
+
+	refute position === :center
+end
+
 test "_Void" do
 	Fixtures::Objects.each do |object|
 		assert _Void === object
