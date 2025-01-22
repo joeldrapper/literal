@@ -6,7 +6,7 @@ class Literal::Types::UnionType
 	def initialize(*queue)
 		raise Literal::ArgumentError.new("_Union type must have at least one type.") if queue.size < 1
 		types = []
-		primitive = true
+		primitives = Set[]
 
 		while queue.length > 0
 			type = queue.shift
@@ -14,21 +14,18 @@ class Literal::Types::UnionType
 			when Literal::Types::UnionType
 				queue.concat(type.types)
 			when Array, Hash, String, Symbol, Integer, Float, Complex, Rational, BigDecimal, true, false, nil
-				types << type
+				primitives << type
 			else
-				primitive = false
 				types << type
 			end
 		end
 
-		if primitive
-			@types = Set.new(types)
-		else
-			types.uniq!
-			@types = types
-		end
+		types.uniq!
+		@types = types
+		@primitives = primitives
 
 		@types.freeze
+		@primitives.freeze
 		freeze
 	end
 
@@ -39,18 +36,14 @@ class Literal::Types::UnionType
 	end
 
 	def ===(value)
+		return true if @primitives.include?(value)
+
 		types = @types
-		case types
-		when Array
-			i, len = 0, types.size
-			while i < len
-				return true if types[i] === value
-				i += 1
-			end
-		when Set
-			types.include?(value)
-		else
-			raise
+
+		i, len = 0, types.size
+		while i < len
+			return true if types[i] === value
+			i += 1
 		end
 	end
 
