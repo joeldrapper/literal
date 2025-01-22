@@ -6,6 +6,20 @@ end
 
 class Empty < Literal::Data
 end
+
+class ReaderlessExample < Literal::Data
+	prop :name, String, reader: false
+end
+
+test "== comparison with readerless properties" do
+	a = ReaderlessExample.new(name: "John")
+	b = ReaderlessExample.new(name: "John")
+	c = ReaderlessExample.new(name: "Bob")
+
+	assert_equal(a, b)
+	refute_equal(a, c)
+end
+
 test "properties have readers by default" do
 	person = Person.new(name: "John")
 	assert_equal(person.name, "John")
