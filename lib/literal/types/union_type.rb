@@ -3,23 +3,43 @@
 class Literal::Types::UnionType
 	include Enumerable
 
-	def initialize(*types)
-		raise Literal::ArgumentError.new("_Union type must have at least one type.") if types.size < 1
+	def initialize(*queue)
+		raise Literal::ArgumentError.new("_Union type must have at least one type.") if queue.size < 1
+		types = []
+		primitives = Set[]
 
-		@types = []
-		load_types(types)
-		@types.uniq!
+		while queue.length > 0
+			type = queue.shift
+			case type
+			when Literal::Types::UnionType
+				queue.concat(type.types, type.primitives.to_a)
+			when Array, Hash, String, Symbol, Integer, Float, Complex, Rational, true, false, nil
+				primitives << type
+			else
+				types << type
+			end
+		end
+
+		types.uniq!
+		@types = types
+		@primitives = primitives
+
 		@types.freeze
+		@primitives.freeze
+		freeze
 	end
 
-	attr_reader :types
+	attr_reader :types, :primitives
 
 	def inspect
 		"_Union(#{@types.inspect})"
 	end
 
 	def ===(value)
+		return true if @primitives.include?(value)
+
 		types = @types
+
 		i, len = 0, types.size
 		while i < len
 			return true if types[i] === value
@@ -62,14 +82,6 @@ class Literal::Types::UnionType
 			@types.any? do |type|
 				Literal.subtype?(other, of: type)
 			end
-		end
-	end
-
-	private
-
-	def load_types(types)
-		types.each do |type|
-			(Literal::Types::UnionType === type) ? load_types(type.types) : @types << type
 		end
 	end
 
