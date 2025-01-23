@@ -13,7 +13,7 @@ class Literal::Types::UnionType
 			case type
 			when Literal::Types::UnionType
 				queue.concat(type.types, type.primitives.to_a)
-			when Array, Hash, String, Symbol, Integer, Float, Complex, Rational, BigDecimal, true, false, nil
+			when Array, Hash, String, Symbol, Integer, Float, Complex, Rational, true, false, nil
 				primitives << type
 			else
 				types << type
