@@ -48,40 +48,49 @@ class Literal::Types::UnionType
 	end
 
 	def each(&)
+		@primitives.each(&)
 		@types.each(&)
 	end
 
 	def deconstruct
-		@types.to_a
+		to_a
 	end
 
 	def [](key)
-		if @types.include?(key)
+		if @primitives.include?(key) || @types.include?(key)
 			key
-		else
-			raise ArgumentError.new("#{key} not in #{inspect}")
 		end
 	end
 
+	def fetch(key)
+		self[key] or raise KeyError.new("Key not found: #{key.inspect}")
+	end
+
 	def record_literal_type_errors(ctx)
-		@types.each do |type|
+		each do |type|
 			ctx.add_child(label: type.inspect, expected: type, actual: ctx.actual)
 		end
+
 		ctx.children.clear if ctx.children.none? { |c| c.children.any? }
 	end
 
 	def >=(other)
+		types = @types
+		primitives = @primitives
+
 		case other
 		when Literal::Types::UnionType
-			other.types.all? do |other_type|
-				@types.any? do |type|
-					Literal.subtype?(type, of: other_type)
-				end
+			types_have_at_least_one_subtype = other.types.all? do |other_type|
+				primitives.any? { |p| Literal.subtype?(p, of: other_type) } || types.any? { |t| Literal.subtype?(t, of: other_type) }
 			end
+
+			primitives_have_at_least_one_subtype = other.primitives.all? do |other_primitive|
+				primitives.any? { |p| Literal.subtype?(p, of: other_primitive) } || types.any? { |t| Literal.subtype?(t, of: other_primitive) }
+			end
+
+			types_have_at_least_one_subtype && primitives_have_at_least_one_subtype
 		else
-			@types.any? do |type|
-				Literal.subtype?(other, of: type)
-			end
+			types.any? { |t| Literal.subtype?(other, of: t) } || primitives.any? { |p| Literal.subtype?(other, of: p) }
 		end
 	end
 

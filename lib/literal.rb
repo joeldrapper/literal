@@ -63,15 +63,35 @@ module Literal
 	end
 
 	def self.subtype?(type, of:)
-		type = type.block.call if Types::DeferredType === type
+		supertype = of
+		subtype = type
 
-		(of == type) || case of
+		subtype = subtype.block.call if Types::DeferredType === subtype
+
+		return true if supertype == subtype
+
+		case supertype
 		when Literal::Type
-			of >= type
+			supertype >= subtype
 		when Module
-			(Module === type) ? of >= type : false
+			case subtype
+			when Module
+				supertype >= subtype
+			when Numeric
+				Numeric >= supertype
+			when String
+				String >= supertype
+			when Symbol
+				Symbol >= supertype
+			when ::Array
+				::Array >= supertype
+			when ::Hash
+				::Hash >= supertype
+			else
+				false
+			end
 		when Range
-			of.cover?(type)
+			supertype.cover?(subtype)
 		else
 			false
 		end
