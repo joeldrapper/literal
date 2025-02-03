@@ -17,8 +17,8 @@ module Literal::Properties
 	end
 
 	def prop(name, type, kind = :keyword, reader: false, writer: false, predicate: false, default: nil, &coercion)
-		if default && !(Proc === default || default.frozen?)
-			raise Literal::ArgumentError.new("The default must be a frozen object or a Proc.")
+		if default && !(Proc === default || Ractor.shareable?(default))
+			raise Literal::ArgumentError.new("The default must be a deeply-frozen object or a Proc.")
 		end
 
 		unless Literal::Property::VISIBILITY_OPTIONS.include?(reader)
