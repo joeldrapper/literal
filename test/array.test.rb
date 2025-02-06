@@ -389,12 +389,12 @@ test "#drop_while returns a new array with the first n elements removed" do
 end
 
 test "#each_index iterates through the indexes" do
-		array = Literal::Array(Integer).new(1, 2, 3)
-		indexes = []
+	array = Literal::Array(Integer).new(1, 2, 3)
+	indexes = []
 
-		array.each_index { |i| indexes << i }
+	array.each_index { |i| indexes << i }
 
-		assert_equal indexes, [0, 1, 2]
+	assert_equal indexes, [0, 1, 2]
 end
 
 test "#insert inserts single element at index offset" do
@@ -770,12 +770,12 @@ test "#take takes the first n elements" do
 end
 
 test "#take_while takes elements where the block returns true" do
-		array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
+	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
 
-		return_value = array.take_while { |i| i < 3 }
+	return_value = array.take_while { |i| i < 3 }
 
-		refute_same return_value, array
-		assert_equal return_value, Literal::Array(Integer).new(1, 2)
+	refute_same return_value, array
+	assert_equal return_value, Literal::Array(Integer).new(1, 2)
 end
 
 test "#shuffle returns a new shuffled array" do

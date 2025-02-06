@@ -30,7 +30,7 @@ module Literal::Properties
 		end
 
 		unless Literal::Property::VISIBILITY_OPTIONS.include?(predicate)
-				raise Literal::ArgumentError.new("The predicate must be one of #{Literal::Property::VISIBILITY_OPTIONS.map(&:inspect).join(', ')}.")
+			raise Literal::ArgumentError.new("The predicate must be one of #{Literal::Property::VISIBILITY_OPTIONS.map(&:inspect).join(', ')}.")
 		end
 
 		if reader && :class == name
@@ -90,7 +90,7 @@ module Literal::Properties
 				end
 
 				def to_h
-						{}
+					{}
 				end
 
 				set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)

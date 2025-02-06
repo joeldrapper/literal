@@ -3,30 +3,3 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 3.1
-
-Naming/MethodName:
-  Enabled: false
-
-Style/MixinUsage:
-  Enabled: false
-
-Style/MultilineBlockChain:
-  Enabled: false
-
-Lint/Void:
-  Enabled: false
-
-Style/MissingRespondToMissing:
-  Enabled: false
-
-Style/ColonMethodCall:
-  Enabled: false
-
-Style/NilComparison:
-  Enabled: false
-
-Style/YodaCondition:
-  Enabled: false
-
-Layout/IndentationWidth:
-  Enabled: false
