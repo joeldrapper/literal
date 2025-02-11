@@ -71,9 +71,8 @@ class Literal::Enum
 				raise ArgumentError.new("You can only use `find_by` on unique indexes.")
 			end
 
-			unless (type = @indexes_definitions.fetch(key)[0]) === value
-				raise Literal::TypeError.expected(value, to_be_a: type)
-			end
+			type = @indexes_definitions.fetch(key)[0]
+			Literal.check(actual: value, expected: type)
 
 			@indexes.fetch(key)[value]&.first
 		end
