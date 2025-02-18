@@ -6,6 +6,10 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		super()
 	end
 
+	def type
+		:literal_enum
+	end
+
 	def cast(value)
 		case value
 		when nil
