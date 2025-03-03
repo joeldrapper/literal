@@ -116,8 +116,12 @@ module Literal::Types
 	# ```ruby
 	# _Constraint(Array, size: 1..3)
 	# ```
-	def _Constraint(...)
-		ConstraintType.new(...)
+	def _Constraint(*a, **k)
+		if a.length == 1 && k.length == 0
+			a[0]
+		else
+			ConstraintType.new(*a, **k)
+		end
 	end
 
 	# Nilable version of `_Constraint`
