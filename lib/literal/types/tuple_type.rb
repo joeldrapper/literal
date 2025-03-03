@@ -8,6 +8,7 @@ class Literal::Types::TupleType
 		raise Literal::ArgumentError.new("_Tuple type must have at least one type.") if types.size < 1
 
 		@types = types
+		freeze
 	end
 
 	attr_reader :types

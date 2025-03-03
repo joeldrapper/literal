@@ -5,6 +5,7 @@ class Literal::Types::DescendantType
 
 	def initialize(type)
 		@type = type
+		freeze
 	end
 
 	attr_reader :type

@@ -6,6 +6,7 @@ class Literal::Types::NilableType
 
 	def initialize(type)
 		@type = type
+		freeze
 	end
 
 	attr_reader :type

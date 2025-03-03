@@ -6,6 +6,7 @@ class Literal::Types::MapType
 
 	def initialize(**shape)
 		@shape = shape
+		freeze
 	end
 
 	attr_reader :shape

@@ -14,6 +14,7 @@ class Literal::Types::InterfaceType
 	def initialize(*methods)
 		raise Literal::ArgumentError.new("_Interface type must have at least one method.") if methods.size < 1
 		@methods = methods
+		freeze
 	end
 
 	attr_reader :methods

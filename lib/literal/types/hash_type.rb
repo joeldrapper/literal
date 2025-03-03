@@ -7,6 +7,7 @@ class Literal::Types::HashType
 	def initialize(key_type, value_type)
 		@key_type = key_type
 		@value_type = value_type
+		freeze
 	end
 
 	attr_reader :key_type, :value_type

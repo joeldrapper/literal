@@ -8,6 +8,7 @@ class Literal::Types::IntersectionType
 		raise Literal::ArgumentError.new("_Intersection type must have at least one type.") if types.size < 1
 
 		@types = types
+		freeze
 	end
 
 	attr_reader :types

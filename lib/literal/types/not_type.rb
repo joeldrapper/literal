@@ -6,6 +6,7 @@ class Literal::Types::NotType
 
 	def initialize(type)
 		@type = type
+		freeze
 	end
 
 	attr_reader :type

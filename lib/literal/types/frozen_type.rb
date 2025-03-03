@@ -12,6 +12,7 @@ class Literal::Types::FrozenType
 		end
 
 		@type = type
+		freeze
 	end
 
 	attr_reader :type
