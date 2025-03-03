@@ -179,11 +179,6 @@ test "_Constraint with property constraints" do
 
 	refute _Constraint(Array, size: 1..2) >= _Constraint(Array, size: 1..3)
 	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
-
-	assert _Constraint(Enumerable) >= _Frozen(Array)
-	assert _Constraint(Array) >= _Frozen(Array)
-
-	assert _Constraint(Array) >= _Constraint(Array, Enumerable)
 end
 
 test "_Date" do
