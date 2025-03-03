@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Literal::Types
+	extend self
+
 	autoload :AnyType, "literal/types/any_type"
 	autoload :ArrayType, "literal/types/array_type"
 	autoload :BooleanType, "literal/types/boolean_type"
@@ -25,16 +27,6 @@ module Literal::Types
 	autoload :TupleType, "literal/types/tuple_type"
 	autoload :UnionType, "literal/types/union_type"
 	autoload :VoidType, "literal/types/void_type"
-
-	ProcableType = InterfaceType.new(:to_proc).freeze
-	CallableType = InterfaceType.new(:call).freeze
-	LambdaType = ConstraintType.new(Proc, lambda?: true).freeze
-
-	NilableBooleanType = NilableType.new(BooleanType::Instance).freeze
-	NilableCallableType = NilableType.new(CallableType).freeze
-	NilableJSONDataType = NilableType.new(JSONDataType).freeze
-	NilableLambdaType = NilableType.new(LambdaType).freeze
-	NilableProcableType = NilableType.new(ProcableType).freeze
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	# ```ruby
@@ -65,8 +57,8 @@ module Literal::Types
 	# _Array?(String)
 	# ```
 	def _Array?(type)
-		NilableType.new(
-			ArrayType.new(type)
+		_Nilable(
+			_Array(type)
 		)
 	end
 
@@ -115,8 +107,8 @@ module Literal::Types
 	# _Class?(ActiveRecord::Base)
 	# ```
 	def _Class?(...)
-		NilableType.new(
-			ClassType.new(...)
+		_Nilable(
+			_Class(...)
 		)
 	end
 
@@ -133,8 +125,8 @@ module Literal::Types
 	# _Constraint?(Array, size: 1..3)
 	# ```
 	def _Constraint?(...)
-		NilableType.new(
-			ConstraintType.new(...)
+		_Nilable(
+			_Constraint(...)
 		)
 	end
 
@@ -165,7 +157,9 @@ module Literal::Types
 
 	# Nilable version of `_Deferred`.
 	def _Deferred?(&type)
-		_Nilable(_Deferred(&type))
+		_Nilable(
+			_Deferred(&type)
+		)
 	end
 
 	# Matches if the value is a descendant of the given class.
@@ -178,8 +172,8 @@ module Literal::Types
 
 	# Nilable version of `_Descendant`.
 	def _Descendant?(...)
-		NilableType.new(
-			DescendantType.new(...)
+		_Nilable(
+			_Descendant(...)
 		)
 	end
 
@@ -193,8 +187,8 @@ module Literal::Types
 
 	# Nilable version of `_Enumerable`.
 	def _Enumerable?(...)
-		NilableType.new(
-			EnumerableType.new(...)
+		_Nilable(
+			_Enumerable(...)
 		)
 	end
 
@@ -227,8 +221,8 @@ module Literal::Types
 
 	# Nilable version of `_Frozen`
 	def _Frozen?(...)
-		NilableType.new(
-			FrozenType.new(...)
+		_Nilable(
+			_Frozen(...)
 		)
 	end
 
@@ -239,8 +233,8 @@ module Literal::Types
 
 	# Nilable version of `_Hash`
 	def _Hash?(...)
-		NilableType.new(
-			HashType.new(...)
+		_Nilable(
+			_Hash(...)
 		)
 	end
 
@@ -267,8 +261,8 @@ module Literal::Types
 
 	# Nilable version of `_Interface`
 	def _Interface?(...)
-		NilableType.new(
-			InterfaceType.new(...)
+		_Nilable(
+			_Interface(...)
 		)
 	end
 
@@ -279,8 +273,8 @@ module Literal::Types
 
 	# Nilable version of `_Intersection`
 	def _Intersection?(...)
-		NilableType.new(
-			IntersectionType.new(...)
+		_Nilable(
+			_Intersection(...)
 		)
 	end
 
@@ -316,8 +310,8 @@ module Literal::Types
 	# _Map?(name: String, age: Integer)
 	# ```
 	def _Map?(...)
-		NilableType.new(
-			MapType.new(...)
+		_Nilable(
+			_Map(...)
 		)
 	end
 
@@ -358,8 +352,8 @@ module Literal::Types
 
 	# Nilable version of `_Range`
 	def _Range?(...)
-		NilableType.new(
-			RangeType.new(...)
+		_Nilable(
+			_Range(...)
 		)
 	end
 
@@ -370,8 +364,8 @@ module Literal::Types
 
 	# Nilable version of `_Set`
 	def _Set?(...)
-		NilableType.new(
-			SetType.new(...)
+		_Nilable(
+			_Set(...)
 		)
 	end
 
@@ -431,8 +425,8 @@ module Literal::Types
 	# _Tuple?(String, Integer, Integer)
 	# ```
 	def _Tuple?(...)
-		NilableType.new(
-			TupleType.new(...)
+		_Nilable(
+			_Tuple(...)
 		)
 	end
 
@@ -443,12 +437,22 @@ module Literal::Types
 
 	# Nilable version of `_Union`
 	def _Union?(...)
-		NilableType.new(
-			UnionType.new(...)
+		_Nilable(
+			_Union(...)
 		)
 	end
 
 	def _Void
 		VoidType::Instance
 	end
+
+	ProcableType = _Interface(:to_proc)
+	CallableType = _Interface(:call)
+	LambdaType = _Constraint(Proc, lambda?: true)
+
+	NilableBooleanType = _Nilable(BooleanType::Instance)
+	NilableCallableType = _Nilable(CallableType)
+	NilableJSONDataType = _Nilable(JSONDataType)
+	NilableLambdaType = _Nilable(LambdaType)
+	NilableProcableType = _Nilable(ProcableType)
 end
