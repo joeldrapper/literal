@@ -26,6 +26,7 @@ module Literal::Types
 	autoload :TruthyType, "literal/types/truthy_type"
 	autoload :TupleType, "literal/types/tuple_type"
 	autoload :UnionType, "literal/types/union_type"
+	autoload :UnitType, "literal/types/unit_type"
 	autoload :VoidType, "literal/types/void_type"
 
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
@@ -443,6 +444,17 @@ module Literal::Types
 	def _Union?(...)
 		_Nilable(
 			_Union(...)
+		)
+	end
+
+	# Matches if the the given type is the same object as the tested type.
+	def _Unit(type)
+		UnitType.new(type)
+	end
+
+	def _Unit?(type)
+		_Nilable(
+			_Unit(type)
 		)
 	end
 

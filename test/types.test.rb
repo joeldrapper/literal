@@ -790,6 +790,7 @@ test "all methods are callable" do
 		_Set: [String],
 		_Tuple: [String, Integer],
 		_Union: [String, Integer],
+		_Unit: [String],
 	}
 	Literal::Types.instance_methods(false).each do |method|
 		args_for_method = args[method] || args[method.name.chomp("?").to_sym]
