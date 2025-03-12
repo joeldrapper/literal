@@ -21,6 +21,7 @@ module Literal::Types
 	autoload :NeverType, "literal/types/never_type"
 	autoload :NilableType, "literal/types/nilable_type"
 	autoload :NotType, "literal/types/not_type"
+	autoload :PredicateType, "literal/types/predicate_type"
 	autoload :RangeType, "literal/types/range_type"
 	autoload :SetType, "literal/types/set_type"
 	autoload :TruthyType, "literal/types/truthy_type"
@@ -337,6 +338,10 @@ module Literal::Types
 		else
 			NotType.new(type)
 		end
+	end
+
+	def _Predicate(message, &block)
+		PredicateType.new(message:, block:)
 	end
 
 	# Matches if the value is a `Proc` or responds to `#to_proc`.
