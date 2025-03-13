@@ -2,6 +2,8 @@
 
 # @api private
 class Literal::Types::ArrayType
+	CACHE = ObjectSpace::WeakMap.new
+
 	include Literal::Type
 
 	def initialize(type)
@@ -16,7 +18,19 @@ class Literal::Types::ArrayType
 	end
 
 	def ===(value)
-		Array === value && value.all?(@type)
+		return false unless Array === value
+
+		if value.frozen?
+			if CACHE[value]
+				true
+			elsif value.all?(@type)
+				CACHE[value] = true
+			else
+				CACHE[value] = false
+			end
+		else
+			value.all?(@type)
+		end
 	end
 
 	def >=(other)
