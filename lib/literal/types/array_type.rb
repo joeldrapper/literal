@@ -21,12 +21,14 @@ class Literal::Types::ArrayType
 		return false unless Array === value
 
 		if value.frozen?
-			if CACHE[value]
+			cache = CACHE[@type] ||= WeakMap.new
+
+			if cache[value]
 				true
 			elsif value.all?(@type)
-				CACHE[value] = true
+				cache[value] = true
 			else
-				CACHE[value] = false
+				cache[value] = false
 			end
 		else
 			value.all?(@type)
