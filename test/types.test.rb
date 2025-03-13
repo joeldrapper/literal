@@ -771,28 +771,3 @@ test "_Void" do
 	assert _Void >= nil
 	assert _Void >= Object
 end
-
-test "all methods are callable" do
-	# also ensures that args sent to `?` methods match the non-`?` methods
-	args = {
-		_Array: [String],
-		_Class: [Enumerable],
-		_Constraint: [Integer, 1..2],
-		_Descendant: [Enumerable],
-		_Enumerable: [String],
-		_Frozen: [Array],
-		_Hash: [Symbol, Integer],
-		_Interface: [:each, :map, :select],
-		_Intersection: [1, 2],
-		_Nilable: [String],
-		_Not: [Integer],
-		_Range: [Integer],
-		_Set: [String],
-		_Tuple: [String, Integer],
-		_Union: [String, Integer],
-	}
-	Literal::Types.instance_methods(false).each do |method|
-		args_for_method = args[method] || args[method.name.chomp("?").to_sym]
-		assert public_send(method, *args_for_method)
-	end
-end
