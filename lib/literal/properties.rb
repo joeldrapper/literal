@@ -57,6 +57,8 @@ module Literal::Properties
 		literal_properties << property
 		__define_literal_methods__(property)
 		include(__literal_extension__)
+
+		name
 	end
 
 	def literal_properties
