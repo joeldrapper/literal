@@ -3,7 +3,7 @@
 include Literal::Types
 
 test "success" do
-	predicate = _Predicate("starts with 'H'") { it.start_with? "H" }
+	predicate = _Predicate("starts with 'H'") { |it| it.start_with? "H" }
 
 	assert predicate === "Hello"
 	refute predicate === "World"
