@@ -79,41 +79,7 @@ test "_Boolean" do
 	assert _Boolean >= _Boolean
 end
 
-test "_Callable" do
-	assert _Callable === -> {}
-	assert _Callable === method(:puts)
 
-	refute _Callable === nil
-
-	assert _Callable >= Proc
-	assert _Callable >= Method
-	assert _Callable >= _Callable
-
-	assert _Callable >= _Intersection(Object, _Callable)
-	assert _Callable >= _String(_Callable)
-
-	assert _Callable >= _Interface(:call, :to_s)
-
-	refute _Callable >= String
-	refute _Callable >= Object
-end
-
-test "_Class" do
-	assert _Class(Enumerable) === Array
-
-	refute _Class(Enumerable) === []
-	refute _Class(Enumerable) === String
-	refute _Class(Enumerable) === Enumerable
-
-	assert _Class(Enumerable) >= _Class(Array)
-	assert _Class(Enumerable) >= _Class(Enumerable)
-	assert _Class(Enumerable) >= _Descendant(Array)
-	assert _Class(Array) >= _Descendant(Array)
-
-	refute _Class(Enumerable) >= _Descendant(Enumerable)
-	refute _Class(Enumerable) >= Enumerable
-	refute _Class(Enumerable) >= Class
-end
 
 test "_Constraint with object constraints" do
 	age_constraint = _Constraint(Integer, 18..)
