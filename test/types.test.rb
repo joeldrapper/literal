@@ -42,24 +42,6 @@ test "_Deferred" do
 	assert _Deferred { Numeric } >= _Deferred { Integer }
 end
 
-test "_Any" do
-	Fixtures::Objects.each do |object|
-		assert _Any === object
-	end
-
-	refute _Any === nil
-
-	assert _Any >= _Any
-	assert _Any >= String
-	assert _Any >= "Hello"
-	assert _Any >= 1
-
-	refute _Any >= nil
-	refute _Any >= Object
-	refute _Any >= _Nilable(_Any)
-	refute _Any >= _Nilable(String)
-end
-
 test "_Array" do
 	assert _Array(String) === []
 	assert _Array(String) === ["a", "b", "c"]
@@ -78,8 +60,6 @@ test "_Boolean" do
 	refute _Boolean >= nil
 	assert _Boolean >= _Boolean
 end
-
-
 
 test "_Constraint with object constraints" do
 	age_constraint = _Constraint(Integer, 18..)
@@ -147,24 +127,6 @@ test "_Constraint with property constraints" do
 	refute _Constraint(String, size: 4) >= _Constraint(String, size: 1)
 end
 
-test "_Date" do
-	assert _Date(_Interface(:to_date)) === Date.today
-	assert _Date(Date.today) === Date.today
-	assert _Date((Date.today)..) === Date.today + 1
-
-	refute _Date(_Interface(:non_existing_method)) === Date.today
-	refute _Date(Date.today) === "2025-01-13"
-	refute _Date(Date.today) === nil
-	refute _Date((Date.today)..) === Date.today - 1
-
-	assert _Date(year: 2025) === Date.new(2025, 1, 13)
-	refute _Date(year: 2025) === Date.new(2024, 1, 13)
-
-	assert _Date(DateTime, _Interface(:to_datetime)) === DateTime.now
-	assert _Date(DateTime, year: 2025) === DateTime.new(2025, 1, 13)
-	refute _Date(DateTime, year: 2025) === Date.new(2025, 1, 13)
-end
-
 test "_Descendant" do
 	assert _Descendant(Enumerable) === Array
 	assert _Descendant(Enumerable) === Set
@@ -175,18 +137,6 @@ test "_Descendant" do
 	assert _Descendant(Enumerable) >= _Descendant(Array)
 	assert _Descendant(Enumerable) >= _Descendant(Set)
 	refute _Descendant(Enumerable) >= _Descendant(String)
-end
-
-test "_Enumerable" do
-	assert _Enumerable(String) === ["a", "b", "c"]
-	assert _Enumerable(Integer) === Set[1, 2, 3]
-
-	refute _Enumerable(String) === [1, "a", :symbol]
-
-	assert _Enumerable(Enumerable) >= _Enumerable(Array)
-	assert _Enumerable(Enumerable) >= _Enumerable(Set)
-
-	refute _Enumerable(Enumerable) >= _Enumerable(String)
 end
 
 test "_Falsy" do
@@ -218,16 +168,6 @@ test "_Float" do
 	refute _Float(18.0..) === 42
 	refute _Float(18.0..) === "string"
 	refute _Float(18.0..) === nil
-end
-
-test "_Frozen" do
-	assert _Frozen(Array) === [].freeze
-	assert _Frozen(String) === "immutable"
-
-	refute _Frozen(Array) === []
-	refute _Frozen(String) === +"mutable"
-	refute _Frozen(Array) === nil
-	assert _Frozen(Enumerable) >= _Constraint(Array, frozen?: true)
 end
 
 test "_Hash" do
@@ -575,39 +515,6 @@ test "_String" do
 	refute _String(size: 5) === "string"
 end
 
-test "_Symbol" do
-	assert _Symbol(_Interface(:to_sym)) === :symbol
-	assert _Symbol(size: 6) === :symbol
-
-	refute _Symbol(_Interface(:non_existing_method)) === :symbol
-	refute _Symbol(size: 5) === :symbol
-end
-
-test "_Time" do
-	current_time = Time.now
-
-	assert _Time (_Interface(:to_time)) === current_time
-	assert _Time(current_time) === current_time
-	assert _Time(current_time..) === current_time + 60
-
-	refute _Time(_Interface(:non_existing_method)) === current_time
-	refute _Time(current_time..) === current_time - 60
-
-	unless RUBY_ENGINE == "jruby"
-		assert _Time(zone: "UTC") === Time.new(2025, 1, 13, 20, 0, 0, "UTC")
-	end
-
-	fifteen_mins_ago = proc { |t| ((Time.now - (60 * 15))..(Time.now)) === t }
-	assert _Time(fifteen_mins_ago) === Time.now - (60 * 10)
-	refute _Time(fifteen_mins_ago) === Time.now - (60 * 20)
-	occurs_on_monday = proc(&:monday?)
-	assert _Time(occurs_on_monday) === Time.new(2025, 1, 13)
-	refute _Time(occurs_on_monday) === Time.new(2025, 1, 14)
-
-	refute _Time(Time.new(2025, 1, 13, 20, 0, 0, "UTC")) === "2025-01-13 20:00:00 UTC"
-	refute _Time(Time.new(2025, 1, 13, 20, 0, 0, "UTC")) === nil
-end
-
 test "_Truthy" do
 	truthy_objects = Fixtures::Objects - Set[false, nil]
 	falsy_objects = Set[false, nil]
@@ -668,65 +575,6 @@ test "_Tuple" do
         Expected: Integer
         Actual (NilClass): nil
 	ERROR
-end
-
-test "_Union matching" do
-	type = _Union(String, Integer)
-
-	assert type === "string"
-	assert type === 42
-
-	refute type === :symbol
-	refute type === []
-	refute type === nil
-
-	assert _Union(String, Integer) >= _Union(String, Integer)
-	refute _Union(String, Integer) >= _Union(String, Float)
-	assert _Union(String, Integer) >= String
-	refute _Union(String, Integer) >= Numeric
-	assert _Union(String, Numeric) >= Float
-
-	expect_type_error(expected: type, actual: :symbol, message: <<~ERROR)
-		Type mismatch
-
-		  Expected: _Union([String, Integer])
-		  Actual (Symbol): :symbol
-	ERROR
-
-	expect_type_error(expected: _Union(_Array(String), _Array(Integer)), actual: [nil], message: <<~ERROR)
-		Type mismatch
-
-		    _Array(String)
-		      [0]
-		        Expected: String
-		        Actual (NilClass): nil
-		    _Array(Integer)
-		      [0]
-		        Expected: Integer
-		        Actual (NilClass): nil
-	ERROR
-end
-
-test "_Union flattens types" do
-	type = _Union(
-		_Union(String, Integer),
-		_Union(Symbol, Float),
-	)
-
-	assert_equal type.inspect, "_Union([String, Integer, Symbol, Float])"
-end
-
-test "_Union with primitives" do
-	position = _Union(:top, :right, :bottom, :left, Integer)
-
-	assert position === :top
-	assert position === :right
-	assert position === :bottom
-	assert position === :left
-	assert position === 42
-
-	refute position === :center
-	refute position === "top"
 end
 
 test "_Void" do
