@@ -10,7 +10,7 @@ test "===" do
 end
 
 test "predicates are subtypes of themselves" do
-	predicate = _Predicate("even") { |it| it.even? }
+	predicate = _Predicate("even", &:even?)
 
 	assert_subtype predicate, predicate
 end
