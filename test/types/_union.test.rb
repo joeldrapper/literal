@@ -52,20 +52,18 @@ test "#fetch" do
 	assert_raises(KeyError) { union.fetch(:d) }
 end
 
-test ">=" do
-	assert _Union(:a, :b, :c) >= _Union(:a, :b, :c)
-	assert _Union(:a, :b, :c) >= _Union(:a, :b)
-	refute _Union(:a, :b, :c) >= _Union(:a, :b, :c, :d)
+test "hierarchy" do
+	assert_subtype _Union(:a), _Union(:a)
+	assert_subtype _Union(:a, :b, :c), _Union(:a, :b, :c)
+	assert_subtype _Union(:a, :b, :c), _Union(:a, :b, :c, :d)
 
-	assert _Union(:a, :b, :c) >= :a
-
-	assert _Union(Integer, String) >= 1
-	assert _Union(Integer, String) >= "1"
-	assert _Union(Array, Hash) >= {}
-	assert _Union(Array, Hash) >= []
+	assert_subtype _Union(Integer), _Union(Numeric)
+	assert_subtype Integer, _Union(Numeric)
+	assert_subtype 1, _Union(Integer)
+	assert_subtype _Union(1, 2, 3), _Union(Integer)
 end
 
-test "_Union with primitives" do
+test "===" do
 	position = _Union(:top, :right, :bottom, :left, Integer)
 
 	assert position === :top
@@ -84,42 +82,21 @@ test "other unions are flattened" do
 		_Union(Symbol, Float),
 	)
 
-	assert_equal type.inspect, "_Union([String, Integer, Symbol, Float])"
+	assert_equal type.inspect, "_Union(String, Integer, Symbol, Float)"
 end
 
-test "_Union matching" do
-	type = _Union(String, Integer)
+test "error message" do
+	error = assert_raises Literal::TypeError do
+		Literal.check(
+			expected: _Union(String, Integer),
+			actual: :symbol
+		)
+	end
 
-	assert type === "string"
-	assert type === 42
-
-	refute type === :symbol
-	refute type === []
-	refute type === nil
-
-	assert _Union(String, Integer) >= _Union(String, Integer)
-	refute _Union(String, Integer) >= _Union(String, Float)
-	assert _Union(String, Integer) >= String
-	refute _Union(String, Integer) >= Numeric
-	assert _Union(String, Numeric) >= Float
-
-	expect_type_error(expected: type, actual: :symbol, message: <<~ERROR)
+	assert_equal error.message, <<~ERROR
 		Type mismatch
 
-		  Expected: _Union([String, Integer])
+		  Expected: _Union(String, Integer)
 		  Actual (Symbol): :symbol
-	ERROR
-
-	expect_type_error(expected: _Union(_Array(String), _Array(Integer)), actual: [nil], message: <<~ERROR)
-		Type mismatch
-
-		    _Array(String)
-		      [0]
-		        Expected: String
-		        Actual (NilClass): nil
-		    _Array(Integer)
-		      [0]
-		        Expected: Integer
-		        Actual (NilClass): nil
 	ERROR
 end

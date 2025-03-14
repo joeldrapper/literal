@@ -2,6 +2,7 @@
 
 class Literal::Types::UnionType
 	include Enumerable
+	include Literal::Type
 
 	def initialize(*queue)
 		raise Literal::ArgumentError.new("_Union type must have at least one type.") if queue.size < 1
@@ -32,7 +33,7 @@ class Literal::Types::UnionType
 	attr_reader :types, :primitives
 
 	def inspect
-		"_Union(#{@types.inspect})"
+		"_Union(#{to_a.map(&:inspect).join(', ')})"
 	end
 
 	def ===(value)
@@ -66,14 +67,6 @@ class Literal::Types::UnionType
 		self[key] or raise KeyError.new("Key not found: #{key.inspect}")
 	end
 
-	def record_literal_type_errors(ctx)
-		each do |type|
-			ctx.add_child(label: type.inspect, expected: type, actual: ctx.actual)
-		end
-
-		ctx.children.clear if ctx.children.none? { |c| c.children.any? }
-	end
-
 	def >=(other)
 		types = @types
 		primitives = @primitives
@@ -81,11 +74,11 @@ class Literal::Types::UnionType
 		case other
 		when Literal::Types::UnionType
 			types_have_at_least_one_subtype = other.types.all? do |other_type|
-				primitives.any? { |p| Literal.subtype?(p, of: other_type) } || types.any? { |t| Literal.subtype?(t, of: other_type) }
+				primitives.any? { |p| Literal.subtype?(other_type, of: p) } || types.any? { |t| Literal.subtype?(other_type, of: t) }
 			end
 
 			primitives_have_at_least_one_subtype = other.primitives.all? do |other_primitive|
-				primitives.any? { |p| Literal.subtype?(p, of: other_primitive) } || types.any? { |t| Literal.subtype?(t, of: other_primitive) }
+				primitives.any? { |p| Literal.subtype?(other_primitive, of: p) } || types.any? { |t| Literal.subtype?(other_primitive, of: t) }
 			end
 
 			types_have_at_least_one_subtype && primitives_have_at_least_one_subtype

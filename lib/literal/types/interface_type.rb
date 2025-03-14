@@ -5,7 +5,7 @@ class Literal::Types::InterfaceType
 	# TODO: We can generate this and make it much more extensive.
 	METHOD_TYPE_MAPPINGS = {
 		:call => Set[Proc, Method],
-		:to_proc => Set[Proc, Method],
+		:to_proc => Set[Proc, Method, Symbol],
 		:to_s => Set[String],
 	}.freeze
 
