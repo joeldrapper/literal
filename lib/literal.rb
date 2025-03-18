@@ -11,8 +11,33 @@ module Literal
 
 		loader.collapse("#{__dir__}/literal/flags")
 		loader.collapse("#{__dir__}/literal/errors")
-
 		loader.setup
+	end
+
+	def self.Value(*, **, &block)
+		value_class = Class.new(Literal::Value)
+
+		type = Literal::Types._Constraint(*, **)
+		value_class.define_method(:type) { type }
+
+		if subtype?(type, of: Integer)
+			value_class.alias_method :to_i, :value
+		elsif subtype?(type, of: String)
+			value_class.alias_method :to_s, :value
+			value_class.alias_method :to_str, :value
+		elsif subtype?(type, of: Array)
+			value_class.alias_method :to_a, :value
+			value_class.alias_method :to_ary, :value
+		elsif subtype?(type, of: Hash)
+			value_class.alias_method :to_h, :value
+		elsif subtype?(type, of: Float)
+			value_class.alias_method :to_f, :value
+		elsif subtype?(type, of: Set)
+			value_class.alias_method :to_set, :value
+		end
+
+		value_class.class_eval(&block) if block
+		value_class.freeze
 	end
 
 	def self.Enum(type)
