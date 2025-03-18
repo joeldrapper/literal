@@ -5,6 +5,10 @@ class Literal::Value
 		-> (value) { new(value) }
 	end
 
+	def self.[](value)
+		new(value)
+	end
+
 	def self.delegate(*methods)
 		methods.each do |method_name|
 			class_eval(<<~RUBY, __FILE__, __LINE__ + 1)
