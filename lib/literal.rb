@@ -24,10 +24,10 @@ module Literal
 
 	autoload :Value, "literal/value"
 
-	def self.Value(*, **, &block)
+	def self.Value(*args, **kwargs, &block)
 		value_class = Class.new(Literal::Value)
 
-		type = Literal::Types._Constraint(*, **)
+		type = Literal::Types._Constraint(*args, **kwargs)
 		value_class.define_method(:type) { type }
 
 		if subtype?(type, of: Integer)
