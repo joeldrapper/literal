@@ -46,6 +46,8 @@ class Literal::Types::UnionType
 			return true if types[i] === value
 			i += 1
 		end
+
+		false
 	end
 
 	def each(&)
