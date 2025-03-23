@@ -493,6 +493,10 @@ class Literal::Array
 		self
 	end
 
+	def reverse(...)
+		__with__(@__value__.reverse(...))
+	end
+
 	alias_method :initialize_copy, :replace
 
 	def rotate(...)
