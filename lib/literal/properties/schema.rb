@@ -62,7 +62,7 @@ class Literal::Properties::Schema
 	end
 
 	def generate_after_initializer(buffer = +"")
-		buffer << "  after_initialize if respond_to?(:after_initialize)\n"
+		buffer << "  after_initialize if respond_to?(:after_initialize, true)\n"
 	end
 
 	def generate_to_h(buffer = +"")
