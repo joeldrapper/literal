@@ -32,4 +32,12 @@ class Literal::Value
 	def inspect
 		"#{self.class.name}(#{value.inspect})"
 	end
+
+	def ===(other)
+		self.class === other && @value == other.value
+	end
+
+	alias_method :==, :===
+
+	freeze
 end
