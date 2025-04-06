@@ -11,6 +11,7 @@ module Literal
 
 		loader.collapse("#{__dir__}/literal/flags")
 		loader.collapse("#{__dir__}/literal/errors")
+
 		loader.setup
 	end
 
@@ -70,6 +71,10 @@ module Literal
 
 	def self.Tuple(*types)
 		Literal::Tuple::Generic.new(*types)
+	end
+
+	def self.Brand(...)
+		Literal::Brand.new(...)
 	end
 
 	def self.check(actual:, expected:)
