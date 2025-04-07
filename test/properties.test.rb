@@ -182,7 +182,7 @@ end
 test "after initialize callback" do
 	callback_called = false
 
-	example = Class.new do
+	public_callback = Class.new do
 		extend Literal::Properties
 
 		prop :name, String
@@ -192,7 +192,43 @@ test "after initialize callback" do
 		end
 	end
 
-	example.new(name: "John")
+	public_callback.new(name: "John")
+
+	assert callback_called
+
+	callback_called = false
+
+	protected_callback = Class.new do
+		extend Literal::Properties
+
+		prop :name, String
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+
+		protected :after_initialize
+	end
+
+	protected_callback.new(name: "John")
+
+	assert callback_called
+
+	callback_called = false
+
+	private_callback = Class.new do
+		extend Literal::Properties
+
+		prop :name, String
+
+		define_method :after_initialize do
+			callback_called = true
+		end
+
+		private :after_initialize
+	end
+
+	private_callback.new(name: "John")
 
 	assert callback_called
 
