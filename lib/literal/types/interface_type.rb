@@ -32,7 +32,7 @@ class Literal::Types::InterfaceType
 		when Literal::Types::InterfaceType
 			@methods.all? { |m| other.methods.include?(m) }
 		when Module
-			@methods.map { |m| METHOD_TYPE_MAPPINGS[m] }.all? { |types| types&.include?(other) }
+			@methods.all? { |m| other.method_defined?(m) }
 		when Literal::Types::IntersectionType
 			other.types.any? { |type| Literal.subtype?(type, self) }
 		when Literal::Types::ConstraintType
