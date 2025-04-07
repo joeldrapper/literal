@@ -40,6 +40,16 @@ module Literal
 		value_class.freeze
 	end
 
+	def self.Delegator(*args, **kwargs, &block)
+		delegator_class = Class.new(Literal::Delegator)
+
+		type = Literal::Types._Constraint(*args, **kwargs)
+		delegator_class.define_method(:__type__) { type }
+
+		delegator_class.class_eval(&block) if block
+		delegator_class.freeze
+	end
+
 	def self.Enum(type)
 		Class.new(Literal::Enum) do
 			prop :value, type, :positional, reader: :public
