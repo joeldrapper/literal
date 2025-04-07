@@ -1,33 +1,19 @@
 # frozen_string_literal: true
 
+require "zeitwerk"
+require_relative "literal/version"
+
 module Literal
-	autoload :Array, "literal/array"
-	autoload :Data, "literal/data"
-	autoload :DataProperty, "literal/data_property"
-	autoload :DataStructure, "literal/data_structure"
-	autoload :Enum, "literal/enum"
-	autoload :Flags, "literal/flags"
-	autoload :Flags16, "literal/flags"
-	autoload :Flags32, "literal/flags"
-	autoload :Flags64, "literal/flags"
-	autoload :Flags8, "literal/flags"
-	autoload :Hash, "literal/hash"
-	autoload :Null, "literal/null"
-	autoload :Object, "literal/object"
-	autoload :Properties, "literal/properties"
-	autoload :Property, "literal/property"
-	autoload :Set, "literal/set"
-	autoload :Struct, "literal/struct"
-	autoload :Type, "literal/type"
-	autoload :Types, "literal/types"
-	autoload :Tuple, "literal/tuple"
+	Loader = Zeitwerk::Loader.for_gem.tap do |loader|
+		loader.inflector.inflect(
+			"json_data_type" => "JSONDataType"
+		)
 
-	# Errors
-	autoload :Error, "literal/errors/error"
-	autoload :TypeError, "literal/errors/type_error"
-	autoload :ArgumentError, "literal/errors/argument_error"
+		loader.collapse("#{__dir__}/literal/flags")
+		loader.collapse("#{__dir__}/literal/errors")
 
-	autoload :TRANSFORMS, "literal/transforms"
+		loader.setup
+	end
 
 	def self.Enum(type)
 		Class.new(Literal::Enum) do

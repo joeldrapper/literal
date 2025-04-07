@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A map of core types to transform Procs mapping to the new type.
-Literal::TRANSFORMS = {
+Literal::Transforms = {
 	Integer => {
 		abs: Integer,
 		ceil: Integer,

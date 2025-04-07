@@ -3,32 +3,6 @@
 module Literal::Types
 	extend self
 
-	autoload :AnyType, "literal/types/any_type"
-	autoload :ArrayType, "literal/types/array_type"
-	autoload :BooleanType, "literal/types/boolean_type"
-	autoload :ClassType, "literal/types/class_type"
-	autoload :ConstraintType, "literal/types/constraint_type"
-	autoload :DeferredType, "literal/deferred_type"
-	autoload :DescendantType, "literal/types/descendant_type"
-	autoload :EnumerableType, "literal/types/enumerable_type"
-	autoload :FalsyType, "literal/types/falsy_type"
-	autoload :FrozenType, "literal/types/frozen_type"
-	autoload :HashType, "literal/types/hash_type"
-	autoload :InterfaceType, "literal/types/interface_type"
-	autoload :IntersectionType, "literal/types/intersection_type"
-	autoload :JSONDataType, "literal/types/json_data_type"
-	autoload :MapType, "literal/types/map_type"
-	autoload :NeverType, "literal/types/never_type"
-	autoload :NilableType, "literal/types/nilable_type"
-	autoload :NotType, "literal/types/not_type"
-	autoload :PredicateType, "literal/types/predicate_type"
-	autoload :RangeType, "literal/types/range_type"
-	autoload :SetType, "literal/types/set_type"
-	autoload :TruthyType, "literal/types/truthy_type"
-	autoload :TupleType, "literal/types/tuple_type"
-	autoload :UnionType, "literal/types/union_type"
-	autoload :VoidType, "literal/types/void_type"
-
 	# Matches any value except `nil`. Use `_Any?` or `_Void` to match any value including `nil`.
 	# ```ruby
 	# _Any
