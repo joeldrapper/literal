@@ -19,7 +19,7 @@ module Literal
 					schema = {}
 					type.literal_properties.each do |prop|
 						schema[prop.name] = generate(prop.type)
-						schema[prop.name][:nullable] = true if prop.default?
+						schema[prop.name][:nullable] = true if prop.optional?
 					end
 
 					required = type.literal_properties.select(&:required?).reject(&:default?).map(&:name).map(&:to_s)

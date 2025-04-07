@@ -99,7 +99,7 @@ test "basic data structure mapping" do
 	class Person < Literal::Data
 		prop :name, String
 		prop :age, Integer
-		prop :email, String, default: nil
+		prop :email, _String?
 	end
 
 	expected_schema = {

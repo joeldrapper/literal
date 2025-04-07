@@ -8,6 +8,8 @@ module Literal
 				def map_type(type)
 					if type == String || type == Symbol
 						{ type: "string" }
+					elsif type.is_a?(Types::NilableType)
+						map_type(type.type)
 					elsif type == Integer
 						{ type: "integer" }
 					elsif type == Float || type == Numeric
