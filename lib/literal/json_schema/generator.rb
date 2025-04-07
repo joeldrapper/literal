@@ -18,7 +18,7 @@ module Literal
 				def generate_data_structure(type)
 					schema = {}
 					type.literal_properties.each do |prop|
-						schema[prop.name] = TypeMapper.map_type(prop.type)
+						schema[prop.name] = generate(prop.type)
 						schema[prop.name][:nullable] = true if prop.default?
 					end
 
