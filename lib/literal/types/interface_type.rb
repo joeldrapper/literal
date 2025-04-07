@@ -34,9 +34,9 @@ class Literal::Types::InterfaceType
 		when Module
 			@methods.map { |m| METHOD_TYPE_MAPPINGS[m] }.all? { |types| types&.include?(other) }
 		when Literal::Types::IntersectionType
-			other.types.any? { |type| Literal.subtype?(type, of: self) }
+			other.types.any? { |type| Literal.subtype?(type, self) }
 		when Literal::Types::ConstraintType
-			other.object_constraints.any? { |type| Literal.subtype?(type, of: self) }
+			other.object_constraints.any? { |type| Literal.subtype?(type, self) }
 		else
 			false
 		end

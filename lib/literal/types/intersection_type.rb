@@ -36,17 +36,17 @@ class Literal::Types::IntersectionType
 		when Literal::Types::IntersectionType
 			@types.all? do |type|
 				other.types.any? do |other_type|
-					Literal.subtype?(other_type, of: type)
+					Literal.subtype?(other_type, type)
 				end
 			end
 		when Literal::Types::ConstraintType
 			@types.all? do |type|
 				other.object_constraints.any? do |object_constraint|
-					Literal.subtype?(object_constraint, of: type)
+					Literal.subtype?(object_constraint, type)
 				end
 			end
 		when Literal::Types::FrozenType
-			@types.all? { |type| Literal.subtype?(other.type, of: type) }
+			@types.all? { |type| Literal.subtype?(other.type, type) }
 		else
 			false
 		end

@@ -140,4 +140,4 @@ Literal::Transforms = {
 		to_s: String,
 		year: Integer,
 	},
-}.transform_values! { |it| it.transform_keys(&:to_proc) }.freeze
+}.transform_values! { |it| it.transform_keys(&:to_proc).freeze }.freeze
