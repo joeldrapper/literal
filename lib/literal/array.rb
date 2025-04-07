@@ -344,7 +344,7 @@ class Literal::Array
 
 	def map(type, &block)
 		my_type = @__type__
-		transform_type = Literal::TRANSFORMS.dig(my_type, block)
+		transform_type = Literal::Transforms.dig(my_type, block)
 
 		if transform_type && Literal.subtype?(transform_type, of: my_type)
 			Literal::Array.allocate.__initialize_without_check__(

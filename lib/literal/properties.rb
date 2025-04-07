@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module Literal::Properties
-	autoload :Schema, "literal/properties/schema"
-	autoload :DataSchema, "literal/properties/data_schema"
-
 	include Literal::Types
 
 	module DocString
