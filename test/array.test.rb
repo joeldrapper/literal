@@ -760,6 +760,14 @@ test "#rotate rotates the array" do
 	assert_equal return_value, Literal::Array(Integer).new(2, 3, 1)
 end
 
+test "#reverse! reverses the array in place" do
+	array = Literal::Array(Integer).new(1, 2, 3)
+
+	return_value = array.reverse!
+
+	assert_same return_value, array
+end
+
 test "#take takes the first n elements" do
 	array = Literal::Array(Integer).new(1, 2, 3, 4, 5)
 
