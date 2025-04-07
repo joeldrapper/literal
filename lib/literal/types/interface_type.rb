@@ -13,11 +13,12 @@ class Literal::Types::InterfaceType
 
 	def initialize(*methods)
 		raise Literal::ArgumentError.new("_Interface type must have at least one method.") if methods.size < 1
-		@methods = methods
+		@methods = methods.freeze
+		@methods_set = methods.to_set.freeze
 		freeze
 	end
 
-	attr_reader :methods
+	attr_reader :methods, :methods_set
 
 	def inspect
 		"_Interface(#{@methods.map(&:inspect).join(', ')})"
@@ -30,9 +31,10 @@ class Literal::Types::InterfaceType
 	def >=(other)
 		case other
 		when Literal::Types::InterfaceType
-			@methods.all? { |m| other.methods.include?(m) }
+			@methods_set.subset?(other.methods_set)
 		when Module
-			@methods.all? { |m| other.method_defined?(m) }
+			public_methods = other.public_instance_methods.to_set
+			@methods_set.subset?(public_methods)
 		when Literal::Types::IntersectionType
 			other.types.any? { |type| Literal.subtype?(type, self) }
 		when Literal::Types::ConstraintType
