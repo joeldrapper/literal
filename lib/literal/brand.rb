@@ -5,7 +5,7 @@ class Literal::Brand
 
 	def initialize(...)
 		@type = _Constraint(...)
-		@objects = ObjectSpace::WeakKeyMap.new
+		@objects = ObjectSpace::WeakMap.new
 	end
 
 	def new(object)
