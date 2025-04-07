@@ -25,7 +25,7 @@ class Literal::Brand
 	def new(object)
 		Literal.check(expected: @type, actual: object)
 
-		dup = object.dup
+		dup = object.frozen? ? object.dup.freeze : object.dup
 		@objects[dup] = true
 		dup
 	end
