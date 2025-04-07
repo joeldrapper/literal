@@ -21,19 +21,19 @@ module Literal
 		type = Literal::Types._Constraint(*args, **kwargs)
 		value_class.define_method(:type) { type }
 
-		if subtype?(type, of: Integer)
+		if subtype?(type, Integer)
 			value_class.alias_method :to_i, :value
-		elsif subtype?(type, of: String)
+		elsif subtype?(type, String)
 			value_class.alias_method :to_s, :value
 			value_class.alias_method :to_str, :value
-		elsif subtype?(type, of: Array)
+		elsif subtype?(type, Array)
 			value_class.alias_method :to_a, :value
 			value_class.alias_method :to_ary, :value
-		elsif subtype?(type, of: Hash)
+		elsif subtype?(type, Hash)
 			value_class.alias_method :to_h, :value
-		elsif subtype?(type, of: Float)
+		elsif subtype?(type, Float)
 			value_class.alias_method :to_f, :value
-		elsif subtype?(type, of: Set)
+		elsif subtype?(type, Set)
 			value_class.alias_method :to_set, :value
 		end
 
@@ -88,8 +88,7 @@ module Literal
 		end
 	end
 
-	def self.subtype?(type, of:)
-		supertype = of
+	def self.subtype?(type, supertype)
 		subtype = type
 
 		subtype = subtype.block.call if Types::DeferredType === subtype

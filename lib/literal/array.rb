@@ -17,13 +17,13 @@ class Literal::Array
 		alias_method :[], :new
 
 		def ===(value)
-			Literal::Array === value && Literal.subtype?(value.__type__, of: @type)
+			Literal::Array === value && Literal.subtype?(value.__type__, @type)
 		end
 
 		def >=(other)
 			case other
 			when Literal::Array::Generic
-				Literal.subtype?(other.type, of: @type)
+				Literal.subtype?(other.type, @type)
 			else
 				false
 			end
@@ -346,7 +346,7 @@ class Literal::Array
 		my_type = @__type__
 		transform_type = Literal::Transforms.dig(my_type, block)
 
-		if transform_type && Literal.subtype?(transform_type, of: my_type)
+		if transform_type && Literal.subtype?(transform_type, my_type)
 			Literal::Array.allocate.__initialize_without_check__(
 				@__value__.map(&block),
 				type:,
@@ -392,7 +392,7 @@ class Literal::Array
 	end
 
 	def narrow(type)
-		unless Literal.subtype?(type, of: @__type__)
+		unless Literal.subtype?(type, @__type__)
 			raise ArgumentError.new("Cannot narrow #{@__type__} to #{type}")
 		end
 
