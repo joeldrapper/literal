@@ -26,6 +26,10 @@ module Literal
 						{ type: "boolean" }
 					elsif type.is_a?(Literal::Enum) || type <= Literal::Enum
 						map_enum(type)
+					elsif Time >= type
+						{ type: "string", format: "date-time" }
+					elsif Date >= type
+						{ type: "string", format: "date" }
 					else
 						{ type: "object" }
 					end

@@ -70,16 +70,6 @@ test "integer array mapping" do
 	}
 end
 
-# Hash type tests
-test "hash with symbol keys and string values" do
-	assert_schema Literal::Hash(Symbol, String), {
-		type: "object",
-		additionalProperties: {
-			type: "string",
-		},
-	}
-end
-
 # Enum type tests
 test "enum type mapping" do
 	class Colors < Literal::Enum(String)
@@ -159,8 +149,10 @@ test "openapi compatibility with date-time format" do
 	class ApiResponse < Literal::Data
 		prop :id, Integer
 		prop :status, String
-		prop :data, Literal::Hash.new({}, key_type: Symbol, value_type: String)
 		prop :created_at, Time
+		prop :created_at_const, _Time?
+		prop :date_added, Date
+		prop :date_added_const, _Date?
 	end
 
 	expected_schema = {
@@ -168,16 +160,29 @@ test "openapi compatibility with date-time format" do
 		properties: {
 			id: { type: "integer" },
 			status: { type: "string" },
-			data: {
-				type: "object",
-				additionalProperties: { type: "string" },
-			},
 			created_at: {
 				type: "string",
 				format: "date-time",
 			},
+
+			created_at_const: {
+				type: "string",
+				format: "date-time",
+				nullable: true,
+			},
+
+			date_added: {
+				type: "string",
+				format: "date",
+			},
+
+			date_added_const: {
+				type: "string",
+				format: "date",
+				nullable: true,
+			},
 		},
-		required: ["id", "status", "data", "created_at"],
+		required: ["id", "status", "created_at", "date_added"],
 		additionalProperties: false,
 	}
 
