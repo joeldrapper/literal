@@ -9,6 +9,12 @@ class Literal::Value
 		new(value)
 	end
 
+	def self.from_pack(payload)
+		object = allocate
+		object.marshal_load(payload)
+		object
+	end
+
 	# Takes a list of method names and delegates them to the underlying value.
 	def self.delegate(*methods)
 		methods.each do |method_name|
@@ -39,6 +45,21 @@ class Literal::Value
 	end
 
 	alias_method :==, :===
+
+	def as_pack
+		marshal_dump
+	end
+
+	def marshal_load(payload)
+		_version, value, was_frozen = payload
+
+		@value = value
+		freeze if was_frozen
+	end
+
+	def marshal_dump
+		[1, @value, frozen?].freeze
+	end
 
 	freeze
 end

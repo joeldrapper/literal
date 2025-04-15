@@ -38,7 +38,7 @@ class Literal::DataStructure
 	end
 
 	def marshal_dump
-		[1, to_h, frozen?]
+		[1, to_h, frozen?].freeze
 	end
 
 	def hash
