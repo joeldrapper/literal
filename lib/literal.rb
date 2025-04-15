@@ -5,6 +5,9 @@ require_relative "literal/version"
 
 module Literal
 	Loader = Zeitwerk::Loader.for_gem.tap do |loader|
+		loader.ignore("#{__dir__}/literal/rails")
+		loader.ignore("#{__dir__}/literal/railtie.rb")
+
 		loader.inflector.inflect(
 			"json_data_type" => "JSONDataType"
 		)
@@ -123,4 +126,4 @@ module Literal
 	end
 end
 
-require_relative "literal/rails" if defined?(Rails)
+require_relative "literal/railtie" if defined?(Rails)
