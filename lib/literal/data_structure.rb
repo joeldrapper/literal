@@ -48,7 +48,8 @@ class Literal::DataStructure
 	def ==(other)
 		self.class === other && other.class.literal_properties.empty?
 	end
-	alias eql? ==
+
+	alias_method :eql?, :==
 
 	def self.__generate_literal_methods__(new_property, buffer = +"")
 		super
