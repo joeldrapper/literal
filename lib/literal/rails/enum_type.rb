@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Literal::Rails::EnumType < ActiveModel::Type::Value
-	def initialize(enum)
+	def initialize(enum, subtype)
 		@enum = enum
+		@subtype = subtype || ActiveModel::Type::Value.new
 		super()
 	end
 
@@ -14,8 +15,10 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		case value
 		when nil
 			nil
+		when @enum
+			value
 		else
-			@enum.coerce(value)
+			@enum.coerce(@subtype.cast(value))
 		end
 	end
 
@@ -24,7 +27,7 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		when nil
 			nil
 		else
-			@enum.coerce(value).value
+			@subtype.serialize(@enum.coerce(value).value)
 		end
 	end
 
@@ -33,7 +36,7 @@ class Literal::Rails::EnumType < ActiveModel::Type::Value
 		when nil
 			nil
 		else
-			@enum.coerce(value)
+			@enum.coerce(@subtype.deserialize(value))
 		end
 	end
 end
