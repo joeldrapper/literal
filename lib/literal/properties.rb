@@ -61,7 +61,7 @@ module Literal::Properties
 	def literal_properties
 		return @literal_properties if defined?(@literal_properties)
 
-		if superclass.is_a?(Literal::Properties)
+		if Literal::Properties === superclass
 			@literal_properties = superclass.literal_properties.dup
 		else
 			@literal_properties = Literal::Properties::Schema.new

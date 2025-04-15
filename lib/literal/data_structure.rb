@@ -46,7 +46,7 @@ class Literal::DataStructure
 	end
 
 	def ==(other)
-		other.is_a?(self.class) && other.class.literal_properties.empty?
+		self.class === other && other.class.literal_properties.empty?
 	end
 	alias eql? ==
 
