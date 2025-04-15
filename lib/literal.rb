@@ -77,12 +77,12 @@ module Literal
 		Literal::Brand.new(...)
 	end
 
-	def self.check(actual, expected)
-		if expected === actual
+	def self.check(value, type)
+		if type === value
 			true
 		else
-			context = Literal::TypeError::Context.new(expected:, actual:)
-			expected.record_literal_type_errors(context) if expected.respond_to?(:record_literal_type_errors)
+			context = Literal::TypeError::Context.new(expected: type, actual: value)
+			type.record_literal_type_errors(context) if type.respond_to?(:record_literal_type_errors)
 			yield context if block_given?
 			raise Literal::TypeError.new(context:)
 		end
