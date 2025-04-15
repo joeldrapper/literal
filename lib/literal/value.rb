@@ -23,7 +23,7 @@ class Literal::Value
 	end
 
 	def initialize(value)
-		Literal.check(expected: __type__, actual: value)
+		Literal.check(value, __type__)
 		@value = value
 		freeze
 	end

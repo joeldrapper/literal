@@ -10,7 +10,7 @@ class Literal::Delegator < SimpleDelegator
 	end
 
 	def initialize(value)
-		Literal.check(expected: __type__, actual: value)
+		Literal.check(value, __type__)
 		super
 		freeze
 	end

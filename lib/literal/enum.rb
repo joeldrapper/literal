@@ -55,7 +55,7 @@ class Literal::Enum
 
 			types = @indexes_definitions.fetch(key)
 			type = types.first
-			Literal.check(actual: value, expected: type) { |c| raise NotImplementedError }
+			Literal.check(value, type) { |c| raise NotImplementedError }
 
 			@indexes.fetch(key)[value]
 		end
@@ -72,7 +72,7 @@ class Literal::Enum
 			end
 
 			type = @indexes_definitions.fetch(key)[0]
-			Literal.check(actual: value, expected: type)
+			Literal.check(value, type)
 
 			@indexes.fetch(key)[value]&.first
 		end

@@ -77,7 +77,7 @@ module Literal
 		Literal::Brand.new(...)
 	end
 
-	def self.check(actual:, expected:)
+	def self.check(actual, expected)
 		if expected === actual
 			true
 		else

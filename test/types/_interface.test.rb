@@ -27,9 +27,7 @@ end
 
 test "error message" do
 	error = assert_raises Literal::TypeError do
-		Literal.check(
-			expected: _Interface(:each, :map, :select), actual: nil
-		)
+		Literal.check(nil, _Interface(:each, :map, :select))
 	end
 
 	assert_equal error.message, <<~MSG

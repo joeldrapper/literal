@@ -51,7 +51,7 @@ class Literal::Array
 	include Literal::Types
 
 	def initialize(value, type:)
-		Literal.check(actual: value, expected: _Array(type)) do |c|
+		Literal.check(value, _Array(type)) do |c|
 			c.fill_receiver(receiver: self, method: "#initialize")
 		end
 
@@ -98,7 +98,7 @@ class Literal::Array
 	def +(other)
 		case other
 		when ::Array
-			Literal.check(actual: other, expected: _Array(@__type__)) do |c|
+			Literal.check(other, _Array(@__type__)) do |c|
 				c.fill_receiver(receiver: self, method: "#+")
 			end
 
@@ -129,7 +129,7 @@ class Literal::Array
 	end
 
 	def <<(value)
-		Literal.check(actual: value, expected: @__type__) do |c|
+		Literal.check(value, @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#<<")
 		end
 
@@ -157,7 +157,7 @@ class Literal::Array
 	end
 
 	def []=(index, value)
-		Literal.check(actual: value, expected: @__type__) do |c|
+		Literal.check(value, @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#[]=")
 		end
 
@@ -284,7 +284,7 @@ class Literal::Array
 	alias_method :index, :find_index
 
 	def insert(index, *value)
-		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
+		Literal.check(value, _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#insert")
 		end
 
@@ -398,7 +398,7 @@ class Literal::Array
 
 		if __type__ != type
 			@__value__.each do |item|
-				Literal.check(actual: item, expected: type) do |c|
+				Literal.check(item, type) do |c|
 					c.fill_receiver(receiver: self, method: "#narrow")
 				end
 			end
@@ -453,7 +453,7 @@ class Literal::Array
 	end
 
 	def push(*value)
-		Literal.check(actual: value, expected: _Array(@__type__)) do |c|
+		Literal.check(value, _Array(@__type__)) do |c|
 			c.fill_receiver(receiver: self, method: "#push")
 		end
 
@@ -475,7 +475,7 @@ class Literal::Array
 	def replace(value)
 		case value
 		when Array
-			Literal.check(actual: value, expected: _Array(@__type__)) do |c|
+			Literal.check(value, _Array(@__type__)) do |c|
 				c.fill_receiver(receiver: self, method: "#replace")
 			end
 
@@ -597,7 +597,7 @@ class Literal::Array
 	end
 
 	def unshift(value)
-		Literal.check(actual: value, expected: @__type__) do |c|
+		Literal.check(value, @__type__) do |c|
 			c.fill_receiver(receiver: self, method: "#unshift")
 		end
 
@@ -636,7 +636,7 @@ class Literal::Array
 	def |(other)
 		case other
 		when ::Array
-			Literal.check(actual: other, expected: _Array(@__type__)) do |c|
+			Literal.check(other, _Array(@__type__)) do |c|
 				c.fill_receiver(receiver: self, method: "#|")
 			end
 

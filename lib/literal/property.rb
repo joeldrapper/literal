@@ -97,15 +97,15 @@ class Literal::Property
 	def check(value, &)
 		raise ArgumentError.new("Cannot check type without a block") unless block_given?
 
-		Literal.check(actual: value, expected: @type, &)
+		Literal.check(value, @type, &)
 	end
 
 	def check_writer(receiver, value)
-		Literal.check(actual: value, expected: @type) { |c| c.fill_receiver(receiver:, method: "##{@name.name}=(value)") }
+		Literal.check(value, @type) { |c| c.fill_receiver(receiver:, method: "##{@name.name}=(value)") }
 	end
 
 	def check_initializer(receiver, value)
-		Literal.check(actual: value, expected: @type) { |c| c.fill_receiver(receiver:, method: "#initialize", label: param) }
+		Literal.check(value, @type) { |c| c.fill_receiver(receiver:, method: "#initialize", label: param) }
 	end
 
 	def generate_reader_method(buffer = +"")
