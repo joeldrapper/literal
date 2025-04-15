@@ -25,6 +25,8 @@ module Fixtures
 	].freeze
 end
 
+Literal::Loader.eager_load
+
 if ENV["COVERAGE"] == "true"
 	require "simplecov"
 
