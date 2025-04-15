@@ -19,7 +19,7 @@ module Literal
 		value_class = Class.new(Literal::Value)
 
 		type = Literal::Types._Constraint(*args, **kwargs)
-		value_class.define_method(:type) { type }
+		value_class.define_method(:__type__) { type }
 
 		if subtype?(type, Integer)
 			value_class.alias_method :to_i, :value

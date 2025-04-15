@@ -9,6 +9,7 @@ class Literal::Value
 		new(value)
 	end
 
+	# Takes a list of method names and delegates them to the underlying value.
 	def self.delegate(*methods)
 		methods.each do |method_name|
 			class_eval(<<~RUBY, __FILE__, __LINE__ + 1)
@@ -22,7 +23,7 @@ class Literal::Value
 	end
 
 	def initialize(value)
-		Literal.check(expected: type, actual: value)
+		Literal.check(expected: __type__, actual: value)
 		@value = value
 		freeze
 	end
