@@ -24,6 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         ruby-version: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
+        exclude:
+          - ruby-version: jruby-head
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
