@@ -88,7 +88,7 @@ class Literal::Enum
 			if self === object
 				# object.instance_variable_set(:@name, name)
 				@names[object] = name
-				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase}?") { self == object }
+				define_method("#{name.to_s.gsub(/([^A-Z])([A-Z]+)/, '\1_\2').gsub(/_{2,}/, '_').downcase}?") { self == object }
 				object.freeze
 			end
 		end
