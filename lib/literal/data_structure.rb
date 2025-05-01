@@ -14,6 +14,8 @@ class Literal::DataStructure
 		{}
 	end
 
+	alias to_hash to_h
+
 	def deconstruct
 		to_h.values
 	end
