@@ -87,9 +87,9 @@ class Literal::Property
 		RUBY_KEYWORDS[@name] || @name.name
 	end
 
-	def default_value
+	def default_value(receiver)
 		case @default
-			when Proc then @default.call
+			when Proc then receiver.instance_exec(&@default)
 			else @default
 		end
 	end
@@ -190,7 +190,7 @@ class Literal::Property
 			escaped_name <<
 			"\n    " <<
 			escaped_name <<
-			" = __property__.default_value\n  end\n"
+			" = __property__.default_value(self)\n  end\n"
 	end
 
 	def generate_initializer_check_type(buffer = +"")

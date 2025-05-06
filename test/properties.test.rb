@@ -93,6 +93,13 @@ class WithDefaultBlock
 	prop :block, Proc, :&, reader: :public, default: -> { proc { "Hello" } }
 end
 
+class WithContextualDefault
+	extend Literal::Properties
+	prop :hello, String, reader: :private, default: "Hello".freeze
+	prop :world, String, reader: :private, default: "World".freeze
+	prop :combined, String, reader: :public, default: -> { "#{hello} #{world}" }
+end
+
 class WithNilableType
 	extend Literal::Properties
 	prop :name, Literal::Types::NilableType.new(String), :positional
@@ -138,6 +145,11 @@ test "default block" do
 
 	object = WithDefaultBlock.new { "World" }
 	assert_equal object.block.call, "World"
+end
+
+test "default value (as a proc) executes in the context of the receiver" do
+	object = WithContextualDefault.new
+	assert_equal object.combined, "Hello World"
 end
 
 test "properties are enumerable" do
