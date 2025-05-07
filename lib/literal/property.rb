@@ -164,9 +164,7 @@ class Literal::Property
 		generate_initializer_assign_value(buffer)
 	end
 
-	private
-
-	def generate_initializer_escape_keyword(buffer = +"")
+	private def generate_initializer_escape_keyword(buffer = +"")
 		buffer <<
 			escaped_name <<
 			" = binding.local_variable_get(:" <<
@@ -174,7 +172,7 @@ class Literal::Property
 			")\n"
 	end
 
-	def generate_initializer_coerce_property(buffer = +"")
+	private def generate_initializer_coerce_property(buffer = +"")
 		buffer <<
 			escaped_name <<
 			"= __property__.coerce(" <<
@@ -182,7 +180,7 @@ class Literal::Property
 			", context: self)\n"
 	end
 
-	def generate_initializer_assign_default(buffer = +"")
+	private def generate_initializer_assign_default(buffer = +"")
 		buffer <<
 			"  if " <<
 			((@kind == :&) ? "nil" : "Literal::Null") <<
@@ -193,12 +191,12 @@ class Literal::Property
 			" = __property__.default_value(self)\n  end\n"
 	end
 
-	def generate_initializer_check_type(buffer = +"")
+	private def generate_initializer_check_type(buffer = +"")
 		buffer <<
 			"  __property__.check_initializer(self, " << escaped_name << ")\n"
 	end
 
-	def generate_initializer_assign_value(buffer = +"")
+	private def generate_initializer_assign_value(buffer = +"")
 		buffer <<
 			"  @" <<
 			@name.name <<

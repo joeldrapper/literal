@@ -85,19 +85,17 @@ class Literal::Types::ConstraintType
 		end
 	end
 
-	private
-
-	def inspect_constraints
+	private def inspect_constraints
 		[inspect_object_constraints, inspect_property_constraints].compact.join(", ")
 	end
 
-	def inspect_object_constraints
+	private def inspect_object_constraints
 		if @object_constraints.length > 0
 			@object_constraints.map(&:inspect).join(", ")
 		end
 	end
 
-	def inspect_property_constraints
+	private def inspect_property_constraints
 		if @property_constraints.length > 0
 			@property_constraints.map { |k, t| "#{k}: #{t.inspect}" }.join(", ")
 		end

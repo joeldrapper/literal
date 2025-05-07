@@ -68,18 +68,16 @@ module Literal::Properties
 		end
 	end
 
-	private
-
-	def __literal_property_class__
+	private def __literal_property_class__
 		Literal::Property
 	end
 
-	def __define_literal_methods__(new_property)
+	private def __define_literal_methods__(new_property)
 		code =	__generate_literal_methods__(new_property)
 		__literal_extension__.module_eval(code)
 	end
 
-	def __literal_extension__
+	private def __literal_extension__
 		if defined?(@__literal_extension__)
 			@__literal_extension__
 		else
@@ -99,7 +97,7 @@ module Literal::Properties
 		end
 	end
 
-	def __generate_literal_methods__(new_property, buffer = +"")
+	private def __generate_literal_methods__(new_property, buffer = +"")
 		buffer << "# frozen_string_literal: true\n"
 		literal_properties.generate_initializer(buffer)
 		literal_properties.generate_to_h(buffer)

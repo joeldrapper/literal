@@ -213,9 +213,7 @@ class Literal::Flags
 		end
 	end
 
-	private
-
-	def bitmap(key)
+	private def bitmap(key)
 		2 ** self.class::FLAGS.fetch(key)
 	end
 end

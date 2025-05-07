@@ -112,9 +112,7 @@ class Literal::Properties::Schema
 		buffer << "alias eql? ==\n"
 	end
 
-	private
-
-	def generate_initializer_params(buffer = +"")
+	private def generate_initializer_params(buffer = +"")
 		sorted_properties = @sorted_properties
 		i, n = 0, sorted_properties.size
 		while i < n
@@ -154,12 +152,12 @@ class Literal::Properties::Schema
 		buffer
 	end
 
-	def generate_initializer_body(buffer = +"")
+	private def generate_initializer_body(buffer = +"")
 		buffer << "  __properties__ = self.class.literal_properties.properties_index\n"
 		generate_initializer_handle_properties(@sorted_properties, buffer)
 	end
 
-	def generate_initializer_handle_properties(properties, buffer = +"")
+	private def generate_initializer_handle_properties(properties, buffer = +"")
 		i, n = 0, properties.size
 		while i < n
 			properties[i].generate_initializer_handle_property(buffer)

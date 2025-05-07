@@ -95,8 +95,8 @@ end
 
 class WithContextualDefault
 	extend Literal::Properties
-	prop :hello, String, reader: :private, default: "Hello".freeze
-	prop :world, String, reader: :private, default: "World".freeze
+	prop :hello, String, reader: :private, default: "Hello"
+	prop :world, String, reader: :private, default: "World"
 	prop :combined, String, reader: :public, default: -> { "#{hello} #{world}" }
 end
 
