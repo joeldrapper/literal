@@ -92,6 +92,8 @@ module Literal::Properties
 					{}
 				end
 
+				alias to_hash to_h
+
 				set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)
 			end
 		end

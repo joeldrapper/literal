@@ -78,6 +78,7 @@ class Literal::Properties::Schema
 		end
 
 		buffer << "  }\n" << "end\n"
+		buffer << "alias to_hash to_h\n"
 	end
 
 	def generate_hash(buffer = +"")
